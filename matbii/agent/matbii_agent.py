@@ -18,6 +18,36 @@ DEFAULT_SCHEDULE_PATH = str(
 class MatbiiActuator(ActiveActuator):
 
     @ActiveActuator.attempt
+    def set_light(self, target: int, state: int):
+        # typically there are only two lights TODO but the agent should discover this...
+        assert target in [1, 2]
+        assert state in [0, 1]
+        target = f"light-{target}-button"
+        return QueryXMLTemplated.new(
+            self.id,
+            target,
+            {
+                "data-state": "%s" % state,
+                "fill": "{{data_colors[%s]}}" % state,
+            },
+        )
+
+    @ActiveActuator.attempt
+    def light_failure(self, target: int):
+        # typically there are only two lights TODO but the agent should discover this...
+        assert target in [1, 2]
+        target = f"light-{target}-button"
+        failure_state = 1
+        return QueryXMLTemplated.new(
+            self.id,
+            target,
+            {
+                "data-state": "%s" % failure_state,
+                "fill": "{{data_colors[%s]}}" % failure_state,
+            },
+        )
+
+    @ActiveActuator.attempt
     def toggle_light(self, target: int):
         # typically there are only two lights TODO but the agent should discover this...
         assert target in [1, 2]
@@ -32,12 +62,10 @@ class MatbiiActuator(ActiveActuator):
         )
 
     @ActiveActuator.attempt
-    def toggle_slider(self, target: int, state: int = None):
+    def toggle_slider(self, target: int):
         # typically there are only 4 lights TODO but the agent should discover this...
         assert target in [1, 2, 3, 4]
-        assert state in [-1, 1]
-        if state is None:
-            state = 2 * random.randint(0, 1) - 1  # randomly perturb the state
+        state = 2 * random.randint(0, 1) - 1  # randomly perturb the state
         target = f"slider-{target}-button"
         state_template = "min(max(data_statemin, data_state+%s), data_statemax)" % state
         return QueryXMLTemplated.new(
@@ -85,7 +113,6 @@ class ScheduleRunner:
                 "Attempting to run completed schedule:", str(self._schedule)
             )
         if self._wait <= (current_time - self._time):
-            print("action")
             # its time to attempt the next action, this will be handled by the ActionSchedule via direct calls to the MatbiiActuator.
             self._wait, _ = next(self._schedule_iter)
             # wait will be None on the final execution of the schedule action
@@ -131,6 +158,14 @@ class MatbiiAgent(Agent):
         for fun in actuator.get_attempt_methods():
             _LOGGER.debug("Registered attempts in schedule: %s", fun.__name__)
             parser.register_action(fun)
+
+        from random import uniform, randint
+
+        parser.register_function(uniform)
+        parser.register_function(randint)
+        parser.register_function(min)
+        parser.register_function(max)
+
         _LOGGER.debug("Reading schedule file: %s", schedule_path)
         with open(schedule_path, "r", encoding="UTF-8") as f:
             schedule_str = f.read()
