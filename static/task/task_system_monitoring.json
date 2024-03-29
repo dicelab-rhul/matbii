@@ -1,8 +1,10 @@
 {
-    "font_size": 12,
-    "stroke_width": 2,
     "width": 260,
     "height": 360,
+    "x": 0,
+    "y": 0,
+    "font_size": 12,
+    "stroke_width": 2,
     "padding": 10,
     "light_state": [
         0,

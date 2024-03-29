@@ -5,13 +5,11 @@ from datetime import datetime
 from jinja2 import Template
 from star_ray.plugin.xml import XMLAmbient, xml_history, QueryXPath, QueryXMLTemplated
 
-from .error import MatbiiInternalError
+from .utils import MatbiiInternalError, MultiTaskLoader
 
-_STATIC_PATH = files(__package__).parent / "static"
-_XML_TEMPLATE_PATH = _STATIC_PATH / "matbii.svg.jinja"
-_XML_TEMPLATE_DATA_PATH = _STATIC_PATH / "matbii.json"
 NAMESPACES = {"svg": "http://www.w3.org/2000/svg"}
 
+# TODO move this to utils._const.py?
 _HISTORY_PATH = str(
     files(__package__).parent
     / "logs"
@@ -23,27 +21,10 @@ _HISTORY_PATH = str(
 class MatbiiAmbient(XMLAmbient):
 
     def __init__(self, agents, *args, **kwargs):
-        xml = self.load_xml_template(
-            _XML_TEMPLATE_PATH, template_data_path=_XML_TEMPLATE_DATA_PATH
-        )
+        # TODO supply arguments to the loader... rather than relying on the default values
+        # we are not making full use of it here (tasks can be enabled etc.)
+        xml = MultiTaskLoader().get_index()
         super().__init__(agents, *args, xml=xml, namespaces=NAMESPACES, **kwargs)
-
-    def load_xml_template(
-        self, template_path, template_data=None, template_data_path=None
-    ):
-        if template_data is None:
-            if template_data_path is None:
-                raise MatbiiInternalError(
-                    "One of `template_data` or `template_data_path` must be specified."
-                )
-            with open(template_data_path, "r", encoding="UTF-8") as json_file:
-                template_data = json.load(json_file)
-
-        with open(template_path, "r", encoding="UTF-8") as svg_file:
-            template = svg_file.read()
-
-        template = Template(template)
-        return template.render(**template_data)
 
     def __select__(self, action):
         # print("__SELECT__!", action)

@@ -1,0 +1,17 @@
+<svg id="root" xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
+
+    <!-- tasks can be included here, they will be included if they are enabled. -->
+
+    {% if task_system_monitoring is defined %}
+    {{ task_system_monitoring }}
+    {% endif %}
+
+    {% if task_tracking is defined %}
+    {{ task_tracking }}
+    {% endif %}
+
+
+
+
+
+</svg>

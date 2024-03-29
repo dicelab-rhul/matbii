@@ -1,18 +1,16 @@
 import random
 import time
-from importlib.resources import files
 from star_ray.agent import Agent, ActiveActuator
 from star_ray.plugin.xml import QueryXMLTemplated
 from star_ray.event import ErrorResponse
 from pyfuncschedule import ScheduleParser
 
 import logging
+from ..utils import DEFAULT_SCHEDULE_PATH
 
 _LOGGER = logging.getLogger("matbii")
 
-DEFAULT_SCHEDULE_PATH = str(
-    files(__package__).parent.parent / "static" / "default_schedule.sch"
-)
+DEFAULT_SCHEDULE_FILE = DEFAULT_SCHEDULE_PATH / "default_schedule.sch"
 
 
 class MatbiiActuator(ActiveActuator):
@@ -151,9 +149,9 @@ class MatbiiAgent(Agent):
                     "ErrorResponse caught for scheduled action. TODO See error logs for details."
                 )
 
-    def _load_schedule(self, actuator, schedule_path=None):
-        if schedule_path is None:
-            schedule_path = DEFAULT_SCHEDULE_PATH
+    def _load_schedule(self, actuator, schedule_file=None):
+        if schedule_file is None:
+            schedule_file = DEFAULT_SCHEDULE_FILE
         parser = ScheduleParser()
         for fun in actuator.get_attempt_methods():
             _LOGGER.debug("Registered attempts in schedule: %s", fun.__name__)
@@ -166,8 +164,8 @@ class MatbiiAgent(Agent):
         parser.register_function(min)
         parser.register_function(max)
 
-        _LOGGER.debug("Reading schedule file: %s", schedule_path)
-        with open(schedule_path, "r", encoding="UTF-8") as f:
+        _LOGGER.debug("Reading schedule file: %s", schedule_file)
+        with open(schedule_file, "r", encoding="UTF-8") as f:
             schedule_str = f.read()
         schedule = parser.parse(schedule_str)
         schedule = parser.resolve(schedule)

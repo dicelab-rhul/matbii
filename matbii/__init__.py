@@ -1,5 +1,5 @@
-from .error import MatbiiInternalError
-from ._logging import _LOGGER
+from .utils._error import MatbiiInternalError
+from .utils._logging import _LOGGER
 
 from . import environment
 from . import agent

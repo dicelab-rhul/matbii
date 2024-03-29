@@ -15,7 +15,7 @@ import pathlib
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 
-from .error import MatbiiInternalError
+from .utils import MatbiiInternalError
 
 
 class MatbiiWebServer(WebServer):

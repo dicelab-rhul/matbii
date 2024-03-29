@@ -1,0 +1,12 @@
+{
+    "line_color": "#1d90ff",
+    "target_color": "#1d90ff",
+    "target_line_width": 4,
+    "target_radius": 30,
+    "padding": 10,
+    "width": 370,
+    "height": 370,
+    "x": 260,
+    "y": 0,
+    "dash_array": "4,2,1,2"
+}
