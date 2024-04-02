@@ -32,7 +32,14 @@ class MultiTaskLoader:
         self._task_path = MultiTaskLoader.resolve_path(
             task_path if task_path else DEFAULT_TASK_PATH
         )
+        self._index_context = index_context
+        self._index_context_file = index_context_file
+        self._tasks = None
+        self._enabled_tasks = None
+        # do an initial load to fill some of the above variables
+        self.load(enabled_tasks=enabled_tasks)
 
+    def load(self, enabled_tasks=None):
         # find and load all tasks in the task path
         self._tasks = self.load_tasks()
         # intialise enabled tasks
@@ -44,7 +51,9 @@ class MultiTaskLoader:
 
         # load the index file that will contain the tasks
         _LOGGER.debug("Loading task index from: %s", self._index_file)
-        self._index_context = self._get_index_context(index_context_file, index_context)
+        self._index_context = self._get_index_context(
+            self._index_context_file, self._index_context
+        )
         _LOGGER.debug("    Tasks enabled: %s", str(list(self._enabled_tasks.keys())))
 
     def get_index(self):

@@ -1,10 +1,14 @@
 {
+    "debug": false,
+    "show_tank_labels": true,
     "line_color": "#1d90ff",
     "target_color": "#1d90ff",
     "target_line_width": 4,
     "target_radius": 30,
     "padding": 10,
-    "width": 370,
-    "height": 370,
+    "width": 650,
+    "height": 360,
+    "x": 260,
+    "y": 360,
     "dash_array": "4,2,1,2"
 }
