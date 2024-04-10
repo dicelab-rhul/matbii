@@ -1,6 +1,7 @@
 {
-    "width": 260,
-    "height": 360,
+    "debug": true,
+    "width": 240,
+    "height": 330,
     "x": 0,
     "y": 0,
     "font_size": 12,

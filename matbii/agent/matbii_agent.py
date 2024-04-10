@@ -1,100 +1,40 @@
 import random
 import time
-from star_ray.agent import Agent, ActiveActuator
-from star_ray.plugin.xml import QueryXMLTemplated
-from star_ray.event import ErrorResponse
+from types import MethodType
+from star_ray.agent import Agent, ActiveActuator, attempt
+from star_ray.event import ErrorActiveObservation
 from pyfuncschedule import ScheduleParser
 
+
 import logging
-from ..utils import DEFAULT_SCHEDULE_PATH
+from ..utils import DEFAULT_SCHEDULE_PATH, MatbiiScheduleError
 
 _LOGGER = logging.getLogger("matbii")
 
 DEFAULT_SCHEDULE_FILE = DEFAULT_SCHEDULE_PATH / "default_schedule.sch"
 
 
+from ..action.task_system_monitoring import (
+    SetLightAction,
+    ToggleLightAction,
+    SetSliderAction,
+)
+
+
 class MatbiiActuator(ActiveActuator):
 
-    @ActiveActuator.attempt
-    def set_light(self, target: int, state: int):
-        # typically there are only two lights TODO but the agent should discover this...
-        assert target in [1, 2]
-        assert state in [0, 1]
-        target = f"light-{target}-button"
-        return QueryXMLTemplated.new(
-            self.id,
-            target,
-            {
-                "data-state": "%s" % state,
-                "fill": "{{data_colors[%s]}}" % state,
-            },
-        )
-
-    @ActiveActuator.attempt
+    @attempt
     def light_failure(self, target: int):
-        # typically there are only two lights TODO but the agent should discover this...
-        assert target in [1, 2]
-        target = f"light-{target}-button"
-        failure_state = 1
-        return QueryXMLTemplated.new(
-            self.id,
-            target,
-            {
-                "data-state": "%s" % failure_state,
-                "fill": "{{data_colors[%s]}}" % failure_state,
-            },
-        )
+        return SetLightAction(target=target, state=0)
 
-    @ActiveActuator.attempt
-    def toggle_light(self, target: int):
-        # typically there are only two lights TODO but the agent should discover this...
-        assert target in [1, 2]
-        target = f"light-{target}-button"
-        return QueryXMLTemplated.new(
-            self.id,
-            target,
-            {
-                "data-state": "{{1-data_state}}",
-                "fill": "{{data_colors[1-data_state]}}",
-            },
-        )
+    @attempt
+    def light_toggle(self, target: int):
+        return ToggleLightAction(target=target)
 
-    @ActiveActuator.attempt
-    def toggle_slider(self, target: int):
-        # typically there are only 4 lights TODO but the agent should discover this...
-        assert target in [1, 2, 3, 4]
-        state = 2 * random.randint(0, 1) - 1  # randomly perturb the state
-        target = f"slider-{target}-button"
-        state_template = "min(max(data_statemin, data_state+%s), data_statemax)" % state
-        return QueryXMLTemplated.new(
-            self.id,
-            target,
-            {
-                "data-state": "{{%s}}" % state_template,
-                "y": "{{data_padding + %s * data_height}}" % state_template,
-            },
-        )
-
-    def get_attempt_methods(self):
-        def _get_attempt_methods(cls):
-            decorated_methods = []
-            for attr_name in dir(cls):
-                attr = getattr(cls, attr_name)
-                if callable(attr) and hasattr(attr, "is_attempt"):
-                    decorated_methods.append(attr)
-            return decorated_methods
-
-        methods = _get_attempt_methods(self.__class__)
-        return [method.__get__(self, self.__class__) for method in methods]
-
-
-# import unittest
-# from pathlib import Path
-# from star_ray.agent import ActiveActuator
-
-
-class MatbiiScheduleError(Exception):
-    pass
+    @attempt
+    def slider_toggle(self, target: int):
+        state = 2 * random.randint(0, 1) - 1  # randomly perturb +/- 1
+        return SetSliderAction(target=target, state=state, relative=True)
 
 
 class ScheduleRunner:
@@ -143,17 +83,23 @@ class MatbiiAgent(Agent):
     def __cycle__(self):
         self._schedule_runners = list(self._step_runners())
         # check observation results for errors
-        for obs in self.actuators[0].get_observations():
-            if isinstance(obs, ErrorResponse):
+        actuator = next(iter(self.actuators))
+        for obs in actuator.get_observations():
+            if isinstance(obs, ErrorActiveObservation):
                 _LOGGER.error(
                     "ErrorResponse caught for scheduled action. TODO See error logs for details."
                 )
+
+    @staticmethod
+    def get_attempt_methods(actuator):
+        for fun in actuator.__class__.__attemptmethods__:
+            yield MethodType(fun, actuator)
 
     def _load_schedule(self, actuator, schedule_file=None):
         if schedule_file is None:
             schedule_file = DEFAULT_SCHEDULE_FILE
         parser = ScheduleParser()
-        for fun in actuator.get_attempt_methods():
+        for fun in MatbiiAgent.get_attempt_methods(actuator):
             _LOGGER.debug("Registered attempts in schedule: %s", fun.__name__)
             parser.register_action(fun)
 

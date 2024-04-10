@@ -2,10 +2,10 @@
     <!-- Target symbol -->
     {% set target_size = (target_radius + target_line_width + 1) * 2 %}
 
-    <svg id="target" width="{{target_size}}" height="{{target_size}}">
+    <svg id="target" width="{{target_size}}" height="{{target_size}}" fill="transparent">
         {% set c = target_size / 2 %}
         <circle cx="{{c}}" cy="{{c}}" r="{{target_radius}}" stroke="{{target_color}}"
-            stroke-width="{{target_line_width}}" fill="none" />
+            stroke-width="{{target_line_width}}" fill="transparent" />
         <circle cx="{{c}}" cy="{{c}}" r="2" stroke="{{target_color}}" stroke-width="{{target_line_width}}"
             fill="{{target_color}}" />
 
@@ -110,5 +110,10 @@
     <line y1="{{vmid - vlen}}" x1="{{width - padding - hoff * inc}}" y2="{{vmid + vlen}}"
         x2="{{width - padding - hoff * inc}}" stroke="{{line_color}}" stroke-width="2"
         stroke-dasharray="{{dash_array}}" />
+
+    {% if debug %}
+    <rect x="0" y="0" width="{{width}}" height="{{height}}" stroke="#FF10F0" fill="none" />
+    {% endif %}
+
 
 </svg>

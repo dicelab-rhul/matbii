@@ -1,10 +1,8 @@
 from importlib.resources import files
 from typing import List
-from dataclasses import dataclass, astuple
 from fastapi import Request
 from fastapi.staticfiles import StaticFiles
 from star_ray import Ambient, Environment, ActiveActuator, ActiveSensor
-from star_ray.event import SelectResponse, Event
 
 from star_ray.agent import AgentFactory
 from star_ray.plugin.web import WebServer, WebAvatar
@@ -31,6 +29,7 @@ class MatbiiWebServer(WebServer):
         scripts = [
             """<script type="module" src="/static/star_ray/websocket.js"></script>""",
             """<script type="module" src="/static/template/star_ray/handle_mouse_button.js"></script>""",
+            """<script type="module" src="/static/template/star_ray/handle_keyboard.js"></script>""",
         ]
         # include star_ray javascript in the head of the root template
         templates_data = {"index.html.jinja": dict(head="\n".join(scripts), body="")}

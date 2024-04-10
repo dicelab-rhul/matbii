@@ -10,13 +10,7 @@
         <use href="#arrow" x="5" y="0" />
     </symbol>
 
-    <symbol id="slider">
-        <rect id="slider-1" x="0" y="0" width="{{slider_width}}" height="{{3 * slider_height}}"
-            fill="{{slider_color}}" />
-        <use href="#double-arrow" x="15" y="25" />
-    </symbol>
-
-    <svg id="lights" x="0" y="0">
+    <svg id="lights" x="0" y="0" width="{{width}}" height="{{light_height + 2 * padding}}">
         <!-- draw lights -->
         <g id="light-1">
             <rect id="light-1-button" x="{{padding}}" y="{{padding}}" width="{{light_width}}" height="{{light_height}}"
@@ -37,6 +31,10 @@
                 fill="black" font-size="{{font_size}}px">F6</text>
             {% endif %}
         </g>
+
+        {% if debug %}
+        <rect x="0" y="0" width="{{width}}" height="{{light_height + 2 * padding}}" stroke="#FF10F0" fill="none" />
+        {% endif %}
     </svg>
 
 
@@ -52,15 +50,17 @@
         <g id="slider-{{i}}">
             <rect id="slider-{{i}}-background" x="{{slider_x}}" y="{{padding}}" width="{{slider_width}}"
                 height="{{slider_num_increments * slider_height}}" fill="{{slider_background_color}}" />
-            <!-- We need to come up with a better way of have variable dependence here, 
-            we dont want to store cosmetic values in data-tags, especially on elements 
-            where they don't belong... (see <use> below). This will make it difficult for agents to modify things...?
-            -->
-            <use id="slider-{{i}}-button" href="#slider" x="{{slider_x}}"
-                y="{{padding + slider_state[i-1] * slider_height }}" data-state="{{slider_state[i-1]}}"
-                data-incs="{{slider_num_increments}}" data-padding="{{padding}}" data-height="{{slider_height}}"
-                data-statemax="{{slider_num_increments-3}}" data-statemin="0" />
 
+
+            <!-- NOTE: the click event does not happen on the <svg> element, this is due to a limitation with the browser. Instead, the inner rect element will be a target. The action that is taken to move the slider will happen to the parent <svg> element in the python implementation. This is an unfortunate side-effect of the way browsers handle nested svg elements and input events. -->
+            {% set sy = padding + slider_state[i-1] * slider_height %}
+            <svg id="slider-{{i}}-button-container" x="{{slider_x}}" y="{{sy}}" data-state="{{slider_state[i-1]}}"
+                width="{{slider_width}}" height="{{3 * slider_height}}">
+                <!-- This is what the user clicks! -->
+                <rect id="slider-{{i}}-button" x="0" y="0" width="{{slider_width}}" height="{{3 * slider_height}}"
+                    fill="{{slider_color}}" />
+                <use href="#double-arrow" x="{{slider_width - 15}}" y="{{ slider_height * 3/2 - 5}}" />
+            </svg>
 
             <rect id="slider-{{i}}-border" x="{{slider_x}}" y="{{padding}}" width="{{slider_width}}"
                 height="{{slider_num_increments * slider_height}}" fill="transparent" stroke-width="{{stroke_width}}"
@@ -68,7 +68,8 @@
             <g id="slider-{{i}}-incs">
                 {% for y in range(1, slider_num_increments) %}
                 <line x1="{{slider_x}}" y1="{{y * slider_height + padding}}" x2="{{slider_x + slider_width}}"
-                    y2="{{y * slider_height + padding}}" stroke-width="{{stroke_width}}" stroke="#000000" />
+                    y2="{{y * slider_height + padding}}" stroke-width="{{stroke_width}}" stroke="#000000"
+                    data-state="{{y}}" />
                 {% endfor %}
                 {% if show_keyboard_shortcuts %}
                 <text x="{{slider_x + (font_size - 4)}}" y="{{padding + (slider_num_increments + 1) * slider_height}}"
@@ -78,5 +79,10 @@
         </g>
         {% endfor %}
     </svg>
+
+    {% if debug %}
+    <rect x="0" y="0" width="{{width}}" height="{{height}}" stroke="#FF10F0" fill="none" />
+    {% endif %}
+
 
 </svg>

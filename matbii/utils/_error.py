@@ -1,5 +1,9 @@
-__all__ = ("MatbiiInternalError",)
+__all__ = ("MatbiiInternalError", "MatbiiScheduleError")
 
 
 class MatbiiInternalError(Exception):
+    pass
+
+
+class MatbiiScheduleError(MatbiiInternalError):
     pass

@@ -3,7 +3,7 @@ import asyncio
 from star_ray import Environment
 
 from .ambient import MatbiiAmbient
-from .agent.avatar import MatbiiAvatar
+from .agent.avatar.avatar import MatbiiAvatar
 from .server import MatbiiWebServer
 from .agent import MatbiiAgent
 

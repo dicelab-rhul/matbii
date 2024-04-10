@@ -1,0 +1,154 @@
+""" Action definitions for the system monitoring task. """
+
+from typing import Tuple
+from pydantic import validator, model_validator, Field
+
+from star_ray.event import Action, ErrorObservation
+from star_ray.plugin.xml import QueryXMLTemplated, QueryXPath
+
+from ..utils import MatbiiInternalError
+
+
+def _check_internal_response(action, response):
+    if isinstance(response, ErrorObservation):
+        raise MatbiiInternalError(
+            f"{type(action)} failed internally, changes to the svg state may be the cause. See error:\n",
+            response,
+        )
+
+
+# these are constants that reflect the SVG of matbii
+VALID_LIGHT_IDS = [1, 2]
+VALID_LIGHT_STATES = [0, 1]
+VALID_SLIDER_IDS = [1, 2, 3, 4]
+
+
+class SetSliderAction(Action):
+
+    target: int  # slider to target
+    state: int  # state to set, or offset from current state, or None if should reset the state.
+    relative: bool = Field(
+        default_factory=lambda: False
+    )  # is `state` relative to the current state?
+
+    @validator("target", pre=True, always=True)
+    @classmethod
+    def _validate_target(cls, value):
+        if not value in VALID_SLIDER_IDS:
+            raise ValueError(f"`target` {value} must be one of {VALID_LIGHT_IDS}")
+        return value
+
+    @model_validator(mode="after")
+    @classmethod
+    def _validate(cls, obj):
+        if obj.state is None:
+            obj.relative = False
+        return obj
+
+    def to_xml_query(self, ambient):
+        # get min and max values for the number of increments
+        inc_target = f"slider-{self.target}-incs"
+        but_target = f"slider-{self.target}-button"
+        query = QueryXPath(
+            xpath=f"//*[@id='{inc_target}']/svg:line", attributes=["y1", "data-state"]
+        )
+        response = ambient.__select__(query)
+        _check_internal_response(self, response)
+        states = {x["data-state"]: x["y1"] for x in response.values}
+        inc_size = states[2] - states[1]  # TODO check that these are all the same?
+
+        min_state, max_state = (min(states.keys()), max(states.keys()))
+        # -1 here because of the size of the slider button
+        # TODO this should really be computed based on the button size relative to inc_size?
+        max_state = max_state - 1
+        state = self.state
+
+        if state is None:
+            state = max_state // 2
+
+        # we select the parent of the button node because it contains the state and position to update
+        xpath_parent = f"//*[@id='{but_target}']/parent::node()"
+        if self.relative:
+            query = QueryXPath(
+                xpath=xpath_parent,
+                attributes=["data-state"],
+            )
+            response = ambient.__select__(query)
+            _check_internal_response(self, response)
+            state = response.values[0]["data-state"] + self.state
+
+        # new state should not overflow
+        state = min(max(min_state, state), max_state)
+        new_y = states[state] - inc_size
+
+        # query the ambient to get the required properties
+        return QueryXPath(
+            xpath=xpath_parent,
+            attributes={"data-state": state, "y": new_y},
+        )
+
+
+class SetLightAction(Action):
+    target: int
+    state: int
+
+    @validator("target", pre=True, always=True)
+    @classmethod
+    def _validate_target(cls, value):
+        if not value in VALID_LIGHT_IDS:
+            raise ValueError(f"`target` {value} must be one of {VALID_LIGHT_IDS}")
+        return value
+
+    @validator("state", pre=True, always=True)
+    @classmethod
+    def _validate_state(cls, value):
+        if not value in VALID_LIGHT_STATES:
+            raise ValueError(f"`state` {value} must be one of {VALID_LIGHT_STATES}")
+        return value
+
+    @staticmethod
+    def new(target: int, state: int):
+        return SetLightAction(target=target, state=state)
+
+    @staticmethod
+    def new_unacceptable(target: int):
+        # TODO assumes failure state = 1
+        return SetLightAction(target=target, state=1)
+
+    @staticmethod
+    def new_acceptable(target: int):
+        # TODO assumes failure state = 0
+        return SetLightAction(target=target, state=0)
+
+    def to_xml_query(self, _) -> QueryXMLTemplated:
+        return QueryXMLTemplated(
+            element_id=f"light-{self.target}-button",
+            attributes={
+                "data-state": "%s" % self.state,
+                "fill": "{{data_colors[%s]}}" % self.state,
+            },
+        )
+
+
+class ToggleLightAction(Action):
+    target: int
+
+    @validator("target", pre=True, always=True)
+    @classmethod
+    def _validate_target(cls, value):
+        if not value in VALID_LIGHT_IDS:
+            raise ValueError(f"`target` {value} must be one of {VALID_LIGHT_IDS}")
+        return value
+
+    @staticmethod
+    def new(target: int):
+        return SetLightAction(target=target)
+
+    def to_xml_query(self, _) -> QueryXMLTemplated:
+        return QueryXMLTemplated(
+            f"light-{self.target}-button",
+            {
+                "data-state": "{{1-data_state}}",
+                "fill": "{{data_colors[1-data_state]}}",
+            },
+        )
