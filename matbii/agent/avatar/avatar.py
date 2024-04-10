@@ -1,4 +1,5 @@
-from typing import List
+from typing import Any, List
+from fastapi import WebSocket
 from star_ray.plugin.web import WebAvatar, SocketSerdePydantic
 from star_ray.plugin.xml import QueryXML
 from star_ray.agent import Actuator, AgentFactory, ActiveSensor, ActiveActuator, Sensor
@@ -56,42 +57,8 @@ class MatbiiAvatar(WebAvatar):
     def handle_sensor_observation(
         self, sensor: Sensor, event: Observation
     ) -> List[Event]:
-        print(sensor, event)
+        # print(sensor, event)
         return super().handle_sensor_observation(sensor, event)
-
-    # async def __cycle__(self):
-    #     await super().__cycle__()
-
-    # def attempt(self, action: dict[str, str]):
-    #     # print("RECIEVED ACTION", action)
-    #     event_type = action["event_type"]
-    #     if event_type == EVENT_TYPE_MOUSE_BUTTON:
-    #         action = self._deserialise_to_mouse_event(action)
-    #     elif event_type == EVENT_TYPE_KEY:
-    #         action = self._deserialize_to_keyboard_event(action)
-    #     else:
-    #         _LOGGER.warning("Avatar received unknown user action: %s", action)
-    #         return
-
-    #     for actuator in self.actuators:
-    #         actuator.attempt(action)
-
-    # def perceive(self, component, observation) -> str:
-    #     if isinstance(observation, ErrorResponse):
-    #         print(observation)  # there was some problem!
-    #     elif isinstance(observation, UpdateResponse):
-    #         print(observation)  # TODO check if there was an error?
-    #     else:  # select response
-    #         if isinstance(component, XMLHistorySensor):
-    #             # TODO many of these events are sent with empty responses
-    #             # it would be much better to have a subscription mechanism for sensors rather than poll
-    #             # TODO implement passive sensing!
-    #             if observation.values:
-    #                 # print("PERCEIVE CHANGE: ", observation)
-    #                 return observation.values
-    #         elif isinstance(component, XMLSensor):
-    #             # print("PERCEIVE RESET:", observation)
-    #             return XMLSensor.get_action_from_response(observation)
 
     @staticmethod
     def get_factory():

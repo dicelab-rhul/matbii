@@ -1,9 +1,11 @@
 from typing import List
+from collections import defaultdict
 from star_ray.agent import ActiveSensor, OnAwake
 from star_ray.event import Observation, Event
 from star_ray.plugin.xml import QueryXML, QueryXMLHistory
 from .ui import UIAction
 
+from ...utils import _LOGGER
 
 __all__ = ("SVGSensor", "SVGChangeSensor")
 
@@ -17,21 +19,50 @@ class SVGChangeSensor(ActiveSensor):
         return [QueryXMLHistory(index=...)]
 
     def __transduce__(self, events: List[Observation]):
-        # each the values contained in each event are the updates that have been performed on the matbii svg
-        return list(self._from_events(events))
+        try:
+            events = list(self._group_events(events))
+        except Exception:
+            _LOGGER.exception("Failed to group change event attributes.")
+            # falling back to ungrouped version. It is ok if this happens once in a while.
+            # might need to rethink the grouping operation if this happens regularly, but it shouldn't in the usual running of matbii
+            events = list(self._from_events_iter(events))
+        return [UIAction(**event) for event in events]
 
-    def _from_events(self, events: List[Observation]):
+    def _group_events(self, events: List[Observation]):
+        # group the changes, we should send only the most recent, and group them together as these are the only that matter for the UI
+        changes = sorted(self._from_events_iter(events), key=lambda x: x["timestamp"])
+        results = dict()
+        # NOTE IMPORTANT: this grouping done for efficiency reasons, but if a query changes the XML tree then grouping like this could break things.
+        for change in changes:
+            xpath = change["xpath"]
+            attrs = change["attributes"]
+            if xpath in results:
+                results[xpath]["timestamp"] = change["timestamp"]
+                if isinstance(attrs, dict):
+                    results[xpath]["attributes"].update(attrs)
+                else:
+                    raise ValueError(
+                        f"Failed to group change events, multiple modifications to XML tree structure in the same cycle at xpath {xpath}"
+                    )
+            else:
+                results[xpath] = dict(
+                    xpath=xpath, timestamp=change["timestamp"], attributes=attrs
+                )
+
+        for result in sorted(results.values(), key=lambda x: x["timestamp"]):
+            yield result
+
+    def _from_events_iter(self, events: List[Observation]):
         for event in events:
             for value in event.values:
-                # value contains xpath, attributes and timestamp
-                yield UIAction(source=event.source, **value)
+                yield value
 
 
 @OnAwake  # this will ensure the sensor only runs once (when the avatar is first created/on its first cycle)
 class SVGSensor(ActiveSensor):
     """This sensor observes an entire svg element ONCE (on its first cycle). It can be used again be calling `activate()`."""
 
-    def __init__(self, sv_element_id="root", active=True, *args, **kwargs):
+    def __init__(self, sv_element_id="root", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._svg_element_id = sv_element_id
 

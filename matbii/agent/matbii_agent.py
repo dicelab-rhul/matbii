@@ -1,40 +1,51 @@
 import random
 import time
+import math
+from typing import Tuple
 from types import MethodType
 from star_ray.agent import Agent, ActiveActuator, attempt
 from star_ray.event import ErrorActiveObservation
 from pyfuncschedule import ScheduleParser
 
 
-import logging
-from ..utils import DEFAULT_SCHEDULE_PATH, MatbiiScheduleError
-
-_LOGGER = logging.getLogger("matbii")
-
-DEFAULT_SCHEDULE_FILE = DEFAULT_SCHEDULE_PATH / "default_schedule.sch"
-
-
-from ..action.task_system_monitoring import (
+from ..action import (
     SetLightAction,
     ToggleLightAction,
     SetSliderAction,
+    TargetMoveAction,
 )
+
+from ..utils import _LOGGER, DEFAULT_SCHEDULE_FILE, MatbiiScheduleError
 
 
 class MatbiiActuator(ActiveActuator):
 
     @attempt
-    def light_failure(self, target: int):
+    def fail_light(self, target: int):
         return SetLightAction(target=target, state=0)
 
     @attempt
-    def light_toggle(self, target: int):
+    def toggle_light(self, target: int):
         return ToggleLightAction(target=target)
 
     @attempt
-    def slider_toggle(self, target: int):
+    def perturb_slider(self, target: int):
         state = 2 * random.randint(0, 1) - 1  # randomly perturb +/- 1
         return SetSliderAction(target=target, state=state, relative=True)
+
+    @attempt
+    def move_target(self, direction: Tuple[float, float] | int | float, speed: float):
+        # an angle was provided (in degrees), convert it to a direction vector
+        if isinstance(direction, (int, float)):
+            angle = math.radians(direction)
+            direction = (math.sin(angle), math.cos(angle))
+        return TargetMoveAction(direction=direction, speed=speed)
+
+    @attempt
+    def perturb_target(self, speed: float):
+        angle = (random.random() * 2 - 1) * math.pi
+        direction = (math.sin(angle), math.cos(angle))
+        return TargetMoveAction(direction=direction, speed=speed)
 
 
 class ScheduleRunner:
@@ -87,7 +98,7 @@ class MatbiiAgent(Agent):
         for obs in actuator.get_observations():
             if isinstance(obs, ErrorActiveObservation):
                 _LOGGER.error(
-                    "ErrorResponse caught for scheduled action. TODO See error logs for details."
+                    "Error caught for scheduled action. TODO See error logs for details."
                 )
 
     @staticmethod
@@ -110,7 +121,7 @@ class MatbiiAgent(Agent):
         parser.register_function(min)
         parser.register_function(max)
 
-        _LOGGER.debug("Reading schedule file: %s", schedule_file)
+        _LOGGER.debug("Reading schedule file: `%s`", schedule_file)
         with open(schedule_file, "r", encoding="UTF-8") as f:
             schedule_str = f.read()
         schedule = parser.parse(schedule_str)

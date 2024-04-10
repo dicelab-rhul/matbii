@@ -50,7 +50,7 @@ class MultiTaskLoader:
             self.enable_task(task)
 
         # load the index file that will contain the tasks
-        _LOGGER.debug("Loading task index from: %s", self._index_file)
+        _LOGGER.debug("Loading task index from: `%s`", self._index_file)
         self._index_context = self._get_index_context(
             self._index_context_file, self._index_context
         )
@@ -116,7 +116,7 @@ class MultiTaskLoader:
         return index_context
 
     def load_tasks(self):
-        _LOGGER.debug("Loading matbii tasks from: `%s`", self._task_path)
+        _LOGGER.debug("Loading tasks from directory: `%s`", self._task_path)
         _task_files = MultiTaskLoader.get_task_files(
             self._task_path,
         )

@@ -1,5 +1,6 @@
 """ Action definitions for the system monitoring task. """
 
+import random
 from typing import Tuple
 from pydantic import validator, model_validator, Field
 
@@ -23,10 +24,21 @@ VALID_LIGHT_STATES = [0, 1]
 VALID_SLIDER_IDS = [1, 2, 3, 4]
 
 
+def ToggleSliderAction(target: int) -> "SetSliderAction":
+    state = random.randint(0, 1) * 2 - 1
+    return SetSliderAction(target=target, state=state, relative=True)
+
+
+def ResetSliderAction(target: int) -> "SetSliderAction":
+    return SetSliderAction(target=target, state=None)
+
+
 class SetSliderAction(Action):
 
     target: int  # slider to target
-    state: int  # state to set, or offset from current state, or None if should reset the state.
+    state: (
+        int | None
+    )  # state to set, or offset from current state, or None if should reset the state.
     relative: bool = Field(
         default_factory=lambda: False
     )  # is `state` relative to the current state?
@@ -64,7 +76,7 @@ class SetSliderAction(Action):
         state = self.state
 
         if state is None:
-            state = max_state // 2
+            state = max_state // 2 + 1
 
         # we select the parent of the button node because it contains the state and position to update
         xpath_parent = f"//*[@id='{but_target}']/parent::node()"

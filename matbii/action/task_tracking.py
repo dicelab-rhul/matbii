@@ -1,30 +1,49 @@
 """ Action definitions for the tracking task. """
 
+import math
 from typing import Tuple
-
+from pydantic import validator
 from star_ray.event import Action
-from star_ray.plugin.xml import QueryXMLTemplated, QueryXPath
+from star_ray.plugin.xml import QueryXMLTemplated, QueryXML
+
+from ..utils import TASK_ID_TRACKING
+
+TARGET_ID = "tracking_target"
 
 
 class TargetMoveAction(Action):
     direction: Tuple[float, float]
     speed: float
 
-    @staticmethod
-    def new(direction: Tuple[float, float], speed: float) -> "TargetMoveAction":
-        return TargetMoveAction(direction=direction, speed=speed)
+    @validator("direction", pre=True, always=True)
+    @classmethod
+    def _validate_direction(cls, value):
+        if isinstance(value, tuple):
+            if len(value) == 2:
+                # normalise the direction
+                d = math.sqrt(value[0] ** 2 + value[1] ** 2)
+                return (float(value[0]) / d, float(value[1]) / d)
+        raise ValueError(f"Invalid direction {value}, must be Tuple[float,float].")
 
+    @validator("speed", pre=True, always=True)
+    @classmethod
+    def _validate_speed(cls, value):
+        return float(value)
 
-# @ActiveActuator.attempt
-# def move_target(self, direction: Tuple[float, float], speed: float):
-#     # normalise the direction
-#     d = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
-#     direction = (direction[0] / d, direction[1] / d)
-#     # return QueryXMLTemplated.new(
-#     #     self.id,
-#     #     target,
-#     #     {
-#     #         "data-state": "%s" % state,
-#     #         "fill": "{{data_colors[%s]}}" % state,
-#     #     },
-#     # )
+    def to_xml_query(self, ambient):
+        d1 = self.direction[0] * self.speed
+        d2 = self.direction[1] * self.speed
+        # get properties of the tracking task
+        query = QueryXML(element_id=TASK_ID_TRACKING, attributes=["width", "height"])
+        response = ambient.__select__(query)
+        # task bounds should limit the new position
+        x1, y1 = (0, 0)
+        x2, y2 = x1 + response.values["width"], y1 + response.values["height"]
+
+        new_x = f"max(min(x + {d1}, {x2} - width), {x1})"
+        new_y = f"max(min(y + {d2}, {y2} - height), {y1})"
+
+        return QueryXMLTemplated(
+            TARGET_ID,
+            {"x": "{{%s}}" % new_x, "y": "{{%s}}" % new_y},
+        )
