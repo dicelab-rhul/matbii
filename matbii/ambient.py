@@ -1,15 +1,40 @@
 from importlib.resources import files
-import json
 from datetime import datetime
-
-from .action import ToggleLightAction, SetLightAction, SetSliderAction, TargetMoveAction
-
+from star_ray.event import (
+    Event,
+    Observation,
+    ErrorActiveObservation,
+    MouseButtonEvent,
+    KeyEvent,
+    MouseMotionEvent,
+)
 from star_ray.plugin.xml import XMLAmbient, xml_history, QueryXPath
 
-from .utils import MultiTaskLoader, _LOGGER
+from .action import (
+    ToggleLightAction,
+    SetLightAction,
+    SetSliderAction,
+    TargetMoveAction,
+    BurnFuelAction,
+    PumpFuelAction,
+    SetPumpAction,
+    TogglePumpAction,
+)
+from .utils import MultiTaskLoader, _LOGGER, MatbiiInternalError
 
 
 NAMESPACES = {"svg": "http://www.w3.org/2000/svg"}
+VALID_ACTIONS = (
+    ToggleLightAction,
+    SetLightAction,
+    SetSliderAction,
+    TargetMoveAction,
+    BurnFuelAction,
+    PumpFuelAction,
+    SetPumpAction,
+    TogglePumpAction,
+)
+VALID_USER_ACTIONS = (MouseButtonEvent, KeyEvent, MouseMotionEvent)
 
 # TODO move this to utils._const.py?
 _HISTORY_PATH = str(
@@ -27,24 +52,45 @@ class MatbiiAmbient(XMLAmbient):
         # we are not making full use of it here (tasks can be enabled etc.)
         xml = MultiTaskLoader().get_index()
         super().__init__(agents, *args, xml=xml, namespaces=NAMESPACES, **kwargs)
-        self._valid_actions = (
-            ToggleLightAction,
-            SetLightAction,
-            SetSliderAction,
-            TargetMoveAction,
-        )
 
     def __select__(self, action):
-        return super().__select__(action)
+        try:
+            return super().__select__(action)
+        except Exception as e:
+            _LOGGER.exception("Error occured during select")
+            return ErrorActiveObservation(exception=e, action_id=action)
 
     def __update__(self, action):
+        try:
+            return self._update_internal(action)
+        except Exception as e:
+            _LOGGER.exception("Error occured during update")
+            return ErrorActiveObservation(exception=e, action_id=action)
+
+    def _update_internal(self, action):
         if isinstance(action, QueryXPath):
             return super().__update__(action)
-        elif isinstance(action, self._valid_actions):
-            return super().__update__(action.to_xml_query(self))
+        elif isinstance(action, VALID_ACTIONS):
+            xml_action = action.to_xml_query(self)
+            if isinstance(xml_action, Event):  # action is not None or []
+                return super().__update__(xml_action)
+            elif isinstance(xml_action, (list, tuple)):
+                # some weirdness with list comprehension means super(MatbiiAmbient, self) is required...
+                return [super(MatbiiAmbient, self).__update__(a) for a in xml_action]
+            elif xml_action is None:
+                # None should be treated as an empty xml query, this can happen if the action preconditions are not met.
+                pass
+            else:
+                raise MatbiiInternalError(
+                    f"Ambient failed to convert action: `{action}` to XML query, invalid return type: `{type(xml_action)}`.",
+                )
+        elif isinstance(action, VALID_USER_ACTIONS):
+            # TODO log these actions somewhere...
+            pass
         else:
-            _LOGGER.debug("UNKNOWN ACTION TYPE: %s", repr(action))
-            return  # TODO we should log this kind of event!
+            raise MatbiiInternalError(
+                f"Ambient received unknown action type: `{type(action)}`."
+            )
 
     def kill(self):
         super().kill()

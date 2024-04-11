@@ -4,7 +4,12 @@ from functools import partial
 
 from star_ray.agent import ActiveActuator, attempt
 from star_ray.event import MouseButtonEvent, MouseMotionEvent, KeyEvent, JoyStickEvent
-from ...action import TargetMoveAction, ToggleLightAction, ResetSliderAction
+from ...action import (
+    TargetMoveAction,
+    ToggleLightAction,
+    ResetSliderAction,
+    TogglePumpAction,
+)
 
 from ...utils import DEFAULT_KEY_BINDING  # TODO support other key bindings?
 
@@ -34,14 +39,15 @@ class TrackingActuator(ActiveActuator):
             # compute speed based on time that has passed
             dt = current_time - self._prev_time
             speed = DEFAULT_TARGET_SPEED * dt
-            # this will be normalised when the action is created
+            # this will be normalised when the action is executed
             result = [0, 0]
             # compute the movement action based on the currently pressed keys
             for key in self._keys_pressed:
                 direction = DIRECTION_MAP[DEFAULT_KEY_BINDING[key]]
                 result[0] += direction[0]
                 result[1] += direction[1]
-            actions.append(TargetMoveAction(direction=tuple(result), speed=speed))
+            if result[0] != 0 or result[1] != 0:
+                actions.append(TargetMoveAction(direction=tuple(result), speed=speed))
         self._prev_time = current_time
         return actions
 
@@ -56,25 +62,37 @@ class TrackingActuator(ActiveActuator):
 
     @attempt(route_events=[JoyStickEvent])
     def attempt_joystick_event(self, user_action: JoyStickEvent):
-        # If a joystick device is used (and supported elsewhere), this is where we handle the action.
-        # the handling should look similar to key events above
+        # TODO If a joystick device is used (and supported elsewhere), this is where we would handle the action.
+        # the handling should look similar to key events above but might require some work (if the input is continuous for example)
         raise NotImplementedError()
 
 
 class ResourceManagementActuator(ActiveActuator):
-    pass
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._get_pump_targets = partial(_get_click_targets, r"pump-([a-z]+)-button")
+
+    @attempt(route_events=[MouseButtonEvent])
+    def attempt_mouse_event(self, user_action: MouseButtonEvent):
+        assert isinstance(user_action, MouseButtonEvent)
+        # always include the user action as it needs to be logged
+        actions = [user_action]
+        if user_action.status == MouseButtonEvent.CLICK and user_action.button == 0:
+            actions.extend(self._get_pump_actions(user_action))
+        return actions
+
+    def _get_pump_actions(self, user_action):
+        targets = self._get_pump_targets(user_action.target)
+        return [TogglePumpAction(target=target) for target in targets]
 
 
 class SystemMonitoringActuator(ActiveActuator):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._get_light_targets = partial(
-            SystemMonitoringActuator._get_click_targets, r"light-(\d+)-button"
-        )
-        self._get_slider_targets = partial(
-            SystemMonitoringActuator._get_click_targets, r"slider-(\d+)-button"
-        )
+        self._get_light_targets = partial(_get_click_targets, r"light-(\d+)-button")
+        self._get_slider_targets = partial(_get_click_targets, r"slider-(\d+)-button")
 
     @attempt(route_events=[MouseButtonEvent])
     def attempt_mouse_event(self, user_action: MouseButtonEvent):
@@ -87,23 +105,23 @@ class SystemMonitoringActuator(ActiveActuator):
         return actions
 
     def _get_light_actions(self, user_action):
-        targets = self._get_light_targets(user_action.target)
+        targets = [int(x) for x in self._get_light_targets(user_action.target)]
         return [ToggleLightAction(target=target) for target in targets]
 
     def _get_slider_actions(self, user_action):
-        targets = self._get_slider_targets(user_action.target)
+        targets = [int(x) for x in self._get_slider_targets(user_action.target)]
         return [ResetSliderAction(target=target) for target in targets]
 
-    @staticmethod
-    def _get_click_targets(pattern, targets):
-        def _get():
-            for target in targets:
-                match = re.match(pattern, target)
-                if match:
-                    target = int(match.group(1))
-                    yield target
 
-        return list(_get())
+def _get_click_targets(pattern, targets):
+    def _get():
+        for target in targets:
+            match = re.match(pattern, target)
+            if match:
+                target = match.group(1)
+                yield target
+
+    return list(_get())
 
 
 # class TrackingTaskActuator(ActiveActuator):

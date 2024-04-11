@@ -6,9 +6,19 @@ from pydantic import validator
 from star_ray.event import Action
 from star_ray.plugin.xml import QueryXMLTemplated, QueryXML
 
-from ..utils import TASK_ID_TRACKING
+from ..utils import TASK_ID_TRACKING, _LOGGER
 
 TARGET_ID = "tracking_target"
+TRACKING_MODES = ["MANUAL", "AUTO"]
+
+
+# TODO
+class TrackingModeAction(Action):
+
+    manual: bool
+
+    def to_xml_query(self, ambient):
+        pass
 
 
 class TargetMoveAction(Action):
@@ -22,6 +32,8 @@ class TargetMoveAction(Action):
             if len(value) == 2:
                 # normalise the direction
                 d = math.sqrt(value[0] ** 2 + value[1] ** 2)
+                if d == 0:
+                    return (0.0, 0.0)
                 return (float(value[0]) / d, float(value[1]) / d)
         raise ValueError(f"Invalid direction {value}, must be Tuple[float,float].")
 
@@ -31,6 +43,11 @@ class TargetMoveAction(Action):
         return float(value)
 
     def to_xml_query(self, ambient):
+        if self.direction == (0.0, 0.0):
+            _LOGGER.warning(
+                "Attempted %s with direction (0,0)", TargetMoveAction.__name__
+            )
+            return None  # going no where...
         d1 = self.direction[0] * self.speed
         d2 = self.direction[1] * self.speed
         # get properties of the tracking task

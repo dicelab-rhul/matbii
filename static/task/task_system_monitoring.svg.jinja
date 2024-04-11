@@ -10,6 +10,8 @@
         <use href="#arrow" x="5" y="0" />
     </symbol>
 
+    {% set light_colors = [[light_off_color, light_on_color], [light_off_color, light_failure_color]] %}
+
     <svg id="lights" x="0" y="0" width="{{width}}" height="{{light_height + 2 * padding}}">
         <!-- draw lights -->
         <g id="light-1">

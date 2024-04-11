@@ -1,7 +1,7 @@
 """ Action definitions for the system monitoring task. """
 
 import random
-from typing import Tuple
+from typing import Tuple, ClassVar
 from pydantic import validator, model_validator, Field
 
 from star_ray.event import Action, ErrorObservation
@@ -20,7 +20,6 @@ def _check_internal_response(action, response):
 
 # these are constants that reflect the SVG of matbii
 VALID_LIGHT_IDS = [1, 2]
-VALID_LIGHT_STATES = [0, 1]
 VALID_SLIDER_IDS = [1, 2, 3, 4]
 
 
@@ -104,6 +103,9 @@ class SetLightAction(Action):
     target: int
     state: int
 
+    OFF: ClassVar[int] = 0
+    ON: ClassVar[int] = 1
+
     @validator("target", pre=True, always=True)
     @classmethod
     def _validate_target(cls, value):
@@ -113,10 +115,25 @@ class SetLightAction(Action):
 
     @validator("state", pre=True, always=True)
     @classmethod
-    def _validate_state(cls, value):
-        if not value in VALID_LIGHT_STATES:
-            raise ValueError(f"`state` {value} must be one of {VALID_LIGHT_STATES}")
+    def _validate_state(cls, value: int | str):
+        if isinstance(value, str):
+            value = SetLightAction.coerce_light_state(value)
+        if not value in (SetLightAction.OFF, SetLightAction.ON):
+            raise ValueError(
+                f"Invalid state `{value}` must be one of {[SetLightAction.OFF, SetLightAction.ON]}"
+            )
         return value
+
+    @staticmethod
+    def coerce_light_state(value: str | int):
+        if isinstance(value, int):
+            return value
+        if value == "on":
+            return SetLightAction.ON
+        elif value == "off":
+            return SetLightAction.OFF
+        else:
+            raise ValueError(f"Invalid state `{value}` must be one of ['on', 'off']")
 
     @staticmethod
     def new(target: int, state: int):

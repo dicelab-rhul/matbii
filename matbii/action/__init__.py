@@ -6,8 +6,18 @@ from .task_system_monitoring import (
     ResetSliderAction,
 )
 from .task_tracking import TargetMoveAction
+from .task_resource_management import (
+    BurnFuelAction,
+    PumpFuelAction,
+    SetPumpAction,
+    TogglePumpAction,
+)
 
 __all__ = (
+    "BurnFuelAction",
+    "PumpFuelAction",
+    "SetPumpAction",
+    "TogglePumpAction",
     "SetLightAction",
     "ToggleLightAction",
     "SetSliderAction",

@@ -1,13 +1,34 @@
 from jinja2 import Template
 from collections import defaultdict
-import json
-import os
+from cerberus import rules_set_registry
 from pathlib import Path
 from typing import Union, List
+
+import json
+import os
+import cerberus
+
 
 from ._error import MatbiiInternalError
 from ._const import DEFAULT_SVG_INDEX_FILE, DEFAULT_TASK_PATH, DEFAULT_ENABLED_TASKS
 from ._logging import _LOGGER
+
+from ..action import SetPumpAction, SetLightAction
+
+
+# add extra validation rules to cererbus
+rules_set_registry.add(
+    "hex_color", {"type": "string", "regex": r"^#?[0-9a-fA-F]+$", "default": "#ff69b4"}
+)
+rules_set_registry.add(
+    "pump_state",
+    {
+        "type": "integer",
+        "allowed": [0, 1, 2],
+        "default": "off",
+        "coerce": SetPumpAction.coerce_pump_state,
+    },
+)
 
 
 class MultiTaskLoader:
@@ -22,6 +43,7 @@ class MultiTaskLoader:
     ):
         super().__init__()
         self._loaders = dict()
+        self._loaders["schema.json"] = MultiTaskLoader.load_json
         self._loaders["json"] = MultiTaskLoader.load_json
         self._loaders["svg"] = MultiTaskLoader.load_svg
         self._loaders["svg.jinja"] = self.load_svg_from_template
@@ -90,8 +112,11 @@ class MultiTaskLoader:
             return self._loaders["svg"](files["svg"])
         elif "svg.jinja" in files:
             assert not "svg" in files
-            assert "json" in files
-            return self._loaders["svg.jinja"](files["svg.jinja"], files["json"])
+            return self._loaders["svg.jinja"](
+                files["svg.jinja"],
+                context_file=files.get("json", None),
+                schema_file=files.get("schema.json", None),
+            )
 
     @staticmethod
     def resolve_path(path: str):
@@ -127,27 +152,57 @@ class MultiTaskLoader:
         return tasks
 
     @staticmethod
-    def load_json(path):
-        with open(path, "r", encoding="UTF-8") as json_file:
-            return json.load(json_file)
+    def load_json(file, schema_file=None):
+        with open(file, "r", encoding="UTF-8") as json_file:
+            json_data = json.load(json_file)
+        if schema_file:
+            return MultiTaskLoader.load_schema(schema_file, data=json_data)
+        else:
+            _LOGGER.warning(
+                "Content of file `%s` was not validated as no schema was found.",
+                Path(file).name,
+            )
+            return json_data
+
+    @staticmethod
+    def load_schema(schema_file, data=None):
+        if data is None:
+            data = {}
+        with open(schema_file, "r", encoding="UTF-8") as json_file:
+            schema = json.load(json_file)
+        validator = cerberus.Validator(schema)
+        data = validator.normalized(data)  # set default values etc.
+        if validator.validate(data):
+            return data
+        else:
+            raise ValueError(
+                f"Data is not valid under the provided schema: `{Path(schema_file).name}`, see issues below:\n",
+                "\n".join(validator.errors),
+            )
 
     @staticmethod
     def load_svg(path):
         with open(path, "r", encoding="UTF-8") as svg_file:
             return svg_file.read()
 
-    def load_svg_from_template(self, file, context_file):
+    def load_svg_from_template(self, file, context_file=None, schema_file=None):
         # current only json is supported
-        assert context_file.endswith("json")
-        template_context = self._loaders["json"](context_file)
+        if context_file:
+            template_context = MultiTaskLoader.load_json(
+                context_file, schema_file=schema_file
+            )
+        elif schema_file:
+            template_context = MultiTaskLoader.load_schema(schema_file)
+        else:
+            raise ValueError(
+                f"Failed to load context for file: {file}, no context files were provided."
+            )
         template = self._loaders["svg"](file)
-
         template = Template(template)
         return template.render(**template_context)
 
     @staticmethod
     def get_task_files(task_directory):
-
         # TODO use pathlib instead of os?
         # A dictionary to hold lists of files with the same name but different extensions
         files_grouped = defaultdict(dict)
@@ -158,19 +213,3 @@ class MultiTaskLoader:
                 file_extension = ".".join(file_extension)
                 files_grouped[file_name][file_extension] = full_path
         return files_grouped
-
-    # @staticmethod
-    # def load_xml_template(template_path, template_data=None, template_data_path=None):
-    #     if template_data is None:
-    #         if template_data_path is None:
-    #             raise MatbiiInternalError(
-    #                 "One of `template_data` or `template_data_path` must be specified."
-    #             )
-    #         with open(template_data_path, "r", encoding="UTF-8") as json_file:
-    #             template_data = json.load(json_file)
-
-    #     with open(template_path, "r", encoding="UTF-8") as svg_file:
-    #         template = svg_file.read()
-
-    #     template = Template(template)
-    #     return template.render(**template_data)

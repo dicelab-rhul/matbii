@@ -13,12 +13,18 @@ from ..action import (
     ToggleLightAction,
     SetSliderAction,
     TargetMoveAction,
+    BurnFuelAction,
+    PumpFuelAction,
 )
 
 from ..utils import _LOGGER, DEFAULT_SCHEDULE_FILE, MatbiiScheduleError
 
 
 class MatbiiActuator(ActiveActuator):
+
+    @attempt
+    def burn_fuel(self, target: int | str, burn: float):
+        return BurnFuelAction(target=target, burn=burn)
 
     @attempt
     def fail_light(self, target: int):
@@ -97,9 +103,7 @@ class MatbiiAgent(Agent):
         actuator = next(iter(self.actuators))
         for obs in actuator.get_observations():
             if isinstance(obs, ErrorActiveObservation):
-                _LOGGER.error(
-                    "Error caught for scheduled action. TODO See error logs for details."
-                )
+                _LOGGER.error("Observation error for scheduled action: %s", repr(obs))
 
     @staticmethod
     def get_attempt_methods(actuator):
