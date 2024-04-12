@@ -15,6 +15,7 @@ from ..action import (
     TargetMoveAction,
     BurnFuelAction,
     PumpFuelAction,
+    TogglePumpFailureAction,
 )
 
 from ..utils import _LOGGER, DEFAULT_SCHEDULE_FILE, MatbiiScheduleError
@@ -25,6 +26,14 @@ class MatbiiActuator(ActiveActuator):
     @attempt
     def burn_fuel(self, target: int | str, burn: float):
         return BurnFuelAction(target=target, burn=burn)
+
+    @attempt
+    def pump_fuel(self, target: int | str, flow: float):
+        return PumpFuelAction(target=target, flow=flow)
+
+    @attempt
+    def toggle_pump(self, target: int | str):
+        return TogglePumpFailureAction(target=target)
 
     @attempt
     def fail_light(self, target: int):

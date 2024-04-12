@@ -1,11 +1,10 @@
 """ Action definitions for the tracking task. """
 
 import math
-from typing import Tuple
+from typing import Tuple, List
 from pydantic import validator
 from star_ray.event import Action
-from star_ray.plugin.xml import QueryXMLTemplated, QueryXML
-
+from star_ray.plugin.xml import QueryXMLTemplated, QueryXML, XMLState, QueryXPath
 from ..utils import TASK_ID_TRACKING, _LOGGER
 
 TARGET_ID = "tracking_target"
@@ -17,7 +16,7 @@ class TrackingModeAction(Action):
 
     manual: bool
 
-    def to_xml_query(self, ambient):
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
         pass
 
 
@@ -42,17 +41,17 @@ class TargetMoveAction(Action):
     def _validate_speed(cls, value):
         return float(value)
 
-    def to_xml_query(self, ambient):
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
         if self.direction == (0.0, 0.0):
             _LOGGER.warning(
                 "Attempted %s with direction (0,0)", TargetMoveAction.__name__
             )
-            return None  # going no where...
+            return []  # going no where...
         d1 = self.direction[0] * self.speed
         d2 = self.direction[1] * self.speed
         # get properties of the tracking task
         query = QueryXML(element_id=TASK_ID_TRACKING, attributes=["width", "height"])
-        response = ambient.__select__(query)
+        response = state.__select__(query)
         # task bounds should limit the new position
         x1, y1 = (0, 0)
         x2, y2 = x1 + response.values["width"], y1 + response.values["height"]

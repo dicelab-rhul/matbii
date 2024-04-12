@@ -11,6 +11,7 @@ from .task_resource_management import (
     PumpFuelAction,
     SetPumpAction,
     TogglePumpAction,
+    TogglePumpFailureAction,
 )
 
 __all__ = (
@@ -18,6 +19,7 @@ __all__ = (
     "PumpFuelAction",
     "SetPumpAction",
     "TogglePumpAction",
+    "TogglePumpFailureAction",
     "SetLightAction",
     "ToggleLightAction",
     "SetSliderAction",

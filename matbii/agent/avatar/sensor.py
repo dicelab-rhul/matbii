@@ -19,6 +19,16 @@ class SVGChangeSensor(ActiveSensor):
         return [QueryXMLHistory(index=...)]
 
     def __transduce__(self, events: List[Observation]):
+        # events = list(self._from_events_iter(events))
+        # if events:
+        #     levels = [
+        #         float(event["attributes"]["data-level"])
+        #         for event in events
+        #         if "data-level" in event["attributes"]
+        #     ]
+        #     print(sum(levels), levels)
+        # return [UIAction(**event) for event in events]
+
         try:
             events = list(self._group_events(events))
         except Exception:

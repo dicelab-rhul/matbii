@@ -3,6 +3,7 @@ from datetime import datetime
 from star_ray.event import (
     Event,
     Observation,
+    ErrorObservation,
     ErrorActiveObservation,
     MouseButtonEvent,
     KeyEvent,
@@ -18,22 +19,12 @@ from .action import (
     BurnFuelAction,
     PumpFuelAction,
     SetPumpAction,
-    TogglePumpAction,
+    TogglePumpFailureAction,
 )
 from .utils import MultiTaskLoader, _LOGGER, MatbiiInternalError
 
 
 NAMESPACES = {"svg": "http://www.w3.org/2000/svg"}
-VALID_ACTIONS = (
-    ToggleLightAction,
-    SetLightAction,
-    SetSliderAction,
-    TargetMoveAction,
-    BurnFuelAction,
-    PumpFuelAction,
-    SetPumpAction,
-    TogglePumpAction,
-)
 VALID_USER_ACTIONS = (MouseButtonEvent, KeyEvent, MouseMotionEvent)
 
 # TODO move this to utils._const.py?
@@ -53,6 +44,9 @@ class MatbiiAmbient(XMLAmbient):
         xml = MultiTaskLoader().get_index()
         super().__init__(agents, *args, xml=xml, namespaces=NAMESPACES, **kwargs)
 
+    def select(self, action):
+        return super().__select__(action)
+
     def __select__(self, action):
         try:
             return super().__select__(action)
@@ -70,19 +64,14 @@ class MatbiiAmbient(XMLAmbient):
     def _update_internal(self, action):
         if isinstance(action, QueryXPath):
             return super().__update__(action)
-        elif isinstance(action, VALID_ACTIONS):
-            xml_action = action.to_xml_query(self)
-            if isinstance(xml_action, Event):  # action is not None or []
-                return super().__update__(xml_action)
-            elif isinstance(xml_action, (list, tuple)):
+        elif hasattr(action, "to_xml_queries"):
+            xml_actions = action.to_xml_queries(self.state)
+            if isinstance(xml_actions, list | tuple):
                 # some weirdness with list comprehension means super(MatbiiAmbient, self) is required...
-                return [super(MatbiiAmbient, self).__update__(a) for a in xml_action]
-            elif xml_action is None:
-                # None should be treated as an empty xml query, this can happen if the action preconditions are not met.
-                pass
+                return [super(MatbiiAmbient, self).__update__(a) for a in xml_actions]
             else:
                 raise MatbiiInternalError(
-                    f"Ambient failed to convert action: `{action}` to XML query, invalid return type: `{type(xml_action)}`.",
+                    f"Ambient failed to convert action: `{action}` to XML queries, invalid return type: `{type(xml_actions)}`.",
                 )
         elif isinstance(action, VALID_USER_ACTIONS):
             # TODO log these actions somewhere...

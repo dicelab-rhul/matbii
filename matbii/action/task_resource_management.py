@@ -1,19 +1,21 @@
 """ Action definitions for the resource management task. """
 
-from typing import ClassVar
+from typing import ClassVar, List
 from pydantic import validator
 from star_ray.event import Action
-from star_ray.plugin.xml import QueryXMLTemplated, QueryXML
+from star_ray.plugin.xml import QueryXMLTemplated, QueryXML, QueryXPath, XMLState
+from ..utils import _LOGGER
 
 TANK_IDS = list("abcdef")
 TANK_MAIN_IDS = list("ab")
 TANK_INF_IDS = list("ef")
 PUMP_IDS = ["ab", "ba", "ca", "ec", "ea", "db", "fd", "fb"]
+ALL = "*"
 
 
-class SetPumpAction(Action):
+class PumpAction(Action):
+
     target: str
-    state: int
 
     OFF: ClassVar[int] = 0
     ON: ClassVar[int] = 1
@@ -30,132 +32,161 @@ class SetPumpAction(Action):
             )
         return value
 
+
+class SetPumpAction(PumpAction):
+    state: int
+
     @validator("state", pre=True, always=True)
     @classmethod
     def _validate_state(cls, value: str | int):
         if isinstance(value, str):
             value = SetPumpAction.coerce_pump_state(value)
-        if not value in (SetPumpAction.OFF, SetPumpAction.ON, SetPumpAction.FAILURE):
+        if not value in (PumpAction.OFF, PumpAction.ON, PumpAction.FAILURE):
             raise ValueError(
-                f"Invalid state `{value}` must be one of {[SetPumpAction.OFF, SetPumpAction.ON, SetPumpAction.FAILURE]}"
+                f"Invalid state `{value}` must be one of {[PumpAction.OFF, PumpAction.ON, PumpAction.FAILURE]}"
             )
         return value
 
     @staticmethod
-    def coerce_pump_state(value: str | int) -> int:
+    def coerce_pump_state(value: int | str) -> int:
         if isinstance(value, int):
             return value
         if value == "on":
-            return SetPumpAction.ON
+            return PumpAction.ON
         elif value == "off":
-            return SetPumpAction.OFF
+            return PumpAction.OFF
         elif value == "failure":
-            return SetPumpAction.FAILURE
+            return PumpAction.FAILURE
         else:
             raise ValueError(
                 f"Invalid state `{value}` must be one of ['on', 'off', 'failure']"
             )
 
     @staticmethod
-    def new(target: int, state: int):
+    def new(target: int | str, state: int):
         return SetPumpAction(target=target, state=state)
 
     @staticmethod
-    def new_on(target: int):
-        return SetPumpAction(target=target, state=SetPumpAction.ON)
+    def new_on(target: int | str):
+        return SetPumpAction(target=target, state=PumpAction.ON)
 
     @staticmethod
-    def new_off(target: int):
-        return SetPumpAction(target=target, state=SetPumpAction.OFF)
+    def new_off(target: int | str):
+        return SetPumpAction(target=target, state=PumpAction.OFF)
 
     @staticmethod
-    def new_failure(target: int):
-        return SetPumpAction(target=target, state=SetPumpAction.FAILURE)
+    def new_failure(target: int | str):
+        return SetPumpAction(target=target, state=PumpAction.FAILURE)
 
-    def to_xml_query(self, _) -> QueryXMLTemplated:
-        return QueryXMLTemplated(
-            element_id=f"pump-{self.target}-button",
-            attributes={
-                "data-state": "%s" % self.state,
-                "fill": "{{data_colors[%s]}}" % self.state,
-            },
-        )
-
-
-class TogglePumpAction(Action):
-    target: str
-
-    OFF: ClassVar[int] = SetPumpAction.OFF
-    ON: ClassVar[int] = SetPumpAction.ON
-    FAILURE: ClassVar[int] = SetPumpAction.FAILURE
-
-    @validator("target", pre=True, always=True)
-    @classmethod
-    def _validate_target(cls, value: str | int):
-        if isinstance(value, int):
-            value = PUMP_IDS[value]
-        if not value in PUMP_IDS:
-            raise ValueError(
-                f"{SetPumpAction.__name__} `target` {value} must be one of {PUMP_IDS}"
+    def to_xml_queries(self, _: XMLState) -> List[QueryXPath]:
+        return [
+            QueryXMLTemplated(
+                element_id=f"pump-{self.target}-button",
+                attributes={
+                    "data-state": "%s" % self.state,
+                    "fill": "{{data_colors[%s]}}" % self.state,
+                },
             )
-        return value
+        ]
+
+
+class TogglePumpAction(PumpAction):
+
+    @staticmethod
+    def new(target: int | str):
+        return TogglePumpAction(target=target)
+
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
+        # check if pump is in a failure state
+        pump_id = f"pump-{self.target}-button"
+        response = state.__select__(
+            QueryXML(element_id=pump_id, attributes=["data-state"])
+        )
+        state = response.values["data-state"]
+        if state == PumpAction.FAILURE:
+            return []  # toggle failed, the pump is currently in failure!
+        return [
+            QueryXMLTemplated(
+                f"pump-{self.target}-button",
+                {
+                    "data-state": "{{(1 - data_state)}}",
+                    "fill": "{{data_colors[(1 - data_state)]}}",
+                },
+            )
+        ]
+
+
+class TogglePumpFailureAction(PumpAction):
 
     @staticmethod
     def new(target: int):
-        return TogglePumpAction(target=target)
+        return TogglePumpFailureAction(target=target)
 
-    def to_xml_query(self, ambient) -> QueryXMLTemplated:
-        # check if pump is in a failure state
-        pump_id = f"pump-{self.target}-button"
-        print(pump_id)
-        response = ambient.__select__(
-            QueryXML(element_id=pump_id, attributes=["data-state"])
-        )
-        print(response)
-        state = response.values["data-state"]
-
-        if state == TogglePumpAction.FAILURE:
-            return None  # toggle failed, the pump is currently in failure!
-
-        # the pump is not in failure, toggle ON/OFF
-        return QueryXMLTemplated(
-            f"pump-{self.target}-button",
-            {
-                "data-state": "{{1-data_state}}",
-                "fill": "{{data_colors[1-data_state]}}",
-            },
-        )
+    def to_xml_queries(self, _: XMLState) -> List[QueryXPath]:
+        # update pump state: 0 or 1 -> 2, 2 -> 0
+        calc = "2 * (1 - data_state // 2)"
+        return [
+            QueryXMLTemplated(
+                f"pump-{self.target}-button",
+                {
+                    "data-state": "{{%s}}" % calc,
+                    "fill": "{{data_colors[%s]}}" % calc,
+                },
+            )
+        ]
 
 
-class PumpFuelAction(Action):
+class PumpFuelAction(PumpAction):
 
-    target: str | int
     flow: float
 
-    @validator("target", pre=True, always=True)
-    @classmethod
-    def _validate_target(cls, value):
-        if isinstance(value, int):
-            value = PUMP_IDS[value]
-        if isinstance(value, str):
-            if value in PUMP_IDS:
-                return value
-        raise ValueError(f"Invalid pump {value}, must be one of {PUMP_IDS}")
+    # XPATH_PUMP_ALL_ON: ClassVar[str] = (
+    #     "//svg:svg[@id='task_resource_management']"
+    #     + "//svg:svg[contains(@id, 'pump-')]"
+    #     + f"/svg:rect[@data-state='{PumpAction.ON}']"
+    # )
+    XPATH_PUMP_ON: ClassVar[str] = (
+        "//svg:svg[@id='task_resource_management']"
+        + "//svg:svg[contains(@id, 'pump-')]"
+        + "/svg:rect[@id='pump-%s-button']"
+    )
 
-    def to_xml_query(self, ambient):
-        id_from = self.target[0]
-        id_to = self.target[1]
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
+        if self.is_pump_on(state, self.target):
+            return PumpFuelAction._get_xml_query(state, self.target, self.flow)
+        return []
 
-        _from = _get_tank_data(id_from, ambient)
+    def is_pump_on(self, state, target):
+        xpath = PumpFuelAction.XPATH_PUMP_ON % target
+        query = QueryXPath(xpath=xpath, attributes=["data-state"])
+        data_state = state.__select__(query).values[0]["data-state"]
+        return data_state == PumpAction.ON
+
+    # def _get_all_on_pumps(self, state):
+    #     # xpath = "//svg[@id='task_resource_management']"
+    #     values = state.__select__(
+    #         QueryXPath(xpath=PumpFuelAction.XPATH_PUMP_ON, attributes=["id"])
+    #     ).values
+    #     return [v["id"].split("-", 1)[1][:2] for v in values]
+
+    @staticmethod
+    def _get_xml_query(state, target, flow):
+
+        id_from = target[0]
+        id_to = target[1]
+
+        _from = _get_tank_data(id_from, state)
+
         if _from["data-level"] <= 0:
-            return None  # there is no fuel to transfer
-        _to = _get_tank_data(id_to, ambient)
+            return []  # there is no fuel to transfer
+        _to = _get_tank_data(id_to, state)
+
         remain = _to["data-capacity"] - _to["data-level"]
         if remain <= 0:
-            return None  # the tank is full
+            return []  # the tank is full
 
         # compute flow value and new levels
-        flow = min(_from["data-level"], remain, self.flow)
+        flow = min(_from["data-level"], remain, flow)
         new_to_level = _to["data-level"] + flow
         to_actions = _get_fuel_level_actions(
             id_to, new_to_level, _to["height"], _to["data-capacity"]
@@ -176,32 +207,47 @@ class PumpFuelAction(Action):
 
 class BurnFuelAction(Action):
 
-    target: str | int
+    target: str
     burn: float
 
     @validator("target", pre=True, always=True)
     @classmethod
-    def _validate_target(cls, value):
+    def _validate_target(cls, value: int | str) -> str:
         if isinstance(value, int):
             value = TANK_MAIN_IDS[value]
         if isinstance(value, str):
-            if value in TANK_MAIN_IDS:
+            if value in TANK_MAIN_IDS + [ALL]:
                 return value
-        raise ValueError(f"Invalid tank {value}, must be one of {TANK_MAIN_IDS}")
+        raise ValueError(
+            f"Invalid tank {value}, must be one of {TANK_MAIN_IDS + [ALL]}"
+        )
 
-    def to_xml_query(self, ambient):
-        values = _get_tank_data(self.target, ambient)
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
+        actions = []
+        if self.target != ALL:
+            targets = [self.target]
+        else:
+            targets = TANK_MAIN_IDS
+        for target in targets:
+            actions.extend(
+                BurnFuelAction._get_xml_burn_queries(state, target, self.burn)
+            )
+        return actions
+
+    @staticmethod
+    def _get_xml_burn_queries(state, target, burn):
+        values = _get_tank_data(target, state)
         if values["data-level"] == 0:
             # nothing needs to be done, there is no fuel left
-            return None
-        new_level = max(values["data-level"] - self.burn, 0)
+            return []
+        new_level = max(values["data-level"] - burn, 0)
         return _get_fuel_level_actions(
-            self.target, new_level, values["height"], values["data-capacity"]
+            target, new_level, values["height"], values["data-capacity"]
         )
 
 
-def _get_tank_data(target, ambient):
-    data = ambient.__select__(
+def _get_tank_data(target, state):
+    data = state.__select__(
         QueryXML(
             element_id=f"tank-{target}",
             attributes=["data-level", "data-capacity", "height"],

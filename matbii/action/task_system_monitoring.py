@@ -1,21 +1,11 @@
 """ Action definitions for the system monitoring task. """
 
 import random
-from typing import Tuple, ClassVar
+from typing import List, ClassVar
 from pydantic import validator, model_validator, Field
 
-from star_ray.event import Action, ErrorObservation
-from star_ray.plugin.xml import QueryXMLTemplated, QueryXPath
-
-from ..utils import MatbiiInternalError
-
-
-def _check_internal_response(action, response):
-    if isinstance(response, ErrorObservation):
-        raise MatbiiInternalError(
-            f"{type(action)} failed internally, changes to the svg state may be the cause. See error:\n",
-            response,
-        )
+from star_ray.event import Action
+from star_ray.plugin.xml import QueryXMLTemplated, QueryXPath, XMLState
 
 
 # these are constants that reflect the SVG of matbii
@@ -56,15 +46,14 @@ class SetSliderAction(Action):
             obj.relative = False
         return obj
 
-    def to_xml_query(self, ambient):
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
         # get min and max values for the number of increments
         inc_target = f"slider-{self.target}-incs"
         but_target = f"slider-{self.target}-button"
         query = QueryXPath(
             xpath=f"//*[@id='{inc_target}']/svg:line", attributes=["y1", "data-state"]
         )
-        response = ambient.__select__(query)
-        _check_internal_response(self, response)
+        response = state.__select__(query)
         states = {x["data-state"]: x["y1"] for x in response.values}
         inc_size = states[2] - states[1]  # TODO check that these are all the same?
 
@@ -84,19 +73,20 @@ class SetSliderAction(Action):
                 xpath=xpath_parent,
                 attributes=["data-state"],
             )
-            response = ambient.__select__(query)
-            _check_internal_response(self, response)
+            response = state.__select__(query)
             state = response.values[0]["data-state"] + self.state
 
         # new state should not overflow
         state = min(max(min_state, state), max_state)
         new_y = states[state] - inc_size
 
-        # query the ambient to get the required properties
-        return QueryXPath(
-            xpath=xpath_parent,
-            attributes={"data-state": state, "y": new_y},
-        )
+        # query the state to get the required properties
+        return [
+            QueryXPath(
+                xpath=xpath_parent,
+                attributes={"data-state": state, "y": new_y},
+            )
+        ]
 
 
 class SetLightAction(Action):
@@ -149,14 +139,16 @@ class SetLightAction(Action):
         # TODO assumes failure state = 0
         return SetLightAction(target=target, state=0)
 
-    def to_xml_query(self, _) -> QueryXMLTemplated:
-        return QueryXMLTemplated(
-            element_id=f"light-{self.target}-button",
-            attributes={
-                "data-state": "%s" % self.state,
-                "fill": "{{data_colors[%s]}}" % self.state,
-            },
-        )
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
+        return [
+            QueryXMLTemplated(
+                element_id=f"light-{self.target}-button",
+                attributes={
+                    "data-state": "%s" % self.state,
+                    "fill": "{{data_colors[%s]}}" % self.state,
+                },
+            )
+        ]
 
 
 class ToggleLightAction(Action):
@@ -173,11 +165,13 @@ class ToggleLightAction(Action):
     def new(target: int):
         return SetLightAction(target=target)
 
-    def to_xml_query(self, _) -> QueryXMLTemplated:
-        return QueryXMLTemplated(
-            f"light-{self.target}-button",
-            {
-                "data-state": "{{1-data_state}}",
-                "fill": "{{data_colors[1-data_state]}}",
-            },
-        )
+    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
+        return [
+            QueryXMLTemplated(
+                f"light-{self.target}-button",
+                {
+                    "data-state": "{{1-data_state}}",
+                    "fill": "{{data_colors[1-data_state]}}",
+                },
+            )
+        ]

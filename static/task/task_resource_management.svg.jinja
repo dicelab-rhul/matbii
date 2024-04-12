@@ -250,7 +250,7 @@
     <!-- small tanks -->
     {% set i = "c" %}
     {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
-    <svg id="tank-d" width="{{sma_tank_width}}" height="{{tank_height}}" x="{{c_x}}" y="{{c_y}}"
+    <svg id="tank-{{i}}" width="{{sma_tank_width}}" height="{{tank_height}}" x="{{c_x}}" y="{{c_y}}"
         data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
         <rect id="tank-{{i}}-background" x="0" y="0" width="{{sma_tank_width}}" height="{{tank_height}}"
             fill="{{background_color}}" />
@@ -263,7 +263,7 @@
 
     {% set i = "d" %}
     {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
-    <svg id="tank-d" width="{{sma_tank_width}}" height="{{tank_height}}" x="{{c_x + off_x}}" y="{{c_y}}"
+    <svg id="tank-{{i}}" width="{{sma_tank_width}}" height="{{tank_height}}" x="{{c_x + off_x}}" y="{{c_y}}"
         data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
         <rect id="tank-{{i}}-background" x="0" y="0" width="{{sma_tank_width}}" height="{{tank_height}}"
             fill="{{background_color}}" />

@@ -7,8 +7,8 @@ from star_ray.event import MouseButtonEvent, MouseMotionEvent, KeyEvent, JoyStic
 from ...action import (
     TargetMoveAction,
     ToggleLightAction,
-    ResetSliderAction,
     TogglePumpAction,
+    ResetSliderAction,
 )
 
 from ...utils import DEFAULT_KEY_BINDING  # TODO support other key bindings?
