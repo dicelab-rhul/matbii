@@ -46,23 +46,19 @@ class SetSliderAction(Action):
             obj.relative = False
         return obj
 
-    def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
+    def to_xml_queries(self, xml_state: XMLState) -> List[QueryXPath]:
         # get min and max values for the number of increments
         inc_target = f"slider-{self.target}-incs"
         but_target = f"slider-{self.target}-button"
         query = QueryXPath(
             xpath=f"//*[@id='{inc_target}']/svg:line", attributes=["y1", "data-state"]
         )
-        response = state.__select__(query)
+        response = xml_state.__select__(query)
         states = {x["data-state"]: x["y1"] for x in response.values}
         inc_size = states[2] - states[1]  # TODO check that these are all the same?
 
-        min_state, max_state = (min(states.keys()), max(states.keys()))
-        # -1 here because of the size of the slider button
-        # TODO this should really be computed based on the button size relative to inc_size?
-        max_state = max_state - 1
+        min_state, max_state = (min(states.keys()), max(states.keys()) - 1)
         state = self.state
-
         if state is None:
             state = max_state // 2 + 1
 
@@ -73,7 +69,7 @@ class SetSliderAction(Action):
                 xpath=xpath_parent,
                 attributes=["data-state"],
             )
-            response = state.__select__(query)
+            response = xml_state.__select__(query)
             state = response.values[0]["data-state"] + self.state
 
         # new state should not overflow
@@ -128,16 +124,6 @@ class SetLightAction(Action):
     @staticmethod
     def new(target: int, state: int):
         return SetLightAction(target=target, state=state)
-
-    @staticmethod
-    def new_unacceptable(target: int):
-        # TODO assumes failure state = 1
-        return SetLightAction(target=target, state=1)
-
-    @staticmethod
-    def new_acceptable(target: int):
-        # TODO assumes failure state = 0
-        return SetLightAction(target=target, state=0)
 
     def to_xml_queries(self, state: XMLState) -> List[QueryXPath]:
         return [

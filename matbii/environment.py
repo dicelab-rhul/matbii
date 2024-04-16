@@ -10,8 +10,19 @@ from .agent import MatbiiAgent
 
 class MatbiiEnvironment(Environment):
 
-    def __init__(self, *args, wait=0.01, schedule_path=None, **kwargs):
-        ambient = MatbiiAmbient([MatbiiAgent(schedule_path=schedule_path)])
+    def __init__(
+        self,
+        *args,
+        agents=[],
+        wait=0.05,
+        schedule_file=None,
+        enabled_tasks=None,
+        **kwargs
+    ):
+        ambient = MatbiiAmbient(
+            [*agents, MatbiiAgent(schedule_file=schedule_file)],
+            enabled_tasks=enabled_tasks,
+        )
         super().__init__(
             ambient,
             *args,

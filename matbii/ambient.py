@@ -9,7 +9,7 @@ from star_ray.event import (
     KeyEvent,
     MouseMotionEvent,
 )
-from star_ray.plugin.xml import XMLAmbient, xml_history, QueryXPath
+from star_ray.plugin.xml import XMLAmbient, xml_history, xml_change_tracker, QueryXPath
 
 from .action import (
     ToggleLightAction,
@@ -36,12 +36,13 @@ _HISTORY_PATH = str(
 
 
 @xml_history(use_disk=True, force_overwrite=False, path=_HISTORY_PATH)
+@xml_change_tracker
 class MatbiiAmbient(XMLAmbient):
 
-    def __init__(self, agents, *args, **kwargs):
+    def __init__(self, agents, enabled_tasks=None, *args, **kwargs):
         # TODO supply arguments to the loader... rather than relying on the default values
         # we are not making full use of it here (tasks can be enabled etc.)
-        xml = MultiTaskLoader().get_index()
+        xml = MultiTaskLoader(enabled_tasks=enabled_tasks).get_index()
         super().__init__(agents, *args, xml=xml, namespaces=NAMESPACES, **kwargs)
 
     def select(self, action):

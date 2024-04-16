@@ -2,7 +2,7 @@ import re
 import time
 from functools import partial
 
-from star_ray.agent import ActiveActuator, attempt
+from star_ray.agent import Actuator, attempt
 from star_ray.event import MouseButtonEvent, MouseMotionEvent, KeyEvent, JoyStickEvent
 from ...action import (
     TargetMoveAction,
@@ -24,7 +24,7 @@ DIRECTION_MAP = {
 DEFAULT_TARGET_SPEED = 100
 
 
-class TrackingActuator(ActiveActuator):
+class TrackingActuator(Actuator):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,7 +34,7 @@ class TrackingActuator(ActiveActuator):
     def __attempt__(self):
         current_time = time.time()
         # this will contain the user action (KeyEvent)
-        actions = self.get_actions()
+        actions = list(self.iter_actions())
         if len(self._keys_pressed) > 0:
             # compute speed based on time that has passed
             dt = current_time - self._prev_time
@@ -67,7 +67,7 @@ class TrackingActuator(ActiveActuator):
         raise NotImplementedError()
 
 
-class ResourceManagementActuator(ActiveActuator):
+class ResourceManagementActuator(Actuator):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,7 +87,7 @@ class ResourceManagementActuator(ActiveActuator):
         return [TogglePumpAction(target=target) for target in targets]
 
 
-class SystemMonitoringActuator(ActiveActuator):
+class SystemMonitoringActuator(Actuator):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -122,29 +122,3 @@ def _get_click_targets(pattern, targets):
                 yield target
 
     return list(_get())
-
-
-# class TrackingTaskActuator(ActiveActuator):
-
-#     def __init__(self, *args, speed=10, key_binding=None, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.keys_pressed = set()
-#         self._action_map = {
-#             "up": partial(TargetMoveAction.new, self.id, (0, 1)),
-#             "down": partial(TargetMoveAction.new, self.id, (0, -1)),
-#             "left": partial(TargetMoveAction.new, self.id, (1, 0)),
-#             "right": partial(TargetMoveAction.new, self.id, (-1, 0)),
-#         }
-#         if key_binding is None:
-#             key_binding = DEFAULT_KEY_BINDING
-#         self._key_binding = key_binding
-#         self._speed = speed  # this should be set based on the simulation speed...
-
-#     @ActiveActuator.attempt
-#     def attempt(self, action):
-#         print(action)
-#         assert isinstance(action, KeyEvent)
-#         return [action]  # we always want to record the original key press/release
-
-#     def on_key(self, action):
-#         pass

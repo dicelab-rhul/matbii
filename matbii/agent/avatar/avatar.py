@@ -1,8 +1,6 @@
 from typing import Any, List
-from fastapi import WebSocket
 from star_ray.plugin.web import WebAvatar, SocketSerdePydantic
-from star_ray.plugin.xml import QueryXML
-from star_ray.agent import Actuator, AgentFactory, ActiveSensor, ActiveActuator, Sensor
+from star_ray.agent import Actuator, AgentFactory, Sensor
 from star_ray.event import (
     Event,
     KeyEvent,
@@ -15,7 +13,7 @@ from .actuator import (
     TrackingActuator,
     ResourceManagementActuator,
 )
-from .sensor import SVGSensor, SVGChangeSensor
+from ..sensor import SVGSensor, SVGChangeSensor
 
 # On the first cycle of the avatar, it will sense the entire state of the environment, this will be sent to the server for rendering.
 # there after, it will sense changes to the state via a XMLHistorySensor
@@ -51,7 +49,7 @@ class MatbiiAvatar(WebAvatar):
     def handle_actuator_observation(
         self, actuator: Actuator, event: Observation
     ) -> List[Event]:
-        print(actuator, event)
+        # print(actuator, event)
         return super().handle_actuator_observation(actuator, event)
 
     def handle_sensor_observation(

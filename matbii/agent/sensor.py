@@ -1,18 +1,18 @@
 from typing import List
 from collections import defaultdict
-from star_ray.agent import ActiveSensor, OnAwake
+from star_ray.agent import Sensor, OnAwake
 from star_ray.event import Observation, Event
 from star_ray.plugin.xml import QueryXML, QueryXMLHistory
-from .ui import UIAction
+from .avatar.ui import UIAction
 
-from ...utils import _LOGGER
+from ..utils import _LOGGER
 
 __all__ = ("SVGSensor", "SVGChangeSensor")
 
 
 # TODO this should probably be a passive sensor. We dont want to constantly be polling for new updates
 # TODO implement passive sensing in star_ray using pubsub
-class SVGChangeSensor(ActiveSensor):
+class SVGChangeSensor(Sensor):
 
     def __sense__(self) -> List["QueryXMLHistory"]:
         # this will get all of the changes to the matbii SVG since the end of the last cycle
@@ -69,7 +69,7 @@ class SVGChangeSensor(ActiveSensor):
 
 
 @OnAwake  # this will ensure the sensor only runs once (when the avatar is first created/on its first cycle)
-class SVGSensor(ActiveSensor):
+class SVGSensor(Sensor):
     """This sensor observes an entire svg element ONCE (on its first cycle). It can be used again be calling `activate()`."""
 
     def __init__(self, sv_element_id="root", *args, **kwargs):

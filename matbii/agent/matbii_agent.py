@@ -3,7 +3,7 @@ import time
 import math
 from typing import Tuple
 from types import MethodType
-from star_ray.agent import Agent, ActiveActuator, attempt
+from star_ray.agent import Agent, Actuator, attempt
 from star_ray.event import ErrorActiveObservation
 from pyfuncschedule import ScheduleParser
 
@@ -21,7 +21,7 @@ from ..action import (
 from ..utils import _LOGGER, DEFAULT_SCHEDULE_FILE, MatbiiScheduleError
 
 
-class MatbiiActuator(ActiveActuator):
+class MatbiiActuator(Actuator):
 
     @attempt
     def burn_fuel(self, target: int | str, burn: float):
@@ -36,8 +36,12 @@ class MatbiiActuator(ActiveActuator):
         return TogglePumpFailureAction(target=target)
 
     @attempt
-    def fail_light(self, target: int):
-        return SetLightAction(target=target, state=0)
+    def on_light(self, target: int):
+        return SetLightAction(target=target, state=SetLightAction.ON)
+
+    @attempt
+    def off_light(self, target: int):
+        return SetLightAction(target=target, state=SetLightAction.OFF)
 
     @attempt
     def toggle_light(self, target: int):
@@ -92,8 +96,8 @@ class ScheduleRunner:
 
 class MatbiiAgent(Agent):
 
-    def __init__(self, schedule_path: str = None):
-        schedules, actuator = self._load_schedule(MatbiiActuator(), schedule_path)
+    def __init__(self, schedule_file: str = None):
+        schedules, actuator = self._load_schedule(MatbiiActuator(), schedule_file)
         super().__init__([], [actuator])
         current_time = time.time()
         self._schedule_runners = [
@@ -110,7 +114,7 @@ class MatbiiAgent(Agent):
         self._schedule_runners = list(self._step_runners())
         # check observation results for errors
         actuator = next(iter(self.actuators))
-        for obs in actuator.get_observations():
+        for obs in actuator.iter_observations():
             if isinstance(obs, ErrorActiveObservation):
                 _LOGGER.error("Observation error for scheduled action: %s", repr(obs))
 

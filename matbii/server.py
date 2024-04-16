@@ -1,7 +1,5 @@
 import json
-from importlib.resources import files
 from deepmerge import always_merger  # used to merge configurations
-from pprint import pformat
 from fastapi import Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse

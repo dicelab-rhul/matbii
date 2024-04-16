@@ -1,16 +1,16 @@
 import unittest
 from pathlib import Path
 from pyfuncschedule import ScheduleParser
-from star_ray.agent import ActiveActuator
+from star_ray.agent import Actuator
 
 
-class MyActuator(ActiveActuator):
+class MyActuator(Actuator):
 
-    @ActiveActuator.attempt
+    @Actuator.attempt
     def foo(self, arg):
         return f"foo-{arg}"
 
-    @ActiveActuator.attempt
+    @Actuator.attempt
     def bar(self, *args):
         return "bar-1"
 
