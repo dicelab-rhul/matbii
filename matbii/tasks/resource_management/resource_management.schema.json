@@ -1,0 +1,128 @@
+{
+    "width": {
+        "type": "integer",
+        "default": 540
+    },
+    "height": {
+        "default": 300,
+        "type": "integer"
+    },
+    "x": {
+        "default": 260,
+        "type": "integer"
+    },
+    "y": {
+        "default": 360,
+        "type": "integer"
+    },
+    "padding": {
+        "default": 10,
+        "type": "integer"
+    },
+    "debug": {
+        "default": false,
+        "type": "boolean"
+    },
+    "show_tank_labels": {
+        "default": true,
+        "type": "boolean"
+    },
+    "tank_capacity": {
+        "type": "dict",
+        "default": {},
+        "schema": {
+            "a": {
+                "default": 2000,
+                "type": "integer"
+            },
+            "b": {
+                "default": 2000,
+                "type": "integer"
+            },
+            "c": {
+                "default": 1500,
+                "type": "integer"
+            },
+            "d": {
+                "default": 1500,
+                "type": "integer"
+            },
+            "e": {
+                "default": 1000,
+                "type": "integer"
+            },
+            "f": {
+                "default": 1000,
+                "type": "integer"
+            }
+        }
+    },
+    "tank_level": {
+        "type": "dict",
+        "default": {},
+        "schema": {
+            "a": {
+                "default": 1000,
+                "type": "integer"
+            },
+            "b": {
+                "default": 1000,
+                "type": "integer"
+            },
+            "c": {
+                "default": 750,
+                "type": "integer"
+            },
+            "d": {
+                "default": 750,
+                "type": "integer"
+            },
+            "e": {
+                "default": 750,
+                "type": "integer"
+            },
+            "f": {
+                "default": 750,
+                "type": "integer"
+            }
+        }
+    },
+    "pump_state": {
+        "type": "dict",
+        "default": {},
+        "schema": {
+            "ab": "pump_state",
+            "ba": "pump_state",
+            "ca": "pump_state",
+            "ec": "pump_state",
+            "ea": "pump_state",
+            "db": "pump_state",
+            "fd": "pump_state",
+            "fb": "pump_state"
+        }
+    },
+    "pump_on_color": {
+        "type": "color",
+        "default": "#00ff00"
+    },
+    "pump_off_color": {
+        "type": "color",
+        "default": "#add9e6"
+    },
+    "pump_failure_color": {
+        "type": "color",
+        "default": "#ff0000"
+    },
+    "stroke_color": {
+        "type": "color",
+        "default": "#000000"
+    },
+    "background_color": {
+        "type": "color",
+        "default": "#ffffff"
+    },
+    "stroke_width": {
+        "type": "integer",
+        "default": 2
+    }
+}

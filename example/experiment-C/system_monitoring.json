@@ -1,0 +1,32 @@
+{
+    "debug": false,
+    "show_keyboard_shortcuts": false,
+    "width": 240,
+    "height": 330,
+    "x": 0,
+    "y": 0,
+    "font_size": 12,
+    "stroke_width": 2,
+    "padding": 10,
+    "light_state": [
+        1,
+        0
+    ],
+    "light_on_color": "#00ff00",
+    "light_off_color": "#add9e6",
+    "light_failure_color": "#ff0000",
+    "light_width": 75,
+    "light_height": 50,
+    "slider_num_increments": 11,
+    "slider_state": [
+        5,
+        5,
+        5,
+        5
+    ],
+    "slider_width": 30,
+    "slider_height": 20,
+    "slider_background_color": "#add9e6",
+    "slider_color": "#4682b4",
+    "slider_arrow_color": "#ffff00"
+}

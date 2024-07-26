@@ -1,0 +1,90 @@
+<svg id="system_monitoring" x="{{x}}" y="{{y}}" width="{{width}}" height="{{height}}"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <symbol id="arrow" viewBox="0 0 20 20" width="10" height="10">
+        <path d="M 0,0 L 10,10 L 0,20" stroke="{{slider_arrow_color}}" stroke-width="4" fill="none" />
+    </symbol>
+
+    <symbol id="double-arrow" width="15" height="10">
+        <use href="#arrow" x="0" y="0" />
+        <use href="#arrow" x="5" y="0" />
+    </symbol>
+
+    {% set light_colors = [[light_off_color, light_on_color], [light_off_color, light_failure_color]] %}
+
+    <svg id="lights" x="0" y="0" width="{{width}}" height="{{light_height + 2 * padding}}">
+        <!-- draw lights -->
+        <g id="light-1">
+            <rect id="light-1-button" x="{{padding}}" y="{{padding}}" width="{{light_width}}" height="{{light_height}}"
+                fill="{{light_colors[0][light_state[0]]}}" stroke="#000000" stroke-width="{{stroke_width}}"
+                data-state="{{light_state[0]}}" data-colors="{{light_colors[0]}}" />
+            {% if show_keyboard_shortcuts %}
+            <text x="{{padding + light_width/2 - (font_size - 4)}}" y="{{padding + light_width/2 - 8}}" fill="black"
+                font-size="{{font_size}}px">F5</text>
+            {% endif %}
+        </g>
+
+        <g id="light-2">
+            <rect id="light-2-button" x="{{width - light_width - padding}}" y="{{padding}}" width="{{light_width}}"
+                height="{{light_height}}" fill="{{light_colors[1][light_state[1]]}}" stroke-width="{{stroke_width}}"
+                stroke="#000000" data-state="{{light_state[1]}}" data-colors="{{light_colors[1]}}" />
+            {% if show_keyboard_shortcuts %}
+            <text x="{{width - padding - light_width/2 - (font_size - 4)}}" y="{{padding + light_width/2 - 8}}"
+                fill="black" font-size="{{font_size}}px">F6</text>
+            {% endif %}
+        </g>
+
+        {% if debug %}
+        <rect x="0" y="0" width="{{width}}" height="{{light_height + 2 * padding}}" stroke="#FF10F0" fill="none" />
+        {% endif %}
+    </svg>
+
+
+    <svg id="sliders" x="0" y="{{4 * padding + light_height}}">
+        <!-- draw sliders -->
+        {% set slider_count = slider_state|length %}
+
+        {% for i in range(1, slider_count + 1) %}
+
+        {% set total_spacing = (width - 2 * padding) - (slider_count * slider_width) %}
+        {% set space_between = total_spacing / (slider_count - 1) %}
+        {% set slider_x = padding + (i-1) * (slider_width + space_between) %}
+        <g id="slider-{{i}}">
+            <rect id="slider-{{i}}-background" x="{{slider_x}}" y="{{padding}}" width="{{slider_width}}"
+                height="{{slider_num_increments * slider_height}}" fill="{{slider_background_color}}" />
+
+
+            <!-- NOTE: the click event does not happen on the <svg> element, this is due to a limitation with the browser. Instead, the inner rect element will be a target. The action that is taken to move the slider will happen to the parent <svg> element in the python implementation. This is an unfortunate side-effect of the way browsers handle nested svg elements and input events. -->
+            {% set sy = padding + (slider_state[i-1] - 1) * slider_height %}
+            <svg id="slider-{{i}}-button-container" x="{{slider_x}}" y="{{sy}}" data-state="{{slider_state[i-1]}}"
+                width="{{slider_width}}" height="{{3 * slider_height}}">
+                <!-- This is what the user clicks! -->
+                <rect id="slider-{{i}}-button" x="0" y="0" width="{{slider_width}}" height="{{3 * slider_height}}"
+                    fill="{{slider_color}}" />
+                <use href="#double-arrow" x="{{slider_width - 15}}" y="{{ slider_height * 3/2 - 5}}" />
+            </svg>
+
+            <rect id="slider-{{i}}-border" x="{{slider_x}}" y="{{padding}}" width="{{slider_width}}"
+                height="{{slider_num_increments * slider_height}}" fill="transparent" stroke-width="{{stroke_width}}"
+                stroke="#000000" />
+            <g id="slider-{{i}}-incs" incs="{{slider_num_increments}}">
+                {% for y in range(1, slider_num_increments) %}
+                <line x1="{{slider_x}}" y1="{{y * slider_height + padding}}" x2="{{slider_x + slider_width}}"
+                    y2="{{y * slider_height + padding}}" stroke-width="{{stroke_width}}" stroke="#000000"
+                    data-state="{{y}}" />
+                {% endfor %}
+                {% if show_keyboard_shortcuts %}
+                <text x="{{slider_x + (font_size - 4)}}" y="{{padding + (slider_num_increments + 1) * slider_height}}"
+                    fill="black" font-size="{{font_size}}px">F{{i}}</text>
+                {% endif %}
+            </g>
+        </g>
+        {% endfor %}
+    </svg>
+
+    {% if debug %}
+    <rect x="0" y="0" width="{{width}}" height="{{height}}" stroke="#FF10F0" fill="none" />
+    {% endif %}
+
+
+</svg>

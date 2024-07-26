@@ -1,0 +1,114 @@
+<svg id="tracking" xmlns="http://www.w3.org/2000/svg" x="{{x}}" y="{{y}}" width="{{width}}" height="{{height}}">
+    <!-- Target symbol -->
+    {% set target_size = (target_radius + target_line_width + 1) * 2 %}
+
+    <svg id="tracking_target" x="{{width/2 - target_size/2 + target_x_offset}}"
+        y="{{height/2 - target_size/2 + target_y_offset}}" width="{{target_size}}" height="{{target_size}}"
+        fill="transparent">
+        {% set c = target_size / 2 %}
+        <circle cx="{{c}}" cy="{{c}}" r="{{target_radius}}" stroke="{{target_color}}"
+            stroke-width="{{target_line_width}}" fill="transparent" />
+        <circle cx="{{c}}" cy="{{c}}" r="2" stroke="{{target_color}}" stroke-width="{{target_line_width}}"
+            fill="{{target_color}}" />
+
+        <line x1="{{c}}" y1="{{c+target_radius}}" x2="{{c}}" y2="{{c+target_radius/2}}" stroke="{{line_color}}"
+            stroke-width="{{target_line_width}}" />
+        <line x1="{{c}}" y1="{{c-target_radius}}" x2="{{c}}" y2="{{c-target_radius/2}}" stroke="{{line_color}}"
+            stroke-width="{{target_line_width}}" />
+
+        <line y1="{{c}}" x1="{{c+target_radius}}" y2="{{c}}" x2="{{c+target_radius/2}}" stroke="{{line_color}}"
+            stroke-width="{{target_line_width}}" />
+        <line y1="{{c}}" x1="{{c-target_radius}}" y2="{{c}}" x2="{{c-target_radius/2}}" stroke="{{line_color}}"
+            stroke-width="{{target_line_width}}" />
+    </svg>
+
+
+    {% set corner_length = 25 %}
+    <!-- Upper Left Corner -->
+    <line x1="{{padding}}" y1="{{padding}}" x2="{{padding + corner_length}}" y2="{{padding}}" stroke="{{line_color}}"
+        stroke-width="2" />
+    <line x1="{{padding}}" y1="{{padding + corner_length}}" x2="{{padding}}" y2="{{padding}}" stroke="{{line_color}}"
+        stroke-width="2" />
+
+    <!-- Upper Right Corner -->
+    <line x1="{{width - padding}}" y1="{{padding}}" x2="{{width - padding - corner_length}}" y2="{{padding}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line x1="{{width - padding}}" y1="{{padding + corner_length}}" x2="{{width - padding}}" y2="{{padding}}"
+        stroke="{{line_color}}" stroke-width="2" />
+
+    <!-- Lower Left Corner -->
+    <line x1="{{padding}}" y1="{{height - padding}}" x2="{{padding + corner_length}}" y2="{{height - padding}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line x1="{{padding}}" y1="{{height - padding}}" x2="{{padding}}" y2="{{height - padding - corner_length}}"
+        stroke="{{line_color}}" stroke-width="2" />
+
+    <!-- Lower Right Corner -->
+    <line x1="{{width - padding}}" y1="{{height - padding}}" x2="{{width - padding - corner_length}}"
+        y2="{{height - padding}}" stroke="{{line_color}}" stroke-width="2" />
+    <line x1="{{width - padding}}" y1="{{height - padding}}" x2="{{width - padding}}"
+        y2="{{height - padding - corner_length}}" stroke="{{line_color}}" stroke-width="2" />
+
+    {% set hmid = width // 2 %}
+    {% set vmid = height // 2 %}
+
+    <!-- Main horizontal line -->
+    <line x1="{{padding}}" y1="{{vmid}}" x2="{{width - padding}}" y2="{{vmid}}" stroke="{{line_color}}"
+        stroke-width="2" />
+
+    <!-- Main vertical line -->
+    <line x1="{{hmid}}" y1="{{padding}}" x2="{{hmid}}" y2="{{height-padding}}" stroke="{{line_color}}"
+        stroke-width="2" />
+
+    {% set hoff = (width - padding * 2) / 8 %}
+    {% set voff = (height - padding * 2) / 8 %}
+
+    {% set inc = 0 %}
+    {% set hlen = 20 %}
+    {% set vlen = 20 %}
+    <line x1="{{hmid - hlen}}" y1="{{padding + voff * inc}}" x2="{{hmid + hlen}}" y2="{{padding + voff * inc}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line x1="{{hmid - hlen}}" y1="{{height - padding - voff * inc}}" x2="{{hmid + hlen}}"
+        y2="{{height - padding - voff * inc}}" stroke="{{line_color}}" stroke-width="2" />
+    <line y1="{{vmid - vlen}}" x1="{{padding + hoff * inc}}" y2="{{vmid + vlen}}" x2="{{padding + hoff * inc}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line y1="{{vmid - vlen}}" x1="{{width - padding - hoff * inc}}" y2="{{vmid + vlen}}"
+        x2="{{width - padding - hoff * inc}}" stroke="{{line_color}}" stroke-width="2" />
+
+    {% set inc = 1 %}
+    {% set hlen = 10 %}
+    {% set vlen = 10 %}
+    <line x1="{{hmid - hlen}}" y1="{{padding + voff * inc}}" x2="{{hmid + hlen}}" y2="{{padding + voff * inc}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line x1="{{hmid - hlen}}" y1="{{height - padding - voff * inc}}" x2="{{hmid + hlen}}"
+        y2="{{height - padding - voff * inc}}" stroke="{{line_color}}" stroke-width="2" />
+    <line y1="{{vmid - vlen}}" x1="{{padding + hoff * inc}}" y2="{{vmid + vlen}}" x2="{{padding + hoff * inc}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line y1="{{vmid - vlen}}" x1="{{width - padding - hoff * inc}}" y2="{{vmid + vlen}}"
+        x2="{{width - padding - hoff * inc}}" stroke="{{line_color}}" stroke-width="2" />
+
+    {% set inc = 2 %}
+    {% set hlen = 20 %}
+    {% set vlen = 20 %}
+    <line x1="{{hmid - hlen}}" y1="{{padding + voff * inc}}" x2="{{hmid + hlen}}" y2="{{padding + voff * inc}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line x1="{{hmid - hlen}}" y1="{{height - padding - voff * inc}}" x2="{{hmid + hlen}}"
+        y2="{{height - padding - voff * inc}}" stroke="{{line_color}}" stroke-width="2" />
+    <line y1="{{vmid - vlen}}" x1="{{padding + hoff * inc}}" y2="{{vmid + vlen}}" x2="{{padding + hoff * inc}}"
+        stroke="{{line_color}}" stroke-width="2" />
+    <line y1="{{vmid - vlen}}" x1="{{width - padding - hoff * inc}}" y2="{{vmid + vlen}}"
+        x2="{{width - padding - hoff * inc}}" stroke="{{line_color}}" stroke-width="2" />
+
+    <!-- central box -->
+    {% set inc = 3 %}
+    {% set hlen = hoff %}
+    {% set vlen = voff %}
+
+    <rect id="tracking_box" x="{{hmid - hlen}}" y="{{vmid - vlen}}" width="{{hlen * 2}}" height="{{vlen * 2}}"
+        stroke="{{line_color}}" stroke-width="2" stroke-dasharray="{{dash_array}}" fill="transparent" />
+
+    {% if debug %}
+    <rect x="0" y="0" width="{{width}}" height="{{height}}" stroke="#FF10F0" fill="none" />
+    {% endif %}
+
+
+</svg>

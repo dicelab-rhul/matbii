@@ -1,0 +1,55 @@
+{
+    "debug": {
+        "type": "boolean",
+        "default": false
+    },
+    "line_color": {
+        "type": "color",
+        "default": "#1d90ff"
+    },
+    "target_color": {
+        "type": "color",
+        "default": "#1d90ff"
+    },
+    "target_line_width": {
+        "type": "integer",
+        "default": 4
+    },
+    "target_x_offset": {
+        "type": "integer",
+        "default": 0
+    },
+    "target_y_offset": {
+        "type": "integer",
+        "default": 0
+    },
+    "target_radius": {
+        "type": "integer",
+        "default": 25
+    },
+    "padding": {
+        "type": "integer",
+        "default": 10
+    },
+    "width": {
+        "type": "integer",
+        "default": 320
+    },
+    "height": {
+        "type": "integer",
+        "default": 320
+    },
+    "x": {
+        "type": "integer",
+        "default": 320
+    },
+    "y": {
+        "type": "integer",
+        "default": 0
+    },
+    "dash_array": {
+        "type": "string",
+        "default": "4,2,1,2",
+        "regex": "^[0-9]+(,[0-9]+)*$"
+    }
+}

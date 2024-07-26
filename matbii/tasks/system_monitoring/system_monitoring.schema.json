@@ -1,0 +1,108 @@
+{
+    "debug": {
+        "type": "boolean",
+        "default": false
+    },
+    "show_keyboard_shortcuts": {
+        "type": "boolean",
+        "default": false
+    },
+    "width": {
+        "type": "integer",
+        "default": 240
+    },
+    "height": {
+        "type": "integer",
+        "default": 330
+    },
+    "x": {
+        "type": "integer",
+        "default": 0
+    },
+    "y": {
+        "type": "integer",
+        "default": 0
+    },
+    "font_size": {
+        "type": "integer",
+        "default": 12
+    },
+    "stroke_width": {
+        "type": "integer",
+        "default": 2
+    },
+    "padding": {
+        "type": "integer",
+        "default": 10
+    },
+    "light_state": {
+        "type": "list",
+        "default": [
+            0,
+            0
+        ],
+        "minlength": 2,
+        "maxlength": 2,
+        "schema": {
+            "type": "integer"
+        }
+    },
+    "light_on_color": {
+        "type": "color",
+        "default": "#00ff00"
+    },
+    "light_off_color": {
+        "type": "color",
+        "default": "#add9e6"
+    },
+    "light_failure_color": {
+        "type": "color",
+        "default": "#ff0000"
+    },
+    "light_width": {
+        "type": "integer",
+        "default": 75
+    },
+    "light_height": {
+        "type": "integer",
+        "default": 50
+    },
+    "slider_num_increments": {
+        "type": "integer",
+        "default": 11
+    },
+    "slider_state": {
+        "type": "list",
+        "minlength": 4,
+        "maxlength": 4,
+        "default": [
+            5,
+            5,
+            5,
+            5
+        ],
+        "schema": {
+            "type": "integer"
+        }
+    },
+    "slider_width": {
+        "type": "integer",
+        "default": 30
+    },
+    "slider_height": {
+        "type": "integer",
+        "default": 20
+    },
+    "slider_background_color": {
+        "type": "color",
+        "default": "#add9e6"
+    },
+    "slider_color": {
+        "type": "color",
+        "default": "#4682b4"
+    },
+    "slider_arrow_color": {
+        "type": "color",
+        "default": "#ffff00"
+    }
+}

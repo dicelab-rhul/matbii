@@ -1,0 +1,41 @@
+{
+    "x": 260,
+    "y": 360,
+    "width": 540,
+    "height": 300,
+    "padding": 80,
+    "debug": false,
+    "show_tank_labels": true,
+    "tank_capacity": {
+        "a": 2000,
+        "b": 2000,
+        "c": 1500,
+        "d": 1500,
+        "e": 1000,
+        "f": 1000
+    },
+    "tank_level": {
+        "a": 1000,
+        "b": 1000,
+        "c": 750,
+        "d": 750,
+        "e": 750,
+        "f": 750
+    },
+    "pump_state": {
+        "ab": "off",
+        "ba": "off",
+        "ca": "off",
+        "ec": "off",
+        "ea": "off",
+        "db": "off",
+        "fd": "off",
+        "fb": "off"
+    },
+    "pump_on_color": "#00ff00",
+    "pump_off_color": "#add9e6",
+    "pump_failure_color": "#ff0000",
+    "stroke_color": "#000000",
+    "background_color": "#ffffff",
+    "stroke_width": 2
+}

@@ -1,0 +1,316 @@
+<svg id="resource_management" xmlns="http://www.w3.org/2000/svg" x="{{x}}" y="{{y}}" width="{{width}}"
+    height="{{height}}">
+
+    {% set pump_width = 50 %}
+    {% set pump_height = 25 %}
+    {% set pump_colors = [pump_off_color, pump_on_color, pump_failure_color] %}
+
+    <!-- arrow stroke width -->
+    {% set asw = 4 %}
+    <symbol id="arrow-east" viewBox="-{{asw}} -{{asw}} {{10 + asw * 2 }} {{20 + asw * 2}}">
+        {% if debug %}
+        <rect x="-{{asw}}" y="-{{asw}}" width="{{10 + asw * 2 }}" height="{{20 + asw * 2 }}" fill="#FF10F0" />
+        {% endif %}
+        <path d="M 0,0 L 10,10 L 0,20" stroke="{{stroke_color}}" stroke-width="{{asw}}" fill="none" />
+    </symbol>
+
+    <symbol id="arrow-west" viewBox="-{{asw}} -{{asw}} {{10 + 2 * asw}} {{20 + 2 * asw}}">
+        {% if debug %}
+        <rect x="-{{asw}}" y="-{{asw}}" width="{{10 + asw * 2 }}" height="{{20 + asw * 2 }}" fill="#FF10F0" />
+        {% endif %}
+        <path d="M 10,0 L 0,10 L 10,20" stroke="{{stroke_color}}" stroke-width="{{asw}}" fill="none" />
+    </symbol>
+
+    <symbol id="arrow-north" viewBox="-{{asw}} -{{asw}} {{20 + 2 * asw}} {{10 + 2 * asw}}">
+        {% if debug %}
+        <rect x="-{{asw}}" y="-{{asw}}" width="{{20 + asw * 2 }}" height="{{10 + asw * 2 }}" fill="#FF10F0" />
+        {% endif %}
+        <path d="M 20,10 L 10,0 L 0,10" stroke="{{stroke_color}}" stroke-width="{{asw}}" fill="none" />
+    </symbol>
+
+    {% set padding = 10 %}
+    {% set fuel_color = "#00ff00" %}
+    {% set tank_height = 100 %}
+    {% set sma_tank_width = 40 %}
+    {% set med_tank_width = 50 %}
+    {% set big_tank_width = 80 %}
+
+    {% set c_x = padding + 10 %}
+    {% set c_y = padding + 175 %}
+    {% set a_x = c_x + 50 %}
+    {% set a_y = padding %}
+    {% set e_x = c_x + 125 %}
+    {% set e_y = c_y %}
+
+    <!-- x off set of the right set of tanks from the left set-->
+    {% set off_x = 325 %}
+
+    {% set box_x = a_x - 30 %}
+    {% set box_y = a_y + 90 %}
+    {% set box_w = 130 %}
+    {% set box_h = 145 %}
+
+
+
+    <!-- fuel lines left/right -->
+    <rect id="fuel-lines-left" x="{{box_x}}" y="{{box_y}}" width="{{box_w}}" height="{{box_h}}"
+        stroke="{{stroke_color}}" stroke-width="{{stroke_width}}" fill="none" />
+    <rect id="fuel-lines-right" x="{{box_x + off_x}}" y="{{box_y}}" width="{{box_w}}" height="{{box_h}}"
+        stroke="{{stroke_color}}" stroke-width="{{stroke_width}}" fill="none" />
+
+    {% set i = "ca" %}
+    <!-- left pumps -->
+    <svg id="pump-{{i}}" x="{{box_x - pump_width / 2}}" y="{{box_y + 20}}" width="{{pump_width}}"
+        height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-north" x="{{pump_width / 2 - 7.5}}" y="{{pump_height / 2 - 10}}"
+            width="15" height="20" />
+    </svg>
+
+    {% set i = "ea" %}
+    <svg id="pump-{{i}}" x="{{box_x + box_w - pump_width / 2}}" y="{{box_y + 20}}" width="{{pump_width}}"
+        height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-north" x="{{pump_width / 2 - 7.5}}" y="{{pump_height / 2 - 10}}"
+            width="15" height="20" />
+    </svg>
+
+    {% set i = "ec" %}
+    <svg id="pump-{{i}}" x="{{box_x + box_w / 2 - pump_width / 2}}" y="{{box_y + box_h - pump_height / 2}}"
+        width="{{pump_width}}" height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-west" x="{{pump_width / 2 - 5}}" y="{{pump_height / 2 - 10}}" width="10"
+            height="20" />
+    </svg>
+
+    {% set i = "db" %}
+    <!-- right pumps -->
+    <svg id="pump-{{i}}" x="{{off_x + box_x - pump_width / 2}}" y="{{box_y + 20}}" width="{{pump_width}}"
+        height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-north" x="{{pump_width / 2 - 7.5}}" y="{{pump_height / 2 - 10}}"
+            width="15" height="20" />
+    </svg>
+
+    {% set i = "fb" %}
+    <svg id="pump-{{i}}" x="{{off_x +  box_x + box_w - pump_width / 2}}" y="{{box_y + 20}}" width="{{pump_width}}"
+        height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-north" x="{{pump_width / 2 - 7.5}}" y="{{pump_height / 2 - 10}}"
+            width="15" height="20" />
+    </svg>
+
+    {% set i = "fd" %}
+    <svg id="pump-{{i}}" x="{{off_x + box_x + box_w / 2 - pump_width / 2}}" y="{{box_y + box_h - pump_height / 2}}"
+        width="{{pump_width}}" height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-west" x="{{pump_width / 2 - 5}}" y="{{pump_height / 2 - 10}}" width="10"
+            height="20" />
+    </svg>
+
+    <!-- middle fuel line -->
+    {% set box_x = a_x + big_tank_width / 2%}
+    {% set box_y = a_y + 20 %}
+    {% set box_w = off_x %}
+    {% set box_h = 40 %}
+    <rect id="fuel-lines-middle" x="{{box_x}}" y="{{box_y}}" width="{{box_w}}" height="{{box_h}}"
+        stroke="{{stroke_color}}" stroke-width="{{stroke_width}}" fill="none" />
+
+    {% set i = "ab" %}
+    <!-- middle pumps -->
+    <svg id="pump-{{i}}" x="{{box_x + box_w / 2 - pump_width / 2}}" y="{{box_y - pump_height / 2}}"
+        width="{{pump_width}}" height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-east" x="{{pump_width / 2 - 5}}" y="{{pump_height / 2 - 10}}" width="10"
+            height="20" />
+    </svg>
+
+    {% set i = "ba" %}
+    <svg id="pump-{{i}}" x="{{box_x + box_w / 2 - pump_width / 2}}" y="{{box_y + box_h - pump_height / 2}}"
+        width="{{pump_width}}" height="{{pump_height}}">
+        <rect id="pump-{{i}}-button" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" fill="{{pump_colors[pump_state[i]]}}" data-state="{{pump_state[i]}}"
+            data-colors="{{pump_colors}}" />
+        <rect id="pump-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}" width="{{pump_width - stroke_width}}"
+            height="{{pump_height - stroke_width}}" stroke="{{stroke_color}}" stroke-width="{{stroke_width}}"
+            fill="none" />
+        <use id="pump-{{i}}-arrow" href="#arrow-west" x="{{pump_width / 2 - 5}}" y="{{pump_height / 2 - 10}}" width="10"
+            height="20" />
+    </svg>
+
+
+    <!-- this should be set in the config file... (acceptable range)-->
+    {% set fuel_acceptable_range = 1 / 4 %}
+    {% set fuel_acceptable_level = 3 / 5 %}
+
+    {% set l_color = "#b1d6e6" %}
+    {% set l_w = big_tank_width * 5/4 %}
+    {% set l_h = fuel_acceptable_range * tank_height %}
+    {% set l_x = a_x - big_tank_width / 8 %}
+    {% set l_y = a_y + tank_height * (1 - fuel_acceptable_level) - l_h / 2 %}
+
+    <!-- big tank level boxes -->
+    <svg id="tank-a-level" x="{{l_x}}" y="{{l_y}}" width="{{100}}" height="{{100}}"
+        data-level="{{fuel_acceptable_level}}" data-range="{{fuel_acceptable_range}}">
+        <rect id="tank-a-level-background" x="0" y="0" width="{{l_w}}" height="{{l_h}}" fill="{{l_color}}" />
+        <line id="tank-a-level-line" x1="0" y1="{{l_h/2}}" x2="{{l_w}}" y2="{{l_h/2}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" />
+    </svg>
+
+    <svg id="tank-b-level" x="{{off_x + l_x}}" y="{{l_y}}" width="{{100}}" height="{{100}}"
+        data-level="{{fuel_acceptable_level}}" data-range="{{fuel_acceptable_range}}">
+        <rect id="tank-b-level-background" x="0" y="0" width="{{l_w}}" height="{{l_h}}" fill="{{l_color}}" />
+        <line id="tank-b-level-line" x1="0" y1="{{l_h/2}}" x2="{{l_w}}" y2="{{l_h/2}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" />
+    </svg>
+
+
+    <!-- tank labels (optional) -->
+
+    {% if show_tank_labels %}
+    <text id="tank-c-label" x="{{c_x - 1.5 * padding}}" y="{{c_y + 1.5  * padding}}" font-size="12" fill="stroke_color">
+        C </text>
+    <text id="tank-d-label" x="{{off_x + c_x - 1.5  * padding}}" y="{{c_y + 1.5  * padding}}" font-size="12"
+        fill="stroke_color"> D </text>
+
+    <text id="tank-e-label" x="{{e_x + med_tank_width + 0.5 * padding}}" y="{{e_y + 1.5  * padding}}" font-size="12"
+        fill="stroke_color"> E </text>
+    <text id="tank-f-label" x="{{off_x + e_x + med_tank_width + 0.5 * padding}}" y="{{e_y + 1.5  * padding}}"
+        font-size="12" fill="stroke_color"> F </text>
+
+    <text id="tank-a-label" x="{{a_x - 2 * padding}}" y="{{a_y + 1.5  * padding}}" font-size="12" fill="stroke_color"> A
+    </text>
+    <text id="tank-b-label" x="{{off_x + a_x + big_tank_width +  padding}}" y="{{a_y + 1.5  * padding}}" font-size="12"
+        fill="stroke_color"> B </text>
+
+
+    {% endif %}
+
+    <!-- tanks -->
+    <!-- when modifying the fuel level, both y and height need to change! -->
+    <!-- small tanks -->
+    {% set i = "c" %}
+    {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
+    <svg id="tank-{{i}}" width="{{sma_tank_width}}" height="{{tank_height}}" x="{{c_x}}" y="{{c_y}}"
+        data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
+        <rect id="tank-{{i}}-background" x="0" y="0" width="{{sma_tank_width}}" height="{{tank_height}}"
+            fill="{{background_color}}" />
+        <rect id="tank-{{i}}-fuel" x="{{stroke_width/2}}" y="{{tank_height-fuel}}"
+            width="{{sma_tank_width - stroke_width}}" height="{{fuel}}" stroke="none" fill="{{fuel_color}}" />
+        <rect id="tank-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}"
+            width="{{sma_tank_width - stroke_width}}" height="{{tank_height - stroke_width}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" fill="none" />
+    </svg>
+
+    {% set i = "d" %}
+    {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
+    <svg id="tank-{{i}}" width="{{sma_tank_width}}" height="{{tank_height}}" x="{{c_x + off_x}}" y="{{c_y}}"
+        data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
+        <rect id="tank-{{i}}-background" x="0" y="0" width="{{sma_tank_width}}" height="{{tank_height}}"
+            fill="{{background_color}}" />
+        <rect id="tank-{{i}}-fuel" x="{{stroke_width/2}}" y="{{tank_height-fuel}}"
+            width="{{sma_tank_width - stroke_width}}" height="{{fuel}}" stroke="none" fill="{{fuel_color}}" />
+        <rect id="tank-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}"
+            width="{{sma_tank_width - stroke_width}}" height="{{tank_height - stroke_width}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" fill="none" />
+    </svg>
+
+    <!-- medium tanks -->
+    {% set i = "e" %}
+    {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
+    <svg id="tank-{{i}}" width="{{med_tank_width}}" height="{{tank_height}}" x="{{e_x}}" y="{{e_y}}"
+        data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
+        <rect id="tank-{{i}}-background" x="0" y="0" width="{{med_tank_width}}" height="{{tank_height}}"
+            fill="{{background_color}}" />
+        <rect id="tank-{{i}}-fuel" x="0" y="{{tank_height-fuel}}" width="{{med_tank_width}}" height="{{fuel}}"
+            stroke="none" fill="{{fuel_color}}" />
+        <rect id="tank-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}"
+            width="{{med_tank_width - stroke_width}}" height="{{tank_height - stroke_width}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" fill="none" />
+    </svg>
+
+    {% set i = "f" %}
+    {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
+    <svg id="tank-{{i}}" width="{{med_tank_width}}" height="{{tank_height}}" x="{{e_x + off_x}}" y="{{e_y}}"
+        data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
+        <rect id="tank-{{i}}-background" x="0" y="0" width="{{med_tank_width}}" height="{{tank_height}}"
+            fill="{{background_color}}" />
+        <rect id="tank-{{i}}-fuel" x="0" y="{{tank_height-fuel}}" width="{{med_tank_width}}" height="{{fuel}}"
+            stroke="none" fill="{{fuel_color}}" />
+        <rect id="tank-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}"
+            width="{{med_tank_width - stroke_width}}" height="{{tank_height - stroke_width}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" fill="none" />
+    </svg>
+
+    <!-- large tanks -->
+    {% set i = "a" %}
+    {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
+    <svg id="tank-{{i}}" width="{{big_tank_width}}" height="{{tank_height}}" x="{{a_x}}" y="{{a_y}}"
+        data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
+
+        <rect id="tank-{{i}}-background" x="0" y="0" width="{{big_tank_width}}" height="{{tank_height}}"
+            fill="{{background_color}}" />
+        <rect id="tank-{{i}}-fuel" x="0" y="{{tank_height-fuel}}" width="{{big_tank_width}}" height="{{fuel}}"
+            stroke="none" fill="{{fuel_color}}" />
+        <rect id="tank-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}"
+            width="{{big_tank_width - stroke_width}}" height="{{tank_height - stroke_width}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" fill="none" />
+    </svg>
+
+    {% set i = "b" %}
+    {% set fuel = tank_height * (tank_level[i] / tank_capacity[i]) %}
+    <svg id="tank-{{i}}" width="{{big_tank_width}}" height="{{tank_height}}" x="{{a_x + off_x}}" y="{{a_y}}"
+        data-capacity="{{tank_capacity[i]}}" data-level="{{tank_level[i]}}">
+
+        <rect id="tank-{{i}}-background" x="0" y="0" width="{{big_tank_width}}" height="{{tank_height}}"
+            fill="{{background_color}}" />
+        <rect id="tank-{{i}}-fuel" x="0" y="{{tank_height-fuel}}" width="{{big_tank_width}}" height="{{fuel}}"
+            stroke="none" fill="{{fuel_color}}" />
+        <rect id="tank-{{i}}-border" x="{{stroke_width/2}}" y="{{stroke_width/2}}"
+            width="{{big_tank_width - stroke_width}}" height="{{tank_height - stroke_width}}" stroke="{{stroke_color}}"
+            stroke-width="{{stroke_width}}" fill="none" />
+    </svg>
+
+    {% if debug %}
+    <rect x="0" y="0" width="{{width}}" height="{{height}}" stroke="#FF10F0" fill="none" />
+    {% endif %}
+
+
+
+
+</svg>
