@@ -1,9 +1,9 @@
 
 Below is a table outlining all configuration options for the system monitoring task. 
 
-The `cerberus` schema file can be found here.
+The `cerberus` schema file can be found [here](https://github.com/dicelab-rhul/matbii/blob/main/matbii/tasks/system_monitoring/system_monitoring.schema.json).
 
-The `svg` file used to render the task can be found here.
+The `svg` file used to render the task can be found [here](https://github.com/dicelab-rhul/matbii/blob/main/matbii/tasks/system_monitoring/system_monitoring.svg.jinja).
 
 | Field Name              | Type    | Default      | Description |
 |-------------------------|---------|--------------|-------------|
