@@ -1,40 +1,51 @@
+"""Entry point of a `matbii` simulation.
+
+`matbii` may be run with `python -m matbii -c <CONFIG_FILE>` after installing with pip, where <CONFIG_FILE> is a path to a json configuration file, see the [wiki](https://github.com/dicelab-rhul/matbii/wiki) for details on configuring `matbii`.
+"""
+
+from functools import partial
+
+# imports for creating the environment
+from matbii.environment import MultiTaskEnvironment
+
+# imports for creating guidance agents
 from matbii.guidance import (
     DefaultGuidanceAgent,
-    ArrowGuidanceActuator, 
+    ArrowGuidanceActuator,
     BoxGuidanceActuator,
     SystemMonitoringTaskAcceptabilitySensor,
     TrackingTaskAcceptabilitySensor,
     ResourceManagementTaskAcceptabilitySensor,
 )
-from matbii.tasks import (
+from matbii.agent import (
     TrackingActuator,
     SystemMonitoringActuator,
     ResourceManagementActuator,
+)
+from matbii.avatar import (
+    Avatar,
+    AvatarActuator,
     AvatarTrackingActuator,
     AvatarSystemMonitoringActuator,
     AvatarResourceManagementActuator,
 )
+from matbii.config import Configuration
+
 from matbii import (
     TASK_PATHS,
     TASK_ID_TRACKING,
     TASK_ID_RESOURCE_MANAGEMENT,
     TASK_ID_SYSTEM_MONITORING,
-    CONFIG_PATH,
 )
-from icua.agent import Avatar, AvatarActuator
-from icua.environment import MultiTaskEnvironment
-from icua.utils import LOGGER
-from icua.extras.eyetracking import EyetrackerIOSensor, tobii
-from star_ray.ui import WindowConfiguration
-from star_ray.utils import ValidatedEnvironment
-from pathlib import Path
 import argparse
 import os
-from pprint import pformat
 
 from star_ray.utils import _LOGGER
-_LOGGER.setLevel("INFO")
-#LOGGER.set_level("INFO")
+from matbii.utils import LOGGER
+
+
+# silence debugging from star_ray logger
+_LOGGER.setLevel("WARNING")
 
 # avoid a pygame issue on linux...
 os.environ["LD_PRELOAD"] = "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
@@ -42,117 +53,103 @@ os.environ["LD_PRELOAD"] = "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
 # load configuration file
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "-c",
-    "--config",
-    required=False,
-    help="Path to the matbii configuration file.",
-    default=None,
+    "-c", "--config", required=False, help="Path to configuration file.", default=None
 )
+parser.add_argument(
+    "-p", "--participant", required=False, help="ID of the participant.", default=None
+)
+parser.add_argument(
+    "-e", "--experiment", required=False, help="ID of the experiment.", default=None
+)
+
 args = parser.parse_args()
-config = ValidatedEnvironment.load_and_validate_context(str(CONFIG_PATH), args.config)
-
-
-if args.config:
-    LOGGER.debug(f"Using config file: {str(args.config)}")
-else:
-    LOGGER.debug("No config file was specified, using default configuration.")
-
-
-
-window_config = WindowConfiguration(
-    x=config["window_x"],
-    y=config["window_y"],
-    width=config["window_width"],
-    height=config["window_height"],
-    title=config["window_title"],
-    resizable=config["window_resizable"],
-    fullscreen=config["window_fullscreen"],
-    background_color=config["window_background_color"],
+# args from command line can be used in config
+context = dict(
+    experiment=dict(id=args.experiment),
+    participant=dict(id=args.participant),
 )
+config = Configuration.from_file(args.config, context=context)
+LOGGER.set_level(config.logging.level)
 
-eyetracking_config = dict(
-    enabled=config["eyetracking_enabled"],
-    calibration_check=config["eyetracking_calibration_check"],
-    moving_average_n=config["eyetracking_moving_average_n"],
-    velocity_threshold=config["eyetracking_velocity_threshold"],
-    throttle_events=config["eyetracking_throttle"],
-)
 
-experiment_config = config["experiment_info"]
-experiment_id = experiment_config["id"]
-experiment_duration = experiment_config["duration"]
-
-experiment_path = Path(experiment_config["path"]).expanduser().resolve()
-if not experiment_path.exists():
-    raise ValueError(f"Experiment path: {experiment_path.as_posix()} does not exist.")
-experiment_path = experiment_path.as_posix()
-
-participant_config = config["participant_info"]
-participant_id = participant_config["id"]
-
-# LOGGER.info(
-#     "------------------------------------------------------------------------------------------"
-# )
-# LOGGER.info("%25s %s", "Experiment :", experiment_id)
-# LOGGER.info("%25s %s", "Experiment path :", experiment_path)
-# LOGGER.info("%25s %s", "Participant :", participant_id)
-# LOGGER.info("%25s %s", "Eyetracking enabled :", eyetracking_config["enabled"])
-# LOGGER.info("%25s %s", "Tasks enabled :", config["enable_tasks"])
-# LOGGER.info(
-#     "------------------------------------------------------------------------------------------"
-# )
-
-eyetracker = tobii.TobiiEyetracker(uri="tet-tcp://172.28.195.1")
-window_config = WindowConfiguration(width=1200, height=800)
-eyetracker_sensor = EyetrackerIOSensor(eyetracker)
-
+# Create the avatar:
+# - required sensors are added by default
+# - task related actuators are added when their corresponding task is enabled
 avatar = Avatar(
-    [eyetracker_sensor],  # relevant sensors are added by default
-    [AvatarActuator()],  # task actuators are added when the corresponding task is enabled
-    window_config=window_config,
+    [],
+    [AvatarActuator()],
+    window_config=config.window,
 )
 
+# if eyetracking is enabled, add a sensor to the avatar
+eyetracking_sensor = config.eyetracking.new_eyetracking_sensor()
+if eyetracking_sensor:
+    avatar.add_component(eyetracking_sensor)
+
+# create the guidance agent
+# - sensors will determine the acceptability of each task - if the task is enabled.
+# - change actuators for different guidance to be shown (must inherit from GuidanceActuator)
 guidance_agent = DefaultGuidanceAgent(
     [
         SystemMonitoringTaskAcceptabilitySensor(),
         ResourceManagementTaskAcceptabilitySensor(),
         TrackingTaskAcceptabilitySensor(),
     ],
-    # change actuators for different guidance to be shown (must inherit from GuidanceActuator)
-    [ArrowGuidanceActuator(arrow_mode="gaze"), BoxGuidanceActuator()],
+    [
+        ArrowGuidanceActuator(
+            arrow_mode="gaze",  # TODO should be a config option?
+            arrow_scale=1.0,  # TODO should be a config option?
+            arrow_fill_color="none",  # TODO should be a config option?
+            arrow_stroke_color="#ff0000",  # TODO should be a config option?
+            arrow_stroke_width=4.0,  # TODO should be a config option?
+            arrow_offset=(80, 80),  # TODO should be a config option?
+        ),
+        BoxGuidanceActuator(
+            box_stroke_color="#ff0000",  # TODO should be a config option?
+            box_stroke_width=4.0,  # TODO should be a config option?
+        ),
+    ],
+    break_ties="random",  # TODO should be a config option?
+    grace_period=2.0,  # TODO configuration options
+    counter_factual=config.guidance.counter_factual,
 )
 
 env = MultiTaskEnvironment(
     avatar=avatar,
-    agents=[guidance_agent],
-    wait=0.3,
-    svg_size=config["canvas_size"],
-    svg_position=config["canvas_offset"],
-    logging_path=config["logging_path"],
+    agents=[],  # [guidance_agent],
+    wait=0.1,  # total time to wait at each cycle. Due to a bug with how task events are scheduled, this needs to be relatively high...
+    svg_size=config.ui.size,
+    svg_position=config.ui.offset,
+    logging_path=config.logging.path,
 )
 
 # NOTE: if you have more tasks to add, add them here! dynamic loading is not enabled by default, if you want to load actuators dynamically, enable it in the ambient.
 env.add_task(
     name=TASK_ID_TRACKING,
-    path=[experiment_path, TASK_PATHS[TASK_ID_TRACKING]],
+    path=[config.experiment.path, TASK_PATHS[TASK_ID_TRACKING]],
     agent_actuators=[TrackingActuator],
-    avatar_actuators=[AvatarTrackingActuator],
-    enable=TASK_ID_TRACKING in config["enable_tasks"],
+    avatar_actuators=[
+        partial(
+            AvatarTrackingActuator,
+            target_speed=50.0,  # TODO a config option for this?
+        )
+    ],
+    enable=TASK_ID_TRACKING in config.experiment.enable_tasks,
 )
 
 env.add_task(
     name=TASK_ID_SYSTEM_MONITORING,
-    path=[experiment_path, TASK_PATHS[TASK_ID_SYSTEM_MONITORING]],
+    path=[config.experiment.path, TASK_PATHS[TASK_ID_SYSTEM_MONITORING]],
     agent_actuators=[SystemMonitoringActuator],
     avatar_actuators=[AvatarSystemMonitoringActuator],
-    enable=TASK_ID_SYSTEM_MONITORING in config["enable_tasks"],
+    enable=TASK_ID_SYSTEM_MONITORING in config.experiment.enable_tasks,
 )
 
 env.add_task(
     name=TASK_ID_RESOURCE_MANAGEMENT,
-    path=[experiment_path, TASK_PATHS[TASK_ID_RESOURCE_MANAGEMENT]],
+    path=[config.experiment.path, TASK_PATHS[TASK_ID_RESOURCE_MANAGEMENT]],
     agent_actuators=[ResourceManagementActuator],
     avatar_actuators=[AvatarResourceManagementActuator],
-    enable=TASK_ID_RESOURCE_MANAGEMENT in config["enable_tasks"],
+    enable=TASK_ID_RESOURCE_MANAGEMENT in config.experiment.enable_tasks,
 )
 env.run()

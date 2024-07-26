@@ -1,3 +1,9 @@
-# from .avatar import Avatar
+"""Package defining agent related functionality."""
 
-# __all__ = ("Avatar",)
+from ..tasks import (
+    TrackingActuator,
+    SystemMonitoringActuator,
+    ResourceManagementActuator,
+)
+
+__all__ = ("TrackingActuator", "SystemMonitoringActuator", "ResourceManagementActuator")

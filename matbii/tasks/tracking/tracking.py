@@ -1,6 +1,15 @@
+"""Module that implements the "tracking" task.
+
+This files contains:
+    - avatar actuator: :class:`AvatarTrackingActuator`
+    - agent actuator: :class:`TrackingActuator`
+    - actions: [:class:`TargetMoveAction`]
+"""
+
 import math
 import random
 import time
+from typing import Any
 from pydantic import field_validator
 
 from star_ray_xml import XMLState, Expr, update, select
@@ -8,8 +17,9 @@ from icua.event import KeyEvent, XMLUpdateQuery
 from icua.utils import LOGGER
 from icua.agent import Actuator, attempt
 
-
 from ..._const import DEFAULT_KEY_BINDING  # TODO support other key bindings?
+
+__all__ = ("AvatarTrackingActuator", "TrackingActuator", "TargetMoveAction")
 
 DIRECTION_MAP = {
     "up": (0, -1),
@@ -17,25 +27,39 @@ DIRECTION_MAP = {
     "left": (-1, 0),
     "right": (1, 0),
 }
-# TODO this should be set in a config somewhere
-# this is measured in units per second and will be approximated based on the cycle time in TrackingActuator
-DEFAULT_TARGET_SPEED = 100
 
 
 class AvatarTrackingActuator(Actuator):
-    def __init__(self, *args, **kwargs):
+    """Actuator class that should be added to the Avatar when the tracking task is enabled. It allows the user to control the "target" in this task."""
+
+    def __init__(
+        self, target_speed: float = 5.0, *args: list[Any], **kwargs: dict[str, Any]
+    ):
+        """Constructor.
+
+        Args:
+            target_speed (float): the speed of the target (svg units per second).
+            args (list[Any], optional): additional optional arguments.
+            kwargs (dict[Any], optional): additional optional keyword arguments.
+        """
         super().__init__(*args, **kwargs)
         self._keys_pressed = set()
         self._prev_time = time.time()
+        self._target_speed = target_speed
 
-    def __attempt__(self):
+    def __attempt__(self) -> list["TargetMoveAction"]:
+        """Attempt method that will attempt a :class:`TargetMoveAction` to move the target according to the users input (if it has been provided since the last call to this method).
+
+        Returns:
+            list[TargetMoveAction]: the action
+        """
         current_time = time.time()
         # this will contain the user action (KeyEvent)
         actions = []
         if len(self._keys_pressed) > 0:
             # compute speed based on time that has passed
             dt = current_time - self._prev_time
-            speed = DEFAULT_TARGET_SPEED * dt
+            speed = self._target_speed * dt
             # this will be normalised when the action is executed
             result = [0, 0]
             # compute the movement action based on the currently pressed keys
@@ -49,7 +73,15 @@ class AvatarTrackingActuator(Actuator):
         return actions
 
     @attempt
-    def attempt_key_event(self, user_action: KeyEvent):
+    def attempt_key_event(self, user_action: KeyEvent) -> list:
+        """Attempt method that takes a :class:`KeyEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.
+
+        Args:
+            user_action (KeyEvent): the users keyboard action
+
+        Returns:
+            list: an empty list (no action is taken by this attempt method, see :method:`AvatarTrackingActuator.__attempt__`.
+        """
         if user_action.key.lower() in DEFAULT_KEY_BINDING:
             if user_action.status == KeyEvent.UP:
                 self._keys_pressed.remove(user_action.key)
@@ -65,29 +97,45 @@ class AvatarTrackingActuator(Actuator):
 
 
 class TrackingActuator(Actuator):
+    """Actuator class that will be part of a `ScheduledAgent` or any other agent that controls the evolution of the tracking task."""
+
     @attempt
-    def move_target(self, direction: tuple[float, float] | int | float, speed: float):
-        """Move the target in a given direction at a given speed."""
+    def move_target(
+        self, direction: tuple[float, float] | int | float, speed: float
+    ) -> "TargetMoveAction":
+        """Move the tracking target in a given direction at a given speed.
+
+        Args:
+            direction (tuple[float, float] | int | float): direction to move.
+            speed (float): speed to move (svg units per call to this function) # TODO perhaps this should be per second!
+
+        Returns:
+            TargetMoveAction: the action to move the tracking target.
+        """
         # an angle was provided (in degrees), convert it to a direction vector
-        if isinstance(direction, (int, float)):
+        if isinstance(direction, int | float):
             angle = math.radians(direction)
             direction = (math.sin(angle), math.cos(angle))
         return TargetMoveAction(direction=direction, speed=speed)
 
     @attempt
     def perturb_target(self, speed: float):
-        """Perturb the target in a random direction at a given speed."""
+        """Move the tracking target in a random direction at a given speed.
+
+        Args:
+            speed (float): speed to move (svg units per call to this function) # TODO perhaps this should be per second!
+
+        Returns:
+            TargetMoveAction: the action to move the tracking target.
+        """
         angle = (random.random() * 2 - 1) * math.pi
         direction = (math.sin(angle), math.cos(angle))
         return TargetMoveAction(direction=direction, speed=speed)
 
 
-# TODO ??
-class TrackingModeAction(XMLUpdateQuery):
-    manual: bool
-
-
 class TargetMoveAction(XMLUpdateQuery):
+    """Action class that will update the tracking target position."""
+
     direction: tuple[float, float]
     speed: float
 
@@ -110,10 +158,10 @@ class TargetMoveAction(XMLUpdateQuery):
     def _validate_speed(cls, value):
         return float(value)
 
-    def __execute__(self, state: XMLState):
+    def __execute__(self, state: XMLState):  # noqa
         if self.direction == (0.0, 0.0):
             LOGGER.warning(
-                f"Attempted {TargetMoveAction.__name__} with direction (0,0)", 
+                f"Attempted {TargetMoveAction.__name__} with direction (0,0)",
             )
             return
         dx = self.direction[0] * self.speed
@@ -137,6 +185,3 @@ class TargetMoveAction(XMLUpdateQuery):
                 attrs=dict(x=new_x, y=new_y),
             )
         )
-    
-   
-

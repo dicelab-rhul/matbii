@@ -1,3 +1,5 @@
+"""Script that will attempt to reconstruct a matbii experiment run from the event log file."""
+
 from datetime import datetime
 import asyncio
 from star_ray_xml import XMLState, XMLQuery, Update, Insert, Delete, Replace
@@ -71,12 +73,14 @@ CLASS_MAP = {
 }
 
 
-def parse_timestamp_to_ms(timestamp_str):
+def parse_timestamp_to_ms(timestamp_str: str) -> float:  # noqa
+    """Parse a str timestamp to get milliseconds."""
     timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d-%H-%M-%S-%f")
     return timestamp.timestamp()
 
 
 def parse_line(line, whitelist_classes=None):
+    """Parse a line of the event log file - {TIMESTAMP} {EVENT}."""
     parts = line.split(" ", 2)
     if len(parts) != 3:
         raise ValueError(f"Malformed line: {line}")
@@ -92,6 +96,7 @@ def parse_line(line, whitelist_classes=None):
 
 
 def parse_events(file_path, whitelist=None):
+    """Parse all events in a event log file."""
     with open(file_path) as file:
         for line in file.readlines():
             result = parse_line(line, whitelist_classes=whitelist)
@@ -100,6 +105,7 @@ def parse_events(file_path, whitelist=None):
 
 
 async def async_parse_events(file_path):
+    """Parse all events in an event log file and yield them at the time they were logged (reconstructing the running of an experiment). NOTE: this wont be completely accurate because the timestamps are not perfectly recorded. TODO discuss the limitations of this."""
     gen = iter(list(parse_events(file_path)))
 
     t0, event = next(gen)
@@ -110,6 +116,7 @@ async def async_parse_events(file_path):
 
 
 async def main(file_path):
+    """Entry point."""
     # TODO load the config file that was used - is this logged anywhere?
     WIDTH, HEIGHT = 1000, 800
     NAMESPACES = {"svg": "http://www.w3.org/2000/svg"}

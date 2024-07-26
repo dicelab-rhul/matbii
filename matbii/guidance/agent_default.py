@@ -1,11 +1,13 @@
+"""Module contains a default implementation for a guidance agent, see :class:`DefaultGuidanceAgent` documentation for details."""
+
 import time
 import random
-
+from typing import Any, Literal
 from star_ray.agent import Actuator, Sensor, observe
-from icua.event import USER_INPUT_TYPES, MouseMotionEvent, EyeMotionEvent
+from icua.event import MouseMotionEvent, EyeMotionEvent
 from icua.agent import (
     GuidanceActuator,
-    ArrowGuidanceActuator, 
+    ArrowGuidanceActuator,
     BoxGuidanceActuator,
     TaskAcceptabilitySensor,
 )
@@ -13,11 +15,20 @@ from icua.utils import LOGGER
 from star_ray.environment import State  # type hint
 from .agent_base import GuidanceAgent
 
-__all__ = ("DefaultGuidanceAgent", "DefaultGuidanceActuator", "ArrowGuidanceActuator", 
-    "BoxGuidanceActuator")
+__all__ = (
+    "DefaultGuidanceAgent",
+    "ArrowGuidanceActuator",
+    "BoxGuidanceActuator",
+)
 
 
 class DefaultGuidanceAgent(GuidanceAgent):
+    """Default implementation of a guidance agent for the matbii system.
+
+    TODO.
+
+    """
+
     # used to break ties when multiple tasks could be highlighted. See `break_guidance_tie` method below.
     BREAK_TIES = ("random", "longest", "since")
 
@@ -25,25 +36,25 @@ class DefaultGuidanceAgent(GuidanceAgent):
         self,
         sensors: list[Sensor],
         actuators: list[Actuator],
-        break_ties: str = "random",
+        break_ties: Literal["random", "longest", "since"] = "random",
         grace_period: float = 3.0,
         counter_factual: bool = False,
-        **kwargs,
+        **kwargs: dict[str, Any],
     ):
-        super().__init__(
-            sensors,
-            actuators, 
-            **kwargs
-        )
+        """Constructor.
+
+        Args:
+            sensors (list[Sensor]): list of sensors, this will typically be a list of `icua.agent.TaskAcceptabilitySensor`s. A `UserInputSensor` will always be added automatically.
+            actuators (list[Actuator]): list of actuators, this will typically contain actuators that are capable of providing visual feedback to a user, see e.g. :class:`icua.agent.GuidanceActuator` and its concrete implementations.
+            break_ties (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest.
+            grace_period (float, optional): the time to wait (seconds) before guidance may be shown for a task after the last time guidance was shown on the task. Defaults to 3.0.
+            counter_factual (bool, optional): whether guidance should be shown to the user, or whether it should just be logged.  This allows counter-factual experiments to be run, we can track when guidance would have been shown, and compare the when it was actually shown (in a different run). Defaults to False.
+            kwargs (dict[str,Any]): Additional optional keyword arguments.
+        """
+        super().__init__(sensors, actuators, **kwargs)
 
         # this agent is tracking the following tasks (based on the provided sensors)
-        self._tracking_tasks = [
-            s.task_name
-            for s in filter(
-                lambda x: isinstance(x, TaskAcceptabilitySensor), self.sensors
-            )
-        ]
-
+        self._tracking_tasks = [s.task_name for s in self.task_acceptability_sensors]
         # time since tasks went into an unacceptable state
         self._task_unacceptable_start: dict[str, float] = None
         # time since tasks become inactive
@@ -67,9 +78,9 @@ class DefaultGuidanceAgent(GuidanceAgent):
                 f"Invalid argument: `grace_period` {self._grace_period} must be > 0 "
             )
         # whether to actually display guidance, or just trigger a guidance event
-        self._counter_factual = counter_factual
+        self._counter_factual = counter_factual  # TODO
 
-    def __initialise__(self, state: State):
+    def __initialise__(self, state: State):  # noqa
         super().__initialise__(state)
         # initialise task unacceptability and inactivity
         start_time = time.time()  # not accurate but good enough
@@ -105,7 +116,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         # update the last time guidance was shown for the given task (for the grace period check)
         self._guidance_last[task] = time.time()
 
-    def __cycle__(self):
+    def __cycle__(self):  # noqa
         super().__cycle__()
         gaze_elements, gaze = self.mouse_at_elements, self.mouse_position
         gaze_elements, gaze = self.gaze_at_elements, self.gaze_position
@@ -159,7 +170,18 @@ class DefaultGuidanceAgent(GuidanceAgent):
             else:
                 pass  # no task is in failure, no guidance should be shown.
 
-    def break_guidance_tie(self, tasks, method="random"):
+    def break_guidance_tie(
+        self, tasks: list[str], method: Literal["random", "longest", "since"] = "random"
+    ) -> str:
+        """Break a tie on tasks that all met the criteria for displaying guiance.
+
+        Args:
+            tasks (list[str]): tasks to break the tie, one of which will be returned.
+            method (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest.
+
+        Returns:
+            str: the chosen task.
+        """
         assert len(tasks) > 0
         if method == "random":
             # randomly break the tie
@@ -180,41 +202,51 @@ class DefaultGuidanceAgent(GuidanceAgent):
                 f"Unknown guidance tie break method: {self._break_ties}, must be one of {DefaultGuidanceAgent.BREAK_TIES}"
             )
 
-    def on_acceptable(self, task: str):
-        self._log(task, "acceptable", True)
+    def on_acceptable(self, task: str):  # noqa
+        self._log_acceptebility(task, "acceptable", True)
 
-    def on_active(self, task: str):
-        self._log(task, "active", True)
+    def on_active(self, task: str):  # noqa
+        self._log_acceptebility(task, "active", True)
 
-    def on_unacceptable(self, task: str):
+    def on_unacceptable(self, task: str):  # noqa
         # NOTE: this time is not the exact time that the task went into failure.
         # for this we would need to track the exact events that caused the failure, this is easier said than done...
         self._task_unacceptable_start[task] = time.time()
-        self._log(task, "acceptable", False)
+        self._log_acceptebility(task, "acceptable", False)
 
-    def on_inactive(self, task: str):
-        self._log(task, "active", False)
+    def on_inactive(self, task: str):  # noqa
+        self._log_acceptebility(task, "active", False)
         self._task_inactive_start[task] = time.time()
 
     @observe([EyeMotionEvent, MouseMotionEvent])
     def _on_motion_event(self, event: MouseMotionEvent | EyeMotionEvent):
         """It may be useful to the actuators to get these events."""
-        # TODO we may need to guard against actuators executing these actions...
-        self.attempt(event)
+        # TODO we may need to guard against actuators executing these actions...?
+        self.attempt(event)  # manually attempt the event
+
+    @property
+    def task_acceptability_sensors(self) -> list[TaskAcceptabilitySensor]:
+        """Getter for task acceptability sensors (sensors that derive the type: :class:`icua.agent.TaskAcceptabilitySensor`).
+
+        Returns:
+            list[TaskAcceptabilitySensor]: the sensors.
+        """
+        return list(self.get_sensors(oftype=TaskAcceptabilitySensor))
 
     @property
     def guidance_actuators(self) -> list[GuidanceActuator]:
-        """The guidance actuator used by this agent."""
-        candidates = list(
-            filter(lambda x: isinstance(x, GuidanceActuator), self.actuators)
-        )
+        """Getter for guidance actuators (actuators that derive the type: :class:`icua.agent.GuidanceActuator`).
+
+        Returns:
+            list[GuidanceActuator]: the GuidanceActuator.
+        """
+        candidates = list(self.get_actuators(oftype=GuidanceActuator))
         if len(candidates) == 0:
             raise ValueError(
                 f"Missing required actuator of type: `{GuidanceActuator.__qualname__}`"
             )
         return candidates
-       
 
-    def _log(self, task, z, ok):
+    def _log_acceptebility(self, task, z, ok):
         info = "task %20s %20s %s" % (z, task, ["✘", "✔"][int(ok)])
         LOGGER.info(info)

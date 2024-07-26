@@ -1,0 +1,41 @@
+{
+    "experiment": {
+        "id": "experiment-C",
+        "path": "./experiment-C/",
+        "duration": -1,
+        "enable_video_recording": false,
+        "enable_guidance": true,
+        "enable_tasks": [
+            "system_monitoring",
+            "resource_management",
+            "tracking"
+        ]
+    },
+    "window": {
+        "x": 0,
+        "y": 0,
+        "width": 640,
+        "height": 480,
+        "title": "Experiment-C",
+        "resizable": false,
+        "fullscreen": false,
+        "background_color": "#ffffff"
+    },
+    "eyetracking": {
+        "enabled": false
+    },
+    "logging": {
+        "level": "debug",
+        "path": "./logs/"
+    },
+    "ui": {
+        "size": [
+            800,
+            600
+        ],
+        "offset": [
+            0,
+            0
+        ]
+    }
+}

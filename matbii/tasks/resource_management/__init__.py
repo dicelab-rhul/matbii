@@ -1,10 +1,13 @@
-from cerberus import rules_set_registry
+"""Package that defines the matbii resource management task."""
+
+from cerberus import rules_set_registry as _rsr
 from .resource_management import (
     ResourceManagementActuator,
     AvatarResourceManagementActuator,
     SetPumpAction,
     BurnFuelAction,
     PumpFuelAction,
+    TogglePumpAction,
     TogglePumpFailureAction,
 )
 
@@ -12,12 +15,14 @@ __all__ = (
     "ResourceManagementActuator",
     "AvatarResourceManagementActuator",
     "SetPumpAction",
+    "TogglePumpAction",
     "BurnFuelAction",
     "PumpFuelAction",
     "TogglePumpFailureAction",
 )
 
-rules_set_registry.add(
+# define type for pump state in configuration files, the values an be "on", "off", "failure", see SetPumpAction.coerce_pump_state
+_rsr.add(
     "pump_state",
     {
         "type": "integer",

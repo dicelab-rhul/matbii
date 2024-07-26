@@ -1,10 +1,12 @@
+"""Package that defines the matbii system monitoring task."""
+
 from .system_monitoring import (
     SystemMonitoringActuator,
     AvatarSystemMonitoringActuator,
     SetSliderAction,
     SetLightAction,
     ToggleLightAction,
-    ToggleSliderAction,
+    PerturbSliderAction,
     ResetSliderAction,
 )
 
@@ -15,6 +17,6 @@ __all__ = (
     "SetLightAction",
     "ToggleLightAction",
     "SetSliderAction",
-    "ToggleSliderAction",
+    "PerturbSliderAction",
     "ResetSliderAction",
 )
