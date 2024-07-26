@@ -1,9 +1,9 @@
 
 Below is a table outlining all configuration options for the tracking task. 
 
-The `cerberus` schema file can be found here.
+The `cerberus` schema file can be found [here](https://github.com/dicelab-rhul/matbii/blob/main/matbii/tasks/tracking/tracking.schema.json).
 
-The `svg` file used to render the task can be found here.
+The `svg` file used to render the task can be found [here](https://github.com/dicelab-rhul/matbii/blob/main/matbii/tasks/tracking/tracking.svg.jinja).
 
 | Field Name        | Type    | Default   | Description |
 |-------------------|---------|-----------|-------------|
