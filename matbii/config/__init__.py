@@ -130,7 +130,7 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
         default="tobii",
         description="The eyetracking SDK to use, current options are: ['tobii'].",
     )
-    enabled: bool = Field(default=True, description="Whether eyetracking is enabled.")
+    enabled: bool = Field(default=False, description="Whether eyetracking is enabled.")
     moving_average_n: int = Field(
         default=5,
         description="The window size to used to smooth eyetracking coordinates.",
@@ -187,8 +187,8 @@ class LoggingConfiguration(BaseModel, validate_assignment=True):
     """Logging Configuration."""
 
     level: str = Field(
-        default="info",
-        description="The logging level to use: ['debug', 'info', 'warning', 'error'], this will not affect event logging.",
+        default="INFO",
+        description="The logging level to use: ['DEBUG', 'INFO', 'WARNING', 'ERROR'], this will not affect event logging.",
     )
     path: str = Field(
         default="./logs/",

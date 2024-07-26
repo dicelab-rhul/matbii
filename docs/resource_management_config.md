@@ -1,6 +1,8 @@
 
 Below is a table outlining all configuration options for the resource management task. 
+
 The `cerberus` schema file can be found here.
+
 The `svg` file used to render the task can be found here.
 
 | Field Name         | Type    | Default   | Description |
@@ -15,9 +17,9 @@ The `svg` file used to render the task can be found here.
 | pump_failure_color | color   | "#ff0000" | color of pumps when in the "failure" state |
 | stroke_color       | color   | "#000000" | line colour           |
 | stroke_width       | integer | 2         | line width            |
-| background_color   | color   | "#ffffff" | background color      |
-| debug              | boolean | false     | whether to display debug information               |
 | show_tank_labels   | boolean | true      | whether to show textual labels next to each tank   |
+| background_color   | color   | "#ffffff" | background color of the tanks     |
+| debug              | boolean | false     | whether to display debug information               |
 | tank_capacity      | dict    |           | See details below:  |
 | tank_capacity.a    | integer | 2000      | capacity for tank a |
 | tank_capacity.b    | integer | 2000      | capacity for tank b |
