@@ -1,4 +1,4 @@
-"""Module contains a guidance sensor for tracking the "resource management" task acceptability, see :class:`ResourceManagementTaskAcceptabilitySensor` documentation for details."""
+"""Module contains a guidance sensor for tracking the "resource management" task acceptability, see `ResourceManagementTaskAcceptabilitySensor` documentation for details."""
 
 from typing import Any
 from functools import partial
@@ -16,9 +16,9 @@ class ResourceManagementTaskAcceptabilitySensor(TaskAcceptabilitySensor):
     - "system_monitoring.tank-a"
     - "system_monitoring.tank-b"
 
-    The acceptability of these sub-tasks can be checked by calling the method: :method:`ResourceManagementTaskAcceptabilitySensor.is_tank_acceptable`.
+    The acceptability of these sub-tasks can be checked by calling the method: `ResourceManagementTaskAcceptabilitySensor.is_tank_acceptable`.
 
-    Otherwise follow the :class:`TaskAcceptabilitySensor` API.
+    Otherwise follow the `TaskAcceptabilitySensor` API.
     """
 
     def __init__(self, *args: list[Any], **kwargs: dict[str, Any]):

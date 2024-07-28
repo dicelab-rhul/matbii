@@ -1,4 +1,4 @@
-"""Module contains a default implementation for a guidance agent, see :class:`DefaultGuidanceAgent` documentation for details."""
+"""Module contains a default implementation for a guidance agent, see `DefaultGuidanceAgent` documentation for details."""
 
 import time
 import random
@@ -45,7 +45,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
         Args:
             sensors (list[Sensor]): list of sensors, this will typically be a list of `icua.agent.TaskAcceptabilitySensor`s. A `UserInputSensor` will always be added automatically.
-            actuators (list[Actuator]): list of actuators, this will typically contain actuators that are capable of providing visual feedback to a user, see e.g. :class:`icua.agent.GuidanceActuator` and its concrete implementations.
+            actuators (list[Actuator]): list of actuators, this will typically contain actuators that are capable of providing visual feedback to a user, see e.g. `icua.agent.GuidanceActuator` and its concrete implementations.
             break_ties (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest.
             grace_period (float, optional): the time to wait (seconds) before guidance may be shown for a task after the last time guidance was shown on the task. Defaults to 3.0.
             counter_factual (bool, optional): whether guidance should be shown to the user, or whether it should just be logged.  This allows counter-factual experiments to be run, we can track when guidance would have been shown, and compare the when it was actually shown (in a different run). Defaults to False.
@@ -226,7 +226,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
     @property
     def task_acceptability_sensors(self) -> list[TaskAcceptabilitySensor]:
-        """Getter for task acceptability sensors (sensors that derive the type: :class:`icua.agent.TaskAcceptabilitySensor`).
+        """Getter for task acceptability sensors (sensors that derive the type: `icua.agent.TaskAcceptabilitySensor`).
 
         Returns:
             list[TaskAcceptabilitySensor]: the sensors.
@@ -235,7 +235,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
     @property
     def guidance_actuators(self) -> list[GuidanceActuator]:
-        """Getter for guidance actuators (actuators that derive the type: :class:`icua.agent.GuidanceActuator`).
+        """Getter for guidance actuators (actuators that derive the type: `icua.agent.GuidanceActuator`).
 
         Returns:
             list[GuidanceActuator]: the GuidanceActuator.

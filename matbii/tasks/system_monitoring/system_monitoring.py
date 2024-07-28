@@ -1,9 +1,9 @@
 """Module that implements the "system monitoring" task.
 
 This files contains:
-    - avatar actuator: :class:`AvatarSystemMonitoringActuator`
-    - agent actuator: :class:`SystemMonitoringActuator`
-    - actions: [:class:`TargetMoveAction`, :class:`PerturbSliderAction`, :class:`ResetSliderAction`, :class:`SetSliderAction`, :class:`SetLightAction`, :class:`ToggleLightAction`]
+    - avatar actuator: `AvatarSystemMonitoringActuator`
+    - agent actuator: `SystemMonitoringActuator`
+    - actions: [`TargetMoveAction`, `PerturbSliderAction`, `ResetSliderAction`, `SetSliderAction`, `SetLightAction`, `ToggleLightAction`]
 """
 
 import random
@@ -61,13 +61,13 @@ class AvatarSystemMonitoringActuator(Actuator):
     def attempt_mouse_event(
         self, user_action: MouseButtonEvent
     ) -> list[Union["SetLightAction", "SetSliderAction"]]:
-        """Attempt method that takes a :class:`MouseButtonEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.
+        """Attempt method that takes a `MouseButtonEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.
 
-        This will attempt either a :class:`SetLightAction` or a :class:`SetSliderAction` depending on what svg element was clicked (assuming the mouse event registers as a click).
+        This will attempt either a `SetLightAction` or a `SetSliderAction` depending on what svg element was clicked (assuming the mouse event registers as a click).
 
         Effects:
-        - :class:`SetLightAction`: will always set the light to its preferred (acceptable) state.
-        - :class:`SetSliderAction` will reset the slider to its preferred (acceptable) state (which is the central position), see :function:`ResetSliderAction`.
+        - `SetLightAction`: will always set the light to its preferred (acceptable) state.
+        - `SetSliderAction` will reset the slider to its preferred (acceptable) state (which is the central position), see `ResetSliderAction`.
 
         Args:
             user_action (MouseButtonEvent): the users mouse button action.

@@ -1,9 +1,9 @@
 """Module that implements the "tracking" task.
 
 This files contains:
-    - avatar actuator: :class:`AvatarTrackingActuator`
-    - agent actuator: :class:`TrackingActuator`
-    - actions: [:class:`TargetMoveAction`]
+    - avatar actuator: `AvatarTrackingActuator`
+    - agent actuator: `TrackingActuator`
+    - actions: [`TargetMoveAction`]
 """
 
 import math
@@ -48,7 +48,7 @@ class AvatarTrackingActuator(Actuator):
         self._target_speed = target_speed
 
     def __attempt__(self) -> list["TargetMoveAction"]:
-        """Attempt method that will attempt a :class:`TargetMoveAction` to move the target according to the users input (if it has been provided since the last call to this method).
+        """Attempt method that will attempt a `TargetMoveAction` to move the target according to the users input (if it has been provided since the last call to this method).
 
         Returns:
             list[TargetMoveAction]: the action
@@ -74,13 +74,13 @@ class AvatarTrackingActuator(Actuator):
 
     @attempt
     def attempt_key_event(self, user_action: KeyEvent) -> list:
-        """Attempt method that takes a :class:`KeyEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.
+        """Attempt method that takes a `KeyEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.
 
         Args:
             user_action (KeyEvent): the users keyboard action
 
         Returns:
-            list: an empty list (no action is taken by this attempt method, see :method:`AvatarTrackingActuator.__attempt__`.
+            list: an empty list (no action is taken by this attempt method, see `AvatarTrackingActuator.__attempt__`.
         """
         if user_action.key.lower() in DEFAULT_KEY_BINDING:
             if user_action.status == KeyEvent.UP:

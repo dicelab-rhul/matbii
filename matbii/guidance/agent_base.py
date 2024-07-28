@@ -1,4 +1,4 @@
-"""Module containing the base class for matbii guidance agents, see :class:`GuidanceAgent` documentation for details."""
+"""Module containing the base class for matbii guidance agents, see `GuidanceAgent` documentation for details."""
 
 from typing import Any
 from icua.event import EyeMotionEvent, MouseMotionEvent

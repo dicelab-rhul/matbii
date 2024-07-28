@@ -11,7 +11,16 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=6.2.4"]
+dev = [
+  "pytest>=6.2.4", 
+  "mkdocs",
+  "mkdocstrings", 
+  "mkdocs-autorefs", 
+  "mkdocs-gen-files", 
+  "mkdocs-literate-nav",
+  "mkdocs-section-index",
+  "mike" # versioned documentation
+]
 
 [project.urls]
 Repository = "https://github.com/dicelab-rhul/matbii"

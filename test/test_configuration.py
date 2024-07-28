@@ -1,4 +1,4 @@
-"""Tests for the class: :class:`matbii.config.Configuration`."""
+"""Tests for the class: `matbii.config.Configuration`."""
 
 from matbii.config import Configuration
 from matbii.utils import get_class_from_fqn

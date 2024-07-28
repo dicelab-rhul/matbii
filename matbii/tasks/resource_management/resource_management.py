@@ -1,9 +1,9 @@
-"""Module that implements the "resource management" task.
+"""Module that implements the [resource management task][matbii.tasks.resource_management].
 
 This files contains:
-    - avatar actuator: :class:`AvatarResourceManagementActuator`
-    - agent actuator: :class:`ResourceManagementActuator`
-    - actions: [:class:`SetPumpAction`, :class:`TogglePumpAction`, :class:`TogglePumpFailureAction`, :class:`PumpFuelAction`, :class:`BurnFuelAction`]
+    - avatar actuator: `AvatarResourceManagementActuator`
+    - agent actuator: `ResourceManagementActuator`
+    - actions: [`SetPumpAction`, `TogglePumpAction`, `TogglePumpFailureAction`, `PumpFuelAction`, `BurnFuelAction`]
 """
 
 import re
@@ -52,12 +52,12 @@ class AvatarResourceManagementActuator(Actuator):
     def attempt_mouse_event(
         self, user_action: MouseButtonEvent
     ) -> list["TogglePumpAction"]:
-        """Attempt method that takes a :class:`MouseButtonEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.
+        """Attempt method that takes a `MouseButtonEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.
 
-        This will attempt a :class:`TogglePumpAction` depending on what svg element was clicked (assuming the mouse event registers as a click).
+        This will attempt a `TogglePumpAction` depending on what svg element was clicked (assuming the mouse event registers as a click).
 
         Effects:
-        - :class:`TogglePumpAction`: toggle the pump on->off or off->on.
+        - `TogglePumpAction`: toggle the pump on->off or off->on.
 
         Args:
             user_action (MouseButtonEvent): the users mouse button action.
@@ -289,7 +289,7 @@ class TogglePumpAction(PumpAction):
     def new(
         target: int | Literal["ab", "ba", "ca", "ec", "ea", "db", "fd", "fb"],
     ) -> "TogglePumpAction":
-        """Factory function for a :class:`TogglePumpAction`.
+        """Factory function for a `TogglePumpAction`.
 
         Args:
             target (int | Literal["ab", "ba", "ca", "ec", "ea", "db", "fd", "fb"]): target pump
@@ -321,7 +321,7 @@ class TogglePumpFailureAction(PumpAction):
 
     @staticmethod
     def new(target: int) -> "TogglePumpFailureAction":
-        """Factory function for a :class:`TogglePumpFailureAction`.
+        """Factory function for a `TogglePumpFailureAction`.
 
         Args:
             target (int | Literal["ab", "ba", "ca", "ec", "ea", "db", "fd", "fb"]): target pump

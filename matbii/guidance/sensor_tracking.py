@@ -1,4 +1,4 @@
-"""Module contains a guidance sensor for tracking the "tracking" task acceptability, see :class:`TrackingTaskAcceptabilitySensor` documentation for details."""
+"""Module contains a guidance sensor for tracking the "tracking" task acceptability, see `TrackingTaskAcceptabilitySensor` documentation for details."""
 
 from typing import Any
 from star_ray_xml import select, Select

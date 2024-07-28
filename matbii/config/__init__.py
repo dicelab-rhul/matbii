@@ -124,20 +124,20 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
 
     uri: str | None = Field(
         default=None,
-        description="The eyetracker address (example: `'tet-tcp://172.28.195.1'`). For details on setting up eyetracking, consult the [wiki](https://github.com/dicelab-rhul/matbii/wiki/Eyetracking).",
+        description="The eye tracker address (example: `'tet-tcp://172.28.195.1'`). If left unspecified `matbii` will attempt to find an eye tracker. For details on setting up eye tracking, consult the [wiki](https://github.com/dicelab-rhul/matbii/wiki/Eyetracking).",
     )
     sdk: str = Field(
         default="tobii",
-        description="The eyetracking SDK to use, current options are: ['tobii'].",
+        description="The eye tracking SDK to use, current options are: `['tobii']`.",
     )
-    enabled: bool = Field(default=False, description="Whether eyetracking is enabled.")
+    enabled: bool = Field(default=False, description="Whether eye tracking is enabled.")
     moving_average_n: int = Field(
         default=5,
-        description="The window size to used to smooth eyetracking coordinates.",
+        description="The window size to used to smooth eye tracking coordinates.",
     )
     velocity_threshold: float = Field(
         default=0.5,
-        description="The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. IMPORTANT NOTE: different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent).",
+        description="The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. **IMPORTANT NOTE:** different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent).",
     )
 
     @field_validator("sdk", mode="before")
@@ -233,7 +233,7 @@ class Configuration(BaseModel, validate_assignment=True):
     def from_file(
         path: str | Path | None, context: dict[str, Any] | None = None
     ) -> "Configuration":
-        """Factory that will build :class:`Configuration` from a .json file.
+        """Factory that will build `Configuration` from a .json file.
 
         Args:
             path (str | Path | None): path to config file.
@@ -251,46 +251,3 @@ class Configuration(BaseModel, validate_assignment=True):
         else:
             LOGGER.info("No config file was specified, using default configuration.")
             return Configuration()
-
-
-if __name__ == "__main__":
-    from pydantic import BaseModel, Field
-    import typing
-    from typing import get_origin
-    from types import UnionType
-
-    def get_type_name(_type: type):
-        """Get the name of a type (and handle union types/nested types)."""
-        if get_origin(_type) is UnionType:
-            return str(_type)
-        if hasattr(_type, "__args__"):
-            return f"{_type.__name__}[{','.join([get_type_name(t) for t in _type.__args__])}]"
-        return _type.__name__
-
-    def generate_docs(model):
-        """Generate documentation from Configuration classes."""
-        # result = f"### {model.__doc__[:-1]}\n"
-        name = model.__name__.replace("Configuration", "")
-        result = f"### {name} Configuration\n"
-        for field_name, field_model in model.__fields__.items():
-            if not field_model.is_required():
-                default = field_model.get_default()
-                default = f'"{default}"' if isinstance(default, str) else default
-                default = f" Defaults to: `{default}`."
-            else:
-                default = ""
-
-            result += f"- `{field_name} ({get_type_name(field_model.annotation)}{', optional' if field_model.is_required() else ''})`: {field_model.description}{default}\n"
-
-        for m in typing.get_type_hints(model).values():
-            if hasattr(m, "__fields__"):
-                result += "\n"
-                result += generate_docs(m)
-
-        return result
-
-    with open("./config_documentation.md", "w") as f:
-        f.write(generate_docs(Configuration))
-
-    with open("./config_default.json", "w") as f:
-        f.write(Configuration().model_dump_json(indent=1))

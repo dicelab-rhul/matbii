@@ -1,0 +1,41 @@
+site_name: matbii
+site_url: https://dicelab-rhul.github.io/matbii/
+
+nav:
+  - Home: index.md
+  - Reference: reference/  
+
+theme:
+  name: material
+  features:
+    - navigation.expand
+    - navigation.tabs
+    - navigation.indexes 
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+  - gen-files:
+      scripts:
+      - scripts/docs/gen_ref_pages.py
+  - literate-nav
+  - autorefs
+  - section-index
+
+extra:
+  version:
+    provider: mike
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.emoji
+  - pymdownx.highlight
+  - pymdownx.extra
+  - toc:
+      permalink: true
+

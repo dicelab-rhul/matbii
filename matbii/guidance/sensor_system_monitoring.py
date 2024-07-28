@@ -1,4 +1,4 @@
-"""Module contains a guidance sensor for tracking the "system monitoring" task acceptability, see :class:`SystemMonitoringTaskAcceptabilitySensor` documentation for details."""
+"""Module contains a guidance sensor for tracking the "system monitoring" task acceptability, see `SystemMonitoringTaskAcceptabilitySensor` documentation for details."""
 
 from typing import Any
 from functools import partial
@@ -21,9 +21,9 @@ class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):
     - "system_monitoring.slider-3"
     - "system_monitoring.slider-4"
 
-    The acceptability of these sub-tasks can be checked by calling the methods: :method:`SystemMonitoringTaskAcceptabilitySensor.is_light_acceptable`, :method:`SystemMonitoringTaskAcceptabilitySensor.is_slider_acceptable`.
+    The acceptability of these sub-tasks can be checked by calling the methods: `SystemMonitoringTaskAcceptabilitySensor.is_light_acceptable`, `SystemMonitoringTaskAcceptabilitySensor.is_slider_acceptable`.
 
-    Otherwise follow the :class:`TaskAcceptabilitySensor` API.
+    Otherwise follow the `TaskAcceptabilitySensor` API.
     """
 
     def __init__(self, *args: list[Any], **kwargs: dict[str, Any]):
