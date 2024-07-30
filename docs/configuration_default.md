@@ -1,7 +1,7 @@
 {
  "experiment": {
   "id": null,
-  "path": "C:/Users/brjw/Documents/repos/dicelab/matbii/example/experiment-C",
+  "path": "C:/Users/brjw/Documents/repos/dicelab",
   "duration": -1,
   "enable_video_recording": false,
   "enable_tasks": [

@@ -34,11 +34,11 @@
 - `background_color (str)`: None Defaults to: `"#ffffff"`.
 
 ### Eyetracking Configuration
-- `uri (str | None)`: The eyetracker address (example: `'tet-tcp://172.28.195.1'`). For details on setting up eyetracking, consult the [wiki](https://github.com/dicelab-rhul/matbii/wiki/Eyetracking). Defaults to: `None`.
-- `sdk (str)`: The eyetracking SDK to use, current options are: ['tobii']. Defaults to: `"tobii"`.
-- `enabled (bool)`: Whether eyetracking is enabled. Defaults to: `False`.
-- `moving_average_n (int)`: The window size to used to smooth eyetracking coordinates. Defaults to: `5`.
-- `velocity_threshold (float)`: The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. IMPORTANT NOTE: different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent). Defaults to: `0.5`.
+- `uri (str | None)`: The eye tracker address (example: `'tet-tcp://172.28.195.1'`). If left unspecified `matbii` will attempt to find an eye tracker. For details on setting up eye tracking, consult the [wiki](https://github.com/dicelab-rhul/matbii/wiki/Eyetracking). Defaults to: `None`.
+- `sdk (str)`: The eye tracking SDK to use, current options are: `['tobii']`. Defaults to: `"tobii"`.
+- `enabled (bool)`: Whether eye tracking is enabled. Defaults to: `False`.
+- `moving_average_n (int)`: The window size to used to smooth eye tracking coordinates. Defaults to: `5`.
+- `velocity_threshold (float)`: The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. **IMPORTANT NOTE:** different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent). Defaults to: `0.5`.
 
 ### Logging Configuration
 - `level (str)`: The logging level to use: ['DEBUG', 'INFO', 'WARNING', 'ERROR'], this will not affect event logging. Defaults to: `"INFO"`.

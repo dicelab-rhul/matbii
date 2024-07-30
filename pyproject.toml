@@ -19,7 +19,8 @@ dev = [
   "mkdocs-gen-files", 
   "mkdocs-literate-nav",
   "mkdocs-section-index",
-  "mike" # versioned documentation
+  "mike", # versioned documentation
+  "griffe-fieldz" # document pydantic fields
 ]
 
 [project.urls]

@@ -30,7 +30,6 @@ def generate_docs(model):
             default = f" Defaults to: `{default}`."
         else:
             default = ""
-
         result += f"- `{field_name} ({get_type_name(field_model.annotation)}{', optional' if field_model.is_required() else ''})`: {field_model.description}{default}\n"
 
     for m in typing.get_type_hints(model).values():

@@ -3,6 +3,7 @@ site_url: https://dicelab-rhul.github.io/matbii/
 
 nav:
   - Home: index.md
+  - Getting Started: getting_started/
   - Reference: reference/  
 
 theme:
@@ -15,9 +16,12 @@ theme:
 plugins:
   - search
   - mkdocstrings:
+      custom_templates: scripts/docs/templates/
+
       handlers:
         python:
           options:
+            preload_modules: [pydantic]
             docstring_style: google
   - gen-files:
       scripts:

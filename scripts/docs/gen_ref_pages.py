@@ -6,7 +6,8 @@ import mkdocs_gen_files
 nav = mkdocs_gen_files.Nav()
 package = "matbii"
 root = Path(__file__).parent.parent.parent
-assert root.name == package
+assert root.name.endswith(package)
+
 src = root / package
 for path in sorted(src.rglob("*.py")):
     if path.name.startswith("_") and path.name != "__init__.py":
@@ -28,9 +29,6 @@ for path in sorted(src.rglob("*.py")):
             for p in module_path.parent.glob("*")
             if p.is_dir() and not p.name.startswith("_")
         ]
-        # print(module_path)
-        # print(modules)
-        # print(packages)
 
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:
             ident = ".".join(parts)
@@ -59,9 +57,3 @@ for path in sorted(src.rglob("*.py")):
             fd.write(f"::: {ident}")
 
     mkdocs_gen_files.set_edit_path(full_doc_path, path.relative_to(root))
-
-# with mkdocs_gen_files.open("reference/SUMMARY.md", "w") as nav_file:
-#     n = list(nav.build_literate_nav())
-#     nav_file.writelines(n)
-#     for i in n:
-#         print("??")
