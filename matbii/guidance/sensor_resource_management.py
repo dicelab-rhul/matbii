@@ -5,7 +5,7 @@ from functools import partial
 from star_ray_xml import select, Select
 from icua.agent import TaskAcceptabilitySensor
 
-from .._const import TASK_ID_RESOURCE_MANAGEMENT, tank_id, tank_level_id
+from ..utils._const import TASK_ID_RESOURCE_MANAGEMENT, tank_id, tank_level_id
 
 
 class ResourceManagementTaskAcceptabilitySensor(TaskAcceptabilitySensor):

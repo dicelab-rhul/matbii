@@ -17,7 +17,7 @@ from icua.event import KeyEvent, XMLUpdateQuery
 from icua.utils import LOGGER
 from icua.agent import Actuator, attempt
 
-from ..._const import DEFAULT_KEY_BINDING  # TODO support other key bindings?
+from ...utils._const import DEFAULT_KEY_BINDING  # TODO support other key bindings?
 
 __all__ = ("AvatarTrackingActuator", "TrackingActuator", "TargetMoveAction")
 

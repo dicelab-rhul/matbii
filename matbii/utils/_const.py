@@ -1,5 +1,5 @@
-from importlib.resources import files
-import os
+from pathlib import Path
+from icua.utils import LOGGER
 
 # constants defining the task ids
 TASK_ID_TRACKING = "tracking"
@@ -7,14 +7,18 @@ TASK_ID_SYSTEM_MONITORING = "system_monitoring"
 TASK_ID_RESOURCE_MANAGEMENT = "resource_management"
 
 # path of the tasks (in this package)
-_TASK_PATH = files(__package__) / "tasks"
+PACKAGE_PATH = Path(__file__).resolve().parent.parent  # root of the package
+LOGGER.debug(f"`matbii` package path: {PACKAGE_PATH.as_posix()}")
+TASKS_PATH = PACKAGE_PATH / "tasks"
 
 # tasks ids, add to this when/if more tasks are implemented
 TASKS = [TASK_ID_TRACKING, TASK_ID_SYSTEM_MONITORING, TASK_ID_RESOURCE_MANAGEMENT]
 # paths of each task (within this package), ensure that the task id matches the folder name in `matbii.tasks`
-TASK_PATHS = {t: str(_TASK_PATH / t) for t in TASKS}
+TASK_PATHS = {t: (TASKS_PATH / t).as_posix() for t in TASKS}
 for task, path in TASK_PATHS.items():
-    assert os.path.exists(str(path))
+    LOGGER.debug(f"Checking {task} path: {path}")
+    if not Path(path).exists():
+        raise FileNotFoundError(f"Failed to find task: {task} at path: {path}")
 
 # enable these tasks by default
 DEFAULT_ENABLED_TASKS = [

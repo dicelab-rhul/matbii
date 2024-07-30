@@ -6,7 +6,12 @@ from star_ray_xml import select, Select
 from icua.agent import TaskAcceptabilitySensor
 
 from ..tasks.system_monitoring import SetLightAction
-from .._const import TASK_ID_SYSTEM_MONITORING, slider_id, slider_incs_id, light_id
+from ..utils._const import (
+    TASK_ID_SYSTEM_MONITORING,
+    slider_id,
+    slider_incs_id,
+    light_id,
+)
 
 
 class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):

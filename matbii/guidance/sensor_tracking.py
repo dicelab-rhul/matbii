@@ -4,7 +4,7 @@ from typing import Any
 from star_ray_xml import select, Select
 from icua.agent import TaskAcceptabilitySensor
 
-from .._const import TASK_ID_TRACKING, tracking_box_id, tracking_target_id
+from ..utils._const import TASK_ID_TRACKING, tracking_box_id, tracking_target_id
 
 
 class TrackingTaskAcceptabilitySensor(TaskAcceptabilitySensor):

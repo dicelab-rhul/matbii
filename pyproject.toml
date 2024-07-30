@@ -7,7 +7,7 @@ license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "icua[tobii]>=2.0.4",
+    "icua[tobii]>=2.0.5",
 ]
 
 [project.optional-dependencies]
@@ -29,6 +29,9 @@ Repository = "https://github.com/dicelab-rhul/matbii"
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["matbii*"]
 
 [tool.setuptools.package-data]
 "matbii.tasks" = ["**/*.sch", "**/*.schema.json", "**/*.svg.jinja"]
