@@ -7,7 +7,7 @@ license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "icua[tobii]>=2.0.5",
+    "icua[tobii]>=2.0.6",
 ]
 
 [project.optional-dependencies]
@@ -16,11 +16,11 @@ dev = [
   "mkdocs",
   "mkdocstrings", 
   "mkdocs-autorefs", 
-  "mkdocs-gen-files", 
-  "mkdocs-literate-nav",
+  "mkdocs-gen-files",    # for generating API reference 
+  "mkdocs-literate-nav", # for generating API reference (optional)
   "mkdocs-section-index",
+  "mkdocs-macros-plugin", # various macros for markdown (jinja2 based) 
   "mike", # versioned documentation
-  "griffe-fieldz" # document pydantic fields
 ]
 
 [project.urls]

@@ -53,7 +53,7 @@ class ResourceManagementTaskAcceptabilitySensor(TaskAcceptabilitySensor):
             else:
                 return is_acceptable()
 
-    def is_tank_acceptable(self, _id: str):
+    def is_tank_acceptable(self, _id: str) -> bool:
         """Whether the given tank is in an acceptable state.
 
         Acceptable: the fuel level lies in the required range.

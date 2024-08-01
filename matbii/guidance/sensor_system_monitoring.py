@@ -19,16 +19,19 @@ class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):
 
     This sensor tracks a number of sub-tasks:
 
-    - "system_monitoring.light-1"
-    - "system_monitoring.light-2"
-    - "system_monitoring.slider-1"
-    - "system_monitoring.slider-2"
-    - "system_monitoring.slider-3"
-    - "system_monitoring.slider-4"
+    - `"system_monitoring.light-1"`
+    - `"system_monitoring.light-2"`
+    - `"system_monitoring.slider-1"`
+    - `"system_monitoring.slider-2"`
+    - `"system_monitoring.slider-3"`
+    - `"system_monitoring.slider-4"`
 
-    The acceptability of these sub-tasks can be checked by calling the methods: `SystemMonitoringTaskAcceptabilitySensor.is_light_acceptable`, `SystemMonitoringTaskAcceptabilitySensor.is_slider_acceptable`.
+    The acceptability of these sub-tasks can be checked by calling the methods:
 
-    Otherwise follow the `TaskAcceptabilitySensor` API.
+    - `SystemMonitoringTaskAcceptabilitySensor.is_light_acceptable`
+    - `SystemMonitoringTaskAcceptabilitySensor.is_slider_acceptable`
+
+    Otherwise follow the `icua.agent.TaskAcceptabilitySensor` API.
     """
 
     def __init__(self, *args: list[Any], **kwargs: dict[str, Any]):
@@ -92,7 +95,7 @@ class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):
         acceptable_state = self.beliefs[slider_incs_id(_id)]["incs"] // 2 + 1
         return state == acceptable_state
 
-    def is_light_acceptable(self, _id: int):
+    def is_light_acceptable(self, _id: int) -> bool:
         """Whether the given light is in an acceptable state.
 
         Acceptable: light-1 is on, light-2 is off.

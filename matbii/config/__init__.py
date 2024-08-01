@@ -9,7 +9,7 @@ from ..utils import LOGGER
 
 
 class GuidanceConfiguration(BaseModel, validate_assignment=True):
-    """Guidance Configuration."""
+    """Configuration relating to guidance that may be provided to a user."""
 
     enable: bool = Field(
         default=True,
@@ -69,12 +69,13 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
 
 
 class ExperimentConfiguration(BaseModel, validate_assignment=True):
-    """Experiment Configuration."""
+    """Configuration relating to the experiment to be run."""
 
     id: str = Field(default=None, description="The unique ID of this experiment.")
     path: str = Field(
-        default_factory=lambda: Path("./").resolve().as_posix(),
-        description="The full path to the directory containing task configuration files, details on configuring tasks consult the [wiki](https://github.com/dicelab-rhul/matbii/wiki/Task-Configuration). If this is a relative path it is relative to the current working directory.",
+        # default_factory=lambda: Path("./").resolve().as_posix(),
+        default="./",
+        description="The full path to the directory containing task configuration files. If this is a relative path it is relative to the current working directory.",
     )
     duration: int = Field(
         default=-1,
@@ -93,19 +94,19 @@ class ExperimentConfiguration(BaseModel, validate_assignment=True):
         description="Any additional meta data you wish to associate with this experiment.",
     )
 
-    @field_validator("path", mode="before")
-    @classmethod
-    def _validate_path(cls, value: str):
-        experiment_path = Path(value).expanduser().resolve()
-        if not experiment_path.exists():
-            raise ValueError(
-                f"Experiment path: {experiment_path.as_posix()} does not exist."
-            )
-        return experiment_path.as_posix()
+    # @field_validator("path", mode="before")
+    # @classmethod
+    # def _validate_path(cls, value: str):
+    #     experiment_path = Path(value).expanduser().resolve()
+    #     if not experiment_path.exists():
+    #         raise ValueError(
+    #             f"Experiment path: {experiment_path.as_posix()} does not exist."
+    #         )
+    #     return experiment_path.as_posix()
 
 
 class ParticipantConfiguration(BaseModel, validate_assignment=True):
-    """Participant Configuration."""
+    """Configuration relating to the participant (or user)."""
 
     id: str = Field(
         default=None,
@@ -118,7 +119,7 @@ class ParticipantConfiguration(BaseModel, validate_assignment=True):
 
 
 class EyetrackingConfiguration(BaseModel, validate_assignment=True):
-    """Eyetracking Configuration."""
+    """Configuration relating to eyetracking."""
 
     SUPPORTED_SDKS: ClassVar[tuple[str]] = ("tobii",)
 
@@ -184,7 +185,7 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
 
 
 class LoggingConfiguration(BaseModel, validate_assignment=True):
-    """Logging Configuration."""
+    """Configuration relating to logging (including event logging)."""
 
     level: str = Field(
         default="INFO",
@@ -202,7 +203,7 @@ class LoggingConfiguration(BaseModel, validate_assignment=True):
 
 
 class UIConfiguration(BaseModel, validate_assignment=True):
-    """UI Configuration."""
+    """Configuration relating to rendering and the UI."""
 
     size: tuple[int, int] = Field(
         default=(800, 600),
@@ -215,7 +216,19 @@ class UIConfiguration(BaseModel, validate_assignment=True):
 
 
 class Configuration(BaseModel, validate_assignment=True):
-    """Matbii configuration."""
+    """Matbii can be configured using a .json file.
+
+    The path of this file is supplied as `-c CONFIG PATH`, for example:
+
+    ```
+    python -m matbii -c ./experiment-config.json
+    ```
+
+    !!! note "Custom entry points"
+        The main configuration outlined here is used in the default entry point (`__main__.py`), but may also be useful for custom entry points.
+
+    The default entry point (main) configuration has sections corresponding to a specific aspect of the simulation. Not all options need to be specified and most have reasonable default values.
+    """
 
     experiment: ExperimentConfiguration = Field(default_factory=ExperimentConfiguration)
     participant: ParticipantConfiguration = Field(

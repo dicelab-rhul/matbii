@@ -3,25 +3,36 @@ site_url: https://dicelab-rhul.github.io/matbii/
 
 nav:
   - Home: index.md
-  - Getting Started: getting_started/
+  - Getting started: 
+    - Getting started: getting_started/index.md
+    - Configuration: getting_started/configuration.md
+    - Experiments: getting_started/experiments.md
+    - Devices:
+      - Devices: getting_started/devices/index.md
+      - Mouse & keyboard: getting_started/devices/mouse_keyboard.md
+      - Eye tracking: getting_started/devices/eye_tracking.md
+      - Window & UI: getting_started/devices/window_ui.md
+      - Advanced: getting_started/devices/advanced.md
+
+
   - Reference: reference/  
 
 theme:
   name: material
   features:
+    - content.code.copy
+    - navigation.footer
     - navigation.expand
     - navigation.tabs
     - navigation.indexes 
-
+  
 plugins:
   - search
   - mkdocstrings:
-      custom_templates: scripts/docs/templates/
-
       handlers:
         python:
           options:
-            preload_modules: [pydantic]
+            preload_modules: [pydantic, icua]
             docstring_style: google
   - gen-files:
       scripts:
@@ -29,17 +40,25 @@ plugins:
   - literate-nav
   - autorefs
   - section-index
+  - macros:
+      module_name: scripts/docs/macros
 
 extra:
   version:
     provider: mike
 
 markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
   - pymdownx.superfences
   - pymdownx.inlinehilite
   - pymdownx.emoji
   - pymdownx.highlight
   - pymdownx.extra
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: true
 

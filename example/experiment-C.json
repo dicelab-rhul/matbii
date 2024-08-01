@@ -14,8 +14,8 @@
     "window": {
         "x": 0,
         "y": 0,
-        "width": 640,
-        "height": 480,
+        "width": 800,
+        "height": 700,
         "title": "Experiment-C",
         "resizable": false,
         "fullscreen": false,

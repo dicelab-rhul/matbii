@@ -119,7 +119,7 @@ class TrackingActuator(Actuator):
         return TargetMoveAction(direction=direction, speed=speed)
 
     @attempt
-    def perturb_target(self, speed: float):
+    def perturb_target(self, speed: float) -> "TargetMoveAction":
         """Move the tracking target in a random direction at a given speed.
 
         Args:

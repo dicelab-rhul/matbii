@@ -299,7 +299,7 @@ class SetLightAction(XMLUpdateQuery):
         return value
 
     @staticmethod
-    def coerce_light_state(value: str | int):
+    def coerce_light_state(value: str | int) -> int:
         """Coerce a state that is specified as a string to an int: "off -> 0, "on" -> 1.
 
         Args:
