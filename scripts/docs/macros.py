@@ -155,7 +155,7 @@ def define_env(env):
         result.append(markdown)
         for name, field in Configuration.model_fields.items():
             schema = field.annotation.model_json_schema()
-            markdown = f"{schema['description']}\n" + schema_to_md(schema)
+            markdown = f"{schema['description']}\n\n" + schema_to_md(schema)
             example = admonition(
                 "Example",
                 f'```\n"{name}": {field.annotation().model_dump_json(indent=2)}\n```',

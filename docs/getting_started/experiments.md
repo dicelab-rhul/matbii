@@ -65,15 +65,27 @@ where `task` is the name of the task. Guidance agents also automatically record 
 
 ### Actuators & Visual Feedback
 
+!!! failure "COMING SOON"
+
 ### Counter-factual guidance
+
+!!! failure "COMING SOON"
 
 ## Multi-tasking
 
+!!! failure "COMING SOON"
+
 ### Multi-task Environment
+
+!!! failure "COMING SOON"
 
 ### Task control
 
+!!! failure "COMING SOON"
+
 ## Post-Analysis
+
+!!! failure "COMING SOON"
 
 
 

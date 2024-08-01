@@ -1,5 +1,8 @@
 
+
 # Configuration
+
+`matbii` is highly configurable thanks to the modular agent-based design of `icua`. Various files are used in the configuration of tasks and experiments, these files are described in the sections below. See [this example](#default-entry-point-example) for usage with the default entry point.
 
 {{ default_entry_config() }}
 
@@ -24,7 +27,8 @@ experiment/
  ├─tracking.json  
  └─tracking.sch
 ```
-The directory `.../experiment/` will be used as the `experiment.path` option in the [main configuration file](#experiment-configuration). You may or may not decide to place the main configuration inside this directory. It is often better to provide an absolute path in `experiment.path` to avoid issues with path resolution (recall that the configuration path is relative to the working directory - where `python -m matbii -c <CONFIG>` is run).
+
+The directory `experiment` will be used as the `experiment.path` option in the [main configuration file](#experiment-configuration). You may or may not decide to place the main configuration inside this directory. It is often better to provide an absolute path in `experiment.path` to avoid issues with path resolution (recall that the configuration path is relative to the working directory - where `python -m matbii -c <CONFIG>` is run).
 
 ### State files
 
@@ -140,4 +144,25 @@ We can build more complex schedules that mix timing functions and constant value
     pump_fuel("ab", 20) @ [0.1]:*
     ```
 
+## Usage
 
+### Default entry point
+
+!!! example "Default entry point"
+    An example of all files discussed above can be found [here](https://github.com/dicelab-rhul/matbii/tree/main/example).
+    
+    To run the example, [install matbii locally](index.md#install).
+
+    Navigate to the `example` directory:
+    ```
+    cd matbii/example
+    ```
+    and run:
+    ```
+    python -m matbii -c experiment-C.json
+    ```
+
+### Custom entry point
+
+!!! failure "Custom entry point"
+    DOCUMENTATION COMING SOON

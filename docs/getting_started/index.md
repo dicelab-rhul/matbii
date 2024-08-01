@@ -68,11 +68,11 @@ A **task** is a key concept in `mabtii` and other multi-task applications. This 
 
 - [`tracking`](#tracking)
 - [`system monitoring`](#system-monitoring)
-- [`resource management`](resource-management)
+- [`resource management`](#resource-management)
 
 ### Tracking
 
-The user is tasked with keeping a target (1) within a central box (2) using the arrow keys on a keyboard. The target will move around according to the task [schedule]() TODO LINK.
+The user is tasked with keeping a target (1) within a central box (2) using the arrow keys on a keyboard. The target will move around according to the task [schedule](configuration.md#schedule-files). 
 
 <img src="https://via.placeholder.com/150" alt="Placeholder image">
 
@@ -87,7 +87,7 @@ Lights will toggle on/off on click.
 
 - sliders (3) should be kept in the central position, they will move to this position on click.
 
-The lights and sliders will change their state according to the task [schedule]() TODO LINK.
+The lights and sliders will change their state according to the task [schedule](configuration.md#schedule-files).
 
 <img src="https://via.placeholder.com/150" alt="Placeholder image">
 
@@ -95,7 +95,7 @@ The lights and sliders will change their state according to the task [schedule](
 
 The user is tasked with keeping the fuel main fuel tanks in the acceptable range (1, 2). The fuel in these tanks will be slowly burned and reduce overtime. Fuel can be transfered between tanks by clicking on pumps (3), this will begin the transfer of fuel at a given rate. Pumps will periodically fail (4) rendering them unusable, fuel will stop flowing if a pump is the failure state.
 
-Pump failure, fuel transfer and burn rates happen according to the task [schedule]() TODO LINK.  
+Pump failure, fuel transfer and burn rates happen according to the task [schedule](configuration.md#schedule-files).  
 
 <img src="https://via.placeholder.com/150" alt="Placeholder image">
 
