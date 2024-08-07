@@ -134,9 +134,10 @@ if __name__ == "__main__":
         svg_size=config.ui.size,
         svg_position=config.ui.offset,
         logging_path=config.logging.path,
+        terminate_after=config.experiment.duration,
     )
 
-    # NOTE: if you have more tasks to add, add them here! dynamic loading is not enabled by default, if you want to load actuators dynamically, enable it in the ambient.
+    # NOTE: if you have more tasks to add, add them here!
     env.add_task(
         name=TASK_ID_TRACKING,
         path=[config.experiment.path, TASK_PATHS[TASK_ID_TRACKING]],
