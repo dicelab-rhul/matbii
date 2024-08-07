@@ -25,13 +25,13 @@
         "enabled": false
     },
     "logging": {
-        "level": "debug",
+        "level": "warning",
         "path": "./logs/"
     },
     "ui": {
         "size": [
             800,
-            600
+            700
         ],
         "offset": [
             0,

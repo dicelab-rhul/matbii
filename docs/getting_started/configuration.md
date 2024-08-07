@@ -28,7 +28,15 @@ experiment/
  └─tracking.sch
 ```
 
-The directory `experiment` will be used as the `experiment.path` option in the [main configuration file](#experiment-configuration). You may or may not decide to place the main configuration inside this directory. It is often better to provide an absolute path in `experiment.path` to avoid issues with path resolution (recall that the configuration path is relative to the working directory - where `python -m matbii -c <CONFIG>` is run).
+The directory `experiment` above should be used as the `experiment.path` option in the [main configuration file](#experiment-configuration). You may or may not decide to place the main configuration inside this directory. Either way, it is better to provide an absolute path in `experiment.path` to avoid issues with path resolution (recall that the configuration path is relative to the working directory - where `python -m matbii -c <CONFIG>` is run).
+
+#### Naming convention
+
+Each configuration file must be named after the task (as above): `resource_management`, `system_monitoring`, `tracking` with `.json` for state files and `.sch` for schedule files. These names are also used when enabling a task in the [main configuration file](#experiment-configuration).
+
+#### Default configuration
+
+All tasks have a [default configuration](https://github.com/dicelab-rhul/matbii/tree/main/matbii/tasks) which will be used in place of state or schedule if the file is not given. Each of the files above is overriding the default state or schedule for the corresponding task.
 
 ### State files
 
@@ -42,7 +50,6 @@ State files contain values that determine the starting state of the task and inf
 
 ??? quote "Tracking Task Configuration"
 {% include 'getting_started/tracking_config.md' %}
-
 
 
 ### Schedule files

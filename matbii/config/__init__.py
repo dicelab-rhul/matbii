@@ -1,6 +1,13 @@
 """Module containing configuration classes."""
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+    NonNegativeInt,
+    PositiveInt,
+    PositiveFloat,
+)
 from typing import Any, ClassVar
 from pathlib import Path
 from star_ray.ui import WindowConfiguration
@@ -19,59 +26,14 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
         default=False,
         description="Whether to show guidance to the user, if False then guidance agent will be configured NOT to display guidance but will still take actions for logging purposes (if they support this).",
     )
-    # guidance_actuator_types: tuple[type] = Field(
-    #     default=(
-    #         ArrowGuidanceActuator,  # "matbii.guidance.ArrowGuidanceActuator",
-    #         BoxGuidanceActuator,  # "matbii.guidance.BoxGuidanceActuator",
-    #     ),
-    #     description="The type of each actuator that the guidance agent will use. When specifying a type use the full path, for example: `matbii.guidance.ArrowGuidanceActuator`.",
-    # )
-    # guidance_agent_type: type = Field(
-    #     default=DefaultGuidanceAgent,  # "matbii.guidance.DefaultGuidanceAgent",
-    #     description="The type of each actuator that the guidance agent will use. When specifying a type use the full path, for example: `matbii.guidance.ArrowGuidanceActuator`.",
-    # )
-    # guidance_agent_args: dict[str, Any] = Field(
-    #     default_factory=dict,
-    #     description="Any additional arguments to give to the guidance agent upon instantiation.",
-    # )
-
-    # @field_validator(
-    #     "guidance_actuator_types",
-    #     mode="before",
-    # )
-    # @classmethod
-    # def _validate_guidance_actuator_types(cls, value: Any):
-    #     if not isinstance(value, list | tuple):
-    #         raise TypeError(f"Invalid type: {value}")
-    #     result = []
-    #     for f in value:
-    #         if isinstance(f, type):
-    #             result.append(result)
-    #         elif isinstance(f, str):
-    #             result.append(get_class_from_fqn(f))
-    #         else:
-    #             raise TypeError(
-    #                 f"Expected `str` or `type` but got: `{type(value)}` for value: {value}"
-    #             )
-    #     return value
-
-    # @field_validator("guidance_agent_type", mode="before")
-    # @classmethod
-    # def _validate_guidance_agent_type(cls, value: Any):
-    #     if isinstance(value, type):
-    #         return value
-    #     elif isinstance(value, str):
-    #         return get_class_from_fqn(value)
-    #     else:
-    #         raise TypeError(
-    #             f"Expected `str` or `type` but got: `{type(value)}` for value: {value}"
-    #         )
 
 
 class ExperimentConfiguration(BaseModel, validate_assignment=True):
     """Configuration relating to the experiment to be run."""
 
-    id: str = Field(default=None, description="The unique ID of this experiment.")
+    id: str | None = Field(
+        default=None, description="The unique ID of this experiment."
+    )
     path: str = Field(
         # default_factory=lambda: Path("./").resolve().as_posix(),
         default="./",
@@ -94,21 +56,29 @@ class ExperimentConfiguration(BaseModel, validate_assignment=True):
         description="Any additional meta data you wish to associate with this experiment.",
     )
 
-    # @field_validator("path", mode="before")
-    # @classmethod
-    # def _validate_path(cls, value: str):
-    #     experiment_path = Path(value).expanduser().resolve()
-    #     if not experiment_path.exists():
-    #         raise ValueError(
-    #             f"Experiment path: {experiment_path.as_posix()} does not exist."
-    #         )
-    #     return experiment_path.as_posix()
+    @field_validator("id", mode="before")
+    @classmethod
+    def _validate_id(cls, value: str | None):
+        if value is None:
+            LOGGER.warning("Configuration option: `experiment.id` was set to None")
+        return value
+
+    @field_validator("path", mode="before")
+    @classmethod
+    def _validate_path(cls, value: str):
+        # we don't want to set it here, it should remain relative, just check that it exists!
+        experiment_path = Path(value).expanduser().resolve()
+        if not experiment_path.exists():
+            raise ValueError(
+                f"Configuration option `experiment.path` is not valid: `{experiment_path.as_posix()}` does not exist."
+            )
+        return value
 
 
 class ParticipantConfiguration(BaseModel, validate_assignment=True):
     """Configuration relating to the participant (or user)."""
 
-    id: str = Field(
+    id: str | None = Field(
         default=None,
         description="The unique ID of the participant that is taking part in the experiment.",
     )
@@ -132,11 +102,11 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
         description="The eye tracking SDK to use, current options are: `['tobii']`.",
     )
     enabled: bool = Field(default=False, description="Whether eye tracking is enabled.")
-    moving_average_n: int = Field(
+    moving_average_n: PositiveInt = Field(
         default=5,
         description="The window size to used to smooth eye tracking coordinates.",
     )
-    velocity_threshold: float = Field(
+    velocity_threshold: PositiveFloat = Field(
         default=0.5,
         description="The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. **IMPORTANT NOTE:** different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent).",
     )
@@ -199,17 +169,22 @@ class LoggingConfiguration(BaseModel, validate_assignment=True):
     @field_validator("level", mode="before")
     @classmethod
     def _validate_level(cls, value: str):
-        return value.upper()
+        _value = value.upper()
+        if _value not in ["DEBUG", "INFO", "WARNING", "ERROR"]:
+            raise ValueError(
+                f"Configuration option `logging.level` is invalid: `{value}` must be one of: ['DEBUG', 'INFO', 'WARNING', 'ERROR']"
+            )
+        return _value
 
 
 class UIConfiguration(BaseModel, validate_assignment=True):
     """Configuration relating to rendering and the UI."""
 
-    size: tuple[int, int] = Field(
+    size: tuple[PositiveInt, PositiveInt] = Field(
         default=(800, 600),
         description="The width and height of the canvas used to render the tasks. This should fully encapsulate all task elements. If a task appears to be off screen, try increasing this value.",
     )
-    offset: tuple[int, int] = Field(
+    offset: tuple[NonNegativeInt, NonNegativeInt] = Field(
         default=(0, 0),
         description="The x and y offset used when rendering the root UI element, can be used to pad the top/left of the window.",
     )
