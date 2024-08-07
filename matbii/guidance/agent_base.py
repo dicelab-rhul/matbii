@@ -3,10 +3,20 @@
 from typing import Any
 from icua.event import EyeMotionEvent, MouseMotionEvent
 from icua.agent import GuidanceAgent as _GuidanceAgent
+from icua.extras.eyetracking import EyetrackerIOSensor
 
 
 class GuidanceAgent(_GuidanceAgent):
     """Base class for matbii guidance agents."""
+
+    @property
+    def has_eyetracker(self) -> bool:
+        """Whether this agent has an attached `EyetrackerIOSensor`.
+
+        Returns:
+            bool: Whether this agent has an attached `EyetrackerIOSensor`
+        """
+        return len(self.get_sensors(oftype=EyetrackerIOSensor)) > 0
 
     @property
     def mouse_at_elements(self) -> list[str]:

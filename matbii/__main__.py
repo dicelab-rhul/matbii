@@ -92,38 +92,45 @@ if __name__ == "__main__":
     if eyetracking_sensor:
         avatar.add_component(eyetracking_sensor)
 
-    # create the guidance agent
-    # - sensors will determine the acceptability of each task - if the task is enabled.
-    # - change actuators for different guidance to be shown (must inherit from GuidanceActuator)
-    guidance_agent = DefaultGuidanceAgent(
-        [
-            SystemMonitoringTaskAcceptabilitySensor(),
-            ResourceManagementTaskAcceptabilitySensor(),
-            TrackingTaskAcceptabilitySensor(),
-        ],
-        [
-            ArrowGuidanceActuator(
-                arrow_mode="gaze",  # TODO should be a config option?
-                arrow_scale=1.0,  # TODO should be a config option?
-                arrow_fill_color="none",  # TODO should be a config option?
-                arrow_stroke_color="#ff0000",  # TODO should be a config option?
-                arrow_stroke_width=4.0,  # TODO should be a config option?
-                arrow_offset=(80, 80),  # TODO should be a config option?
-            ),
-            BoxGuidanceActuator(
-                box_stroke_color="#ff0000",  # TODO should be a config option?
-                box_stroke_width=4.0,  # TODO should be a config option?
-            ),
-        ],
-        break_ties="random",  # TODO should be a config option?
-        grace_period=2.0,  # TODO configuration options
-        counter_factual=config.guidance.counter_factual,
-    )
+    agents = []  # will be given to the environment
+
+    if config.guidance.enable:
+        # create the guidance agent
+        # - sensors will determine the acceptability of each task - if the task is enabled.
+        # - change actuators for different guidance to be shown (must inherit from GuidanceActuator)
+        guidance_agent = DefaultGuidanceAgent(
+            [
+                # add more if there are more tasks!
+                SystemMonitoringTaskAcceptabilitySensor(),
+                ResourceManagementTaskAcceptabilitySensor(),
+                TrackingTaskAcceptabilitySensor(),
+            ],
+            [
+                # shows arrow pointing at a task as guidance
+                ArrowGuidanceActuator(
+                    # TODO should be a config option?
+                    arrow_mode="gaze" if config.eyetracking.enabled else "mouse",
+                    arrow_scale=1.0,  # TODO should be a config option?
+                    arrow_fill_color="none",  # TODO should be a config option?
+                    arrow_stroke_color="#ff0000",  # TODO should be a config option?
+                    arrow_stroke_width=4.0,  # TODO should be a config option?
+                    arrow_offset=(80, 80),  # TODO should be a config option?
+                ),
+                # shows a box around a task as guidance
+                BoxGuidanceActuator(
+                    box_stroke_color="#ff0000",  # TODO should be a config option?
+                    box_stroke_width=4.0,  # TODO should be a config option?
+                ),
+            ],
+            break_ties="random",  # TODO should be a config option?
+            grace_period=2.0,  # TODO configuration options
+            counter_factual=config.guidance.counter_factual,
+        )
+        agents.append(guidance_agent)
 
     env = MultiTaskEnvironment(
         avatar=avatar,
-        agents=[],  # [guidance_agent],
-        wait=0.1,  # total time to wait at each cycle. Due to a bug with how task events are scheduled, this needs to be relatively high...
+        agents=agents,
         svg_size=config.ui.size,
         svg_position=config.ui.offset,
         logging_path=config.logging.path,
