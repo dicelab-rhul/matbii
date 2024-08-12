@@ -3,10 +3,15 @@
 import argparse
 from pathlib import Path
 import matplotlib.pyplot as plt
-from icua.extras.analysis import EventLogParser, plot_timestamps
+from icua.extras.analysis import (
+    EventLogParser,
+    plot_timestamps,
+    plot_intervals,
+    get_guidance_intervals,
+    get_acceptable_intervals,
+)
 
 from icua.event import (
-    RenderEvent,
     MouseButtonEvent,
     WindowOpenEvent,
     WindowCloseEvent,
@@ -60,17 +65,54 @@ parser.discover_event_classes("matbii")
 events = list(parser.parse(event_log))
 
 
-fig = plot_timestamps(events, RenderEvent, alpha=0.1)
-fig = plot_timestamps(
+# fig = plot_timestamps(events, RenderEvent, alpha=0.1)
+
+# plt.show()
+
+# get_guidance_intervals(events)
+TRACKING_COLOR = "#4363d8"
+RESOURCE_MANAGEMENT_COLOR = "#3cb44b"
+SYSTEM_MONITORING_COLOR = "#e6194B"
+
+task_plot_data = {
+    "tracking": {"color": TRACKING_COLOR, "ymin": 0, "ymax": 1 / 3},
+    "system_monitoring": {
+        "color": SYSTEM_MONITORING_COLOR,
+        "ymin": 1 / 3,
+        "ymax": 2 / 3,
+    },
+    "resource_management": {
+        "color": RESOURCE_MANAGEMENT_COLOR,
+        "ymin": 2 / 3,
+        "ymax": 1,
+    },
+}
+ax = None
+
+for task, intervals in get_acceptable_intervals(events):
+    color = task_plot_data[task]["color"]
+    ymin = task_plot_data[task]["ymin"]
+    ymax = task_plot_data[task]["ymax"]
+    plot_intervals(intervals, color=color, alpha=0.3, ymin=ymin, ymax=ymax, ax=ax)
+    ax = plt.gca()
+
+for task, intervals in get_guidance_intervals(events):
+    ymin = task_plot_data[task]["ymin"] * 1.05
+    ymax = task_plot_data[task]["ymax"] * 0.95
+    plot_intervals(intervals, color="black", alpha=0.1, ymin=ymin, ymax=ymax, ax=ax)
+    ax = plt.gca()
+
+
+plot_timestamps(
     events,
     WindowCloseEvent | WindowOpenEvent,
     ax=plt.gca(),
     color="red",
     linestyle="--",
 )
-fig = plot_timestamps(
+plot_timestamps(
     events, MouseButtonEvent, ax=plt.gca(), ymin=0.0, ymax=0.1, color="lime"
 )
-fig = plot_timestamps(events, KeyEvent, ax=plt.gca(), ymin=0.1, ymax=0.2, color="cyan")
+plot_timestamps(events, KeyEvent, ax=plt.gca(), ymin=0.1, ymax=0.2, color="cyan")
 
 plt.show()

@@ -56,7 +56,6 @@ class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):
             return False  # always return False if the task is inactive
         if task is None or task == self.task_name:
             return all([x() for x in self._is_subtask_acceptable.values()])
-            # print(is_acceptable)
         else:
             is_acceptable = self._is_subtask_acceptable.get(task, None)
             if is_acceptable is None:

@@ -101,10 +101,11 @@ class DefaultGuidanceAgent(GuidanceAgent):
             task (str): the task to show guidance for.
         """
         self._guidance_on_task = task
-        self._counter_factual_guidance_actuator.show_guidance(task=task)
         if not self._counter_factual:
             for actuator in self.guidance_actuators:
                 actuator.show_guidance(task=task)
+        else:
+            self._counter_factual_guidance_actuator.show_guidance(task=task)
 
     def hide_guidance(self, task: str):
         """Hide guidance for a given task.
@@ -115,10 +116,12 @@ class DefaultGuidanceAgent(GuidanceAgent):
             task (str): the task to hide guidance for.
         """
         self._guidance_on_task = None
-        self._counter_factual_guidance_actuator.hide_guidance(task=task)
         if not self._counter_factual:
             for actuator in self.guidance_actuators:
                 actuator.hide_guidance(task=task)
+        else:
+            self._counter_factual_guidance_actuator.hide_guidance(task=task)
+
         # update the last time guidance was shown for the given task (for the grace period check)
         self._guidance_last[task] = time.time()
 
