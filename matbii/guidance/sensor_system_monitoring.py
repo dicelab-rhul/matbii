@@ -5,7 +5,7 @@ from functools import partial
 from star_ray_xml import Select
 from .sensor_guidance import TaskAcceptabilitySensor
 
-from ..tasks.system_monitoring import SetLightAction
+from ..tasks.system_monitoring import SetLightAction, SetSliderAction
 from ..utils._const import (
     TASK_ID_SYSTEM_MONITORING,
     slider_id,
@@ -56,6 +56,7 @@ class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):
             return False  # always return False if the task is inactive
         if task is None or task == self.task_name:
             return all([x() for x in self._is_subtask_acceptable.values()])
+            # print(is_acceptable)
         else:
             is_acceptable = self._is_subtask_acceptable.get(task, None)
             if is_acceptable is None:
@@ -72,7 +73,7 @@ class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):
         Unacceptable: otherwise.
 
         Args:
-            _id (int): the id of the slider (1,2,3 or 4)
+            _id (int): the id of the slider (1, 2, 3 or 4)
 
         Returns:
             bool: True if the slider is in an acceptable state, False otherwise.
@@ -81,7 +82,9 @@ class SystemMonitoringTaskAcceptabilitySensor(TaskAcceptabilitySensor):
             return False  # always return False if the task is inactive
         # sliders should be at the center position to be acceptable
         state = self.beliefs[slider_id(_id)]["data-state"]
-        acceptable_state = self.beliefs[slider_incs_id(_id)]["incs"] // 2 + 1
+        acceptable_state = SetSliderAction.acceptable_state(
+            self.beliefs[slider_incs_id(_id)]["incs"]
+        )
         return state == acceptable_state
 
     def is_light_acceptable(self, _id: int) -> bool:

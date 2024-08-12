@@ -225,7 +225,7 @@ class SetSliderAction(XMLUpdateQuery):
         Returns:
             int: the acceptable state of the slider
         """
-        return increments // 2 + 1
+        return increments // 2
 
     def __execute__(self, xml_state: XMLState) -> Any:  # noqa
         # get min and max values for the number of increments
@@ -244,7 +244,7 @@ class SetSliderAction(XMLUpdateQuery):
         state = self.state
         if state is None:
             self.relative = False
-            state = SetSliderAction.acceptable_state(max_state)
+            state = SetSliderAction.acceptable_state(max_state + 1)
 
         # we select the parent of the button node because it contains the state and position to update
         xpath_parent = f"//*[@id='{but_target}']/parent::node()"
