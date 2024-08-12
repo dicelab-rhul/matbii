@@ -2,11 +2,10 @@
     "experiment": {
         "id": null,
         "path": "./experiment-C/",
-        "duration": 5,
+        "duration": 20,
         "enable_video_recording": false,
         "enable_tasks": [
             "system_monitoring",
-            "resource_management",
             "tracking"
         ],
         "meta": {}

@@ -1,5 +1,6 @@
 """Module containing configuration classes."""
 
+from datetime import datetime
 from pydantic import (
     BaseModel,
     Field,
@@ -239,3 +240,44 @@ class Configuration(BaseModel, validate_assignment=True):
         else:
             LOGGER.info("No config file was specified, using default configuration.")
             return Configuration()
+
+    @staticmethod
+    def initialise_logging(config: "Configuration") -> "Configuration":
+        """Initialises logging for the given run. This will set logging options and set the config logging path which should be used throughout `matbii` to log information that may be relevant for experiment post-analysis. The configuration passed here will also be logged to the `configuration.json` file in the logging path.
+
+        The logging path will be derived: `<config.experiment.id>/<config.participant.id>` if these values are present, otherwise a timestamp will be used to make the logging path unique. If the two ids are given then they are assumed to be unique (they represent a single trial for a participant).
+
+        Args:
+            config (Configuration): configuration
+
+        Raises:
+            FileExistsError: if the derived logging path already exists.
+
+        Returns:
+            Configuration: the configuration (with updated path variables - modified in place)
+        """
+        # set the logger path
+        path = Path(config.logging.path).expanduser().resolve()
+        full_path = path
+        if config.experiment.id:
+            full_path = full_path / config.experiment.id
+        if config.participant.id:
+            full_path = full_path / config.participant.id
+
+        if path == full_path:
+            full_path = full_path / datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
+
+        if full_path.exists():
+            raise FileExistsError(
+                f"Logging path: {path} already exists, perhaps you have miss-specified `experiment.id` or `participant.id`?\n    See <TODO LINK> for details."
+            )
+
+        full_path.mkdir(parents=True)
+        LOGGER.debug(f"Logging to: {full_path.as_posix()}")
+
+        # log the configuration that is in use
+        with open(full_path / "configuration.json", "w") as f:
+            f.write(config.model_dump_json(indent=2))
+
+        config.logging.path = full_path.as_posix()
+        return config

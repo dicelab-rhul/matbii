@@ -115,6 +115,28 @@ class DefaultGuidanceAgent(GuidanceAgent):
         # update the last time guidance was shown for the given task (for the grace period check)
         self._guidance_last[task] = time.time()
 
+    def get_inactive_tasks(self) -> set[str]:
+        """Get the set of inactive tasks.
+
+        Returns:
+            set[str]: set of inactive tasks.
+        """
+        active = list(self._is_task_active.items())
+        return set([x[0] for x in active if not x[1]])
+
+    def get_unacceptable_tasks(self) -> set[str]:
+        """Get the set of unacceptable tasks.
+
+        Returns:
+            set[str]: set of unacceptable tasks.
+        """
+        unacceptable = list(self._is_task_acceptable.items())
+        # is the task in an unacceptable state? (remove if they are acceptable)
+        unacceptable = set([x[0] for x in unacceptable if not x[1]])
+        # remove all inactive tasks (never display guidance for these)
+        unacceptable -= self.get_inactive_tasks()
+        return unacceptable
+
     def __cycle__(self):  # noqa
         super().__cycle__()
         if self.has_eyetracker:
@@ -154,9 +176,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         else:
             current_time = time.time()
             # guidance is not active, should it be?
-            unacceptable = list(self._is_task_acceptable.items())
-            # is the task in an unacceptable state? (remove if they are acceptable)
-            unacceptable = [x[0] for x in unacceptable if not x[1]]
+            unacceptable = self.get_unacceptable_tasks()
             # is the user looking at the task? (remove if they are)
             unacceptable = [x for x in unacceptable if x not in gaze_elements]
             # is the grace period over for the task?
@@ -167,7 +187,6 @@ class DefaultGuidanceAgent(GuidanceAgent):
             ]
             if len(unacceptable) > 0:
                 # there are tasks in failure, decide which one to highlight
-                # break ties randomly - this could be more interesting!
                 task = self.break_guidance_tie(unacceptable, self._break_ties)
                 self.show_guidance(task)  # show guidance on the chosen task
             else:
@@ -206,19 +225,19 @@ class DefaultGuidanceAgent(GuidanceAgent):
             )
 
     def on_acceptable(self, task: str):  # noqa
-        self._log_acceptebility(task, "acceptable", True)
+        self._log_acceptability(task, "acceptable", True)
 
     def on_active(self, task: str):  # noqa
-        self._log_acceptebility(task, "active", True)
+        self._log_acceptability(task, "active", True)
 
     def on_unacceptable(self, task: str):  # noqa
         # NOTE: this time is not the exact time that the task went into failure.
         # for this we would need to track the exact events that caused the failure, this is easier said than done...
         self._task_unacceptable_start[task] = time.time()
-        self._log_acceptebility(task, "acceptable", False)
+        self._log_acceptability(task, "acceptable", False)
 
     def on_inactive(self, task: str):  # noqa
-        self._log_acceptebility(task, "active", False)
+        self._log_acceptability(task, "active", False)
         self._task_inactive_start[task] = time.time()
 
     @observe([EyeMotionEvent, MouseMotionEvent])
@@ -250,6 +269,6 @@ class DefaultGuidanceAgent(GuidanceAgent):
             )
         return candidates
 
-    def _log_acceptebility(self, task, z, ok):
+    def _log_acceptability(self, task, z, ok):
         info = "task %20s %20s %s" % (z, task, ["✘", "✔"][int(ok)])
         LOGGER.info(info)

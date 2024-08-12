@@ -2,7 +2,7 @@
 
 from typing import Any
 from star_ray_xml import select, Select
-from icua.agent import TaskAcceptabilitySensor
+from .sensor_guidance import TaskAcceptabilitySensor
 
 from ..utils._const import TASK_ID_TRACKING, tracking_box_id, tracking_target_id
 
@@ -19,11 +19,8 @@ class TrackingTaskAcceptabilitySensor(TaskAcceptabilitySensor):
         """
         super().__init__(TASK_ID_TRACKING, *args, **kwargs)
 
-    def is_active(self, task: str = None, **kwargs: dict[str, Any]) -> bool:  # noqa
-        return True  # TODO
-
     def is_acceptable(self, task: str = None, **kwargs: dict[str, Any]) -> bool:  # noqa
-        if task is None or task == TASK_ID_TRACKING:
+        if task is None or task == self.task_name:
             return self.is_tracking_acceptable()
         else:
             raise KeyError(

@@ -41,7 +41,6 @@ if __name__ == "__main__":
     import os
 
     from star_ray.utils import _LOGGER
-    from matbii.utils import LOGGER
 
     # silence debugging from star_ray logger
     _LOGGER.setLevel("WARNING")
@@ -76,7 +75,6 @@ if __name__ == "__main__":
         participant=dict(id=args.participant),
     )
     config = Configuration.from_file(args.config, context=context)
-    LOGGER.set_level(config.logging.level)
 
     # Create the avatar:
     # - required sensors are added by default
