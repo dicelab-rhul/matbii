@@ -42,10 +42,10 @@ if __name__ == "__main__":
 
     from star_ray.utils import _LOGGER
 
-    # silence debugging from star_ray logger
+    # silence logs from star_ray logger
     _LOGGER.setLevel("WARNING")
 
-    # avoid a pygame issue on linux...
+    # avoid a pygame issue on linux. TODO this should be moved somewhere more suitable...
     os.environ["LD_PRELOAD"] = "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
 
     # load configuration file
@@ -74,7 +74,10 @@ if __name__ == "__main__":
         experiment=dict(id=args.experiment),
         participant=dict(id=args.participant),
     )
+    # load configuration from the config file
     config = Configuration.from_file(args.config, context=context)
+    # initialise logging
+    config = Configuration.initialise_logging(config)
 
     # Create the avatar:
     # - required sensors are added by default

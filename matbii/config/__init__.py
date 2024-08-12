@@ -1,5 +1,7 @@
 """Module containing configuration classes."""
 
+import json
+from deepmerge import always_merger
 from datetime import datetime
 from pydantic import (
     BaseModel,
@@ -236,7 +238,9 @@ class Configuration(BaseModel, validate_assignment=True):
             path = Path(path).expanduser().resolve().as_posix()
             LOGGER.info(f"Using config file: {path}")
             with open(path) as f:
-                return Configuration.model_validate_json(f.read(), context=context)
+                data = json.load(f)
+                data = always_merger.merge(data, context)
+                return Configuration.model_validate(data)
         else:
             LOGGER.info("No config file was specified, using default configuration.")
             return Configuration()
