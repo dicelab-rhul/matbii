@@ -1,13 +1,13 @@
 [project]
 name = "matbii"
-version = "0.0.5"
+version = "0.0.6"
 description = "A configurable implementation of the MATB-II: Multi-Attribute Task Battery."
 authors = [{name = "Benedict Wilkins", email = "benrjw@gmail.com"}]
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "icua[tobii]>=2.0.7",
+    "icua[tobii]>=2.0.8",
 ]
 
 [project.optional-dependencies]
