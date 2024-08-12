@@ -71,8 +71,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     # args from command line can be used in config
     context = dict(
-        experiment=dict(id=args.experiment),
-        participant=dict(id=args.participant),
+        experiment=dict(id=args.experiment) if args.experiment else dict(),
+        participant=dict(id=args.participant) if args.participant else dict(),
     )
     # load configuration from the config file
     config = Configuration.from_file(args.config, context=context)

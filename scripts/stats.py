@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-from matbii.config import Configuration
+from icua.extras.analysis import EventLogParser
 
 # load configuration file
 parser = argparse.ArgumentParser()
@@ -34,14 +34,26 @@ args.participant = "P00"
 
 # path that contains the log files
 path = Path(args.dir).expanduser().resolve()
-print(path)
 if args.participant and args.experiment:
     # the the experiment path has been specified explicitly
     path = path / args.experiment / args.participant
 
 files = {f.name: f for f in path.iterdir()}
 # this context prevents config errors where paths cannot be resolved (since cwd has changed)
-config_context = dict("experiment", dict("path", "./"))
-config = Configuration.from_file(files["configuration.json"], context=config_context)
+# config_context = dict(experiment=dict(path="./"))
+# config = Configuration.from_file(files["configuration.json"], context=config_context)
 event_log = files[next(filter(lambda f: f.startswith("event_log"), files.keys()))]
-print(event_log)
+
+
+parser = EventLogParser()
+parser.discover_event_classes("matbii")
+
+events = list(parser.parse(event_log))
+
+# print(events[0])
+
+# from icua.event import MouseButtonEvent
+# import matplotlib.pyplot as plt
+
+# fig = plot_timestamps(events, MouseButtonEvent)
+# plt.show()

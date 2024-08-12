@@ -240,6 +240,7 @@ class Configuration(BaseModel, validate_assignment=True):
             with open(path) as f:
                 data = json.load(f)
                 data = always_merger.merge(data, context)
+                print(data)
                 return Configuration.model_validate(data)
         else:
             LOGGER.info("No config file was specified, using default configuration.")
