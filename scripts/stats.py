@@ -2,7 +2,16 @@
 
 import argparse
 from pathlib import Path
-from icua.extras.analysis import EventLogParser
+import matplotlib.pyplot as plt
+from icua.extras.analysis import EventLogParser, plot_timestamps
+
+from icua.event import (
+    RenderEvent,
+    MouseButtonEvent,
+    WindowOpenEvent,
+    WindowCloseEvent,
+    KeyEvent,
+)
 
 # load configuration file
 parser = argparse.ArgumentParser()
@@ -29,7 +38,7 @@ args = parser.parse_args()
 
 # TODO remove this is just for testing!
 args.dir = "C:/Users/brjw/Documents/repos/dicelab/matbii/example/logs"
-args.experiment = "experiment-C"
+args.experiment = "C"
 args.participant = "P00"
 
 # path that contains the log files
@@ -50,10 +59,18 @@ parser.discover_event_classes("matbii")
 
 events = list(parser.parse(event_log))
 
-# print(events[0])
 
-# from icua.event import MouseButtonEvent
-# import matplotlib.pyplot as plt
+fig = plot_timestamps(events, RenderEvent, alpha=0.1)
+fig = plot_timestamps(
+    events,
+    WindowCloseEvent | WindowOpenEvent,
+    ax=plt.gca(),
+    color="red",
+    linestyle="--",
+)
+fig = plot_timestamps(
+    events, MouseButtonEvent, ax=plt.gca(), ymin=0.0, ymax=0.1, color="lime"
+)
+fig = plot_timestamps(events, KeyEvent, ax=plt.gca(), ymin=0.1, ymax=0.2, color="cyan")
 
-# fig = plot_timestamps(events, MouseButtonEvent)
-# plt.show()
+plt.show()

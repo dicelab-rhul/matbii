@@ -7,6 +7,7 @@ from star_ray.agent import Actuator, Sensor, observe
 from icua.event import MouseMotionEvent, EyeMotionEvent
 from icua.agent import (
     GuidanceActuator,
+    CounterFactualGuidanceActuator,
     ArrowGuidanceActuator,
     BoxGuidanceActuator,
     TaskAcceptabilitySensor,
@@ -44,12 +45,14 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
         Args:
             sensors (list[Sensor]): list of sensors, this will typically be a list of `icua.agent.TaskAcceptabilitySensor`s. A `UserInputSensor` will always be added automatically.
-            actuators (list[Actuator]): list of actuators, this will typically contain actuators that are capable of providing visual feedback to a user, see e.g. `icua.agent.GuidanceActuator` and its concrete implementations.
-            break_ties (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest.
-            grace_period (float, optional): the time to wait (seconds) before guidance may be shown for a task after the last time guidance was shown on the task. Defaults to 3.0.
+            actuators (list[Actuator]): list of actuators, this will typically contain actuators that are capable of providing visual feedback to a user, see e.g. `icua.agent.GuidanceActuator` and its concrete implementations. A `CounterFactualGuidanceActuator` will be added by default.
+            break_ties (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest time.
+            grace_period (float, optional): the time to wait (seconds) before guidance may be shown for a task after the last time guidance was shown on the task. Defaults to 3.0 seconds.
             counter_factual (bool, optional): whether guidance should be shown to the user, or whether it should just be logged.  This allows counter-factual experiments to be run, we can track when guidance would have been shown, and compare the when it was actually shown (in a different run). Defaults to False.
             kwargs (dict[str,Any]): Additional optional keyword arguments.
         """
+        _counter_factual_guidance_actuator = CounterFactualGuidanceActuator()
+        actuators.append(_counter_factual_guidance_actuator)
         super().__init__(sensors, actuators, **kwargs)
 
         # this agent is tracking the following tasks (based on the provided sensors)
@@ -77,7 +80,8 @@ class DefaultGuidanceAgent(GuidanceAgent):
                 f"Invalid argument: `grace_period` {self._grace_period} must be > 0 "
             )
         # whether to actually display guidance, or just trigger a guidance event
-        self._counter_factual = counter_factual  # TODO
+        self._counter_factual = counter_factual
+        self._counter_factual_guidance_actuator = _counter_factual_guidance_actuator
 
     def __initialise__(self, state: State):  # noqa
         super().__initialise__(state)
@@ -97,8 +101,10 @@ class DefaultGuidanceAgent(GuidanceAgent):
             task (str): the task to show guidance for.
         """
         self._guidance_on_task = task
-        for actuator in self.guidance_actuators:
-            actuator.show_guidance(task=task)
+        self._counter_factual_guidance_actuator.show_guidance(task=task)
+        if not self._counter_factual:
+            for actuator in self.guidance_actuators:
+                actuator.show_guidance(task=task)
 
     def hide_guidance(self, task: str):
         """Hide guidance for a given task.
@@ -108,10 +114,11 @@ class DefaultGuidanceAgent(GuidanceAgent):
         Args:
             task (str): the task to hide guidance for.
         """
-        # TODO trigger event here! this will be used in post analysis, ensure that counterfactual guidance is also a thing!
         self._guidance_on_task = None
-        for actuator in self.guidance_actuators:
-            actuator.hide_guidance(task=task)
+        self._counter_factual_guidance_actuator.hide_guidance(task=task)
+        if not self._counter_factual:
+            for actuator in self.guidance_actuators:
+                actuator.hide_guidance(task=task)
         # update the last time guidance was shown for the given task (for the grace period check)
         self._guidance_last[task] = time.time()
 

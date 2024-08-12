@@ -84,7 +84,7 @@ if __name__ == "__main__":
     # - task related actuators are added when their corresponding task is enabled
     avatar = Avatar(
         [],
-        [AvatarActuator()],
+        [AvatarActuator()],  # will log user events by default
         window_config=config.window,
     )
 

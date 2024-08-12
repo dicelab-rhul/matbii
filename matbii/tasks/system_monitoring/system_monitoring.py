@@ -76,8 +76,7 @@ class AvatarSystemMonitoringActuator(Actuator):
             list[SetLightAction | SetSliderAction]: the action to be attempted
         """
         assert isinstance(user_action, MouseButtonEvent)
-        # always include the user action as it needs to be logged
-        actions = [user_action]
+        actions = []
         if (
             user_action.status == MouseButtonEvent.DOWN
             and user_action.button == MouseButtonEvent.BUTTON_LEFT

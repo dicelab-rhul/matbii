@@ -87,7 +87,7 @@ class AvatarTrackingActuator(Actuator):
                 self._keys_pressed.remove(user_action.key)
             elif user_action.status in (KeyEvent.DOWN, KeyEvent.HOLD):
                 self._keys_pressed.add(user_action.key)
-        return []  # these will be recorded by the DefaultActuator
+        return []
 
     # @attempt
     # def attempt_joystick_event(self, user_action: JoyStickEvent):

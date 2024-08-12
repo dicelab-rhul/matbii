@@ -1,6 +1,6 @@
 {
     "experiment": {
-        "id": "experiment-C",
+        "id": "C",
         "path": "./experiment-C/",
         "duration": 20,
         "enable_video_recording": false,
@@ -16,7 +16,7 @@
     },
     "guidance": {
         "enable": true,
-        "counter_factual": false
+        "counter_factual": true
     },
     "window": {
         "x": 0,
