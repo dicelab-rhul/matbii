@@ -37,6 +37,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         sensors: list[Sensor],
         actuators: list[Actuator],
         break_ties: Literal["random", "longest", "since"] = "random",
+        attention_mode: Literal["gaze", "mouse"] = "mouse",
         grace_period: float = 3.0,
         counter_factual: bool = False,
         **kwargs: dict[str, Any],
@@ -47,6 +48,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
             sensors (list[Sensor]): list of sensors, this will typically be a list of `icua.agent.TaskAcceptabilitySensor`s. A `UserInputSensor` will always be added automatically.
             actuators (list[Actuator]): list of actuators, this will typically contain actuators that are capable of providing visual feedback to a user, see e.g. `icua.agent.GuidanceActuator` and its concrete implementations. A `CounterFactualGuidanceActuator` will be added by default.
             break_ties (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest time.
+            attention_mode (Literal["gaze", "mouse"], optional): method of determining where the user is paying attention. "mouse" will track the mouse position, "gaze" will track the gaze position (if avaliable). Defaults to "mouse".
             grace_period (float, optional): the time to wait (seconds) before guidance may be shown for a task after the last time guidance was shown on the task. Defaults to 3.0 seconds.
             counter_factual (bool, optional): whether guidance should be shown to the user, or whether it should just be logged.  This allows counter-factual experiments to be run, we can track when guidance would have been shown, and compare the when it was actually shown (in a different run). Defaults to False.
             kwargs (dict[str,Any]): Additional optional keyword arguments.
@@ -82,6 +84,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         # whether to actually display guidance, or just trigger a guidance event
         self._counter_factual = counter_factual
         self._counter_factual_guidance_actuator = _counter_factual_guidance_actuator
+        self._attention_mode = attention_mode
 
     def __initialise__(self, state: State):  # noqa
         super().__initialise__(state)
@@ -147,30 +150,27 @@ class DefaultGuidanceAgent(GuidanceAgent):
         unacceptable -= self.get_inactive_tasks()
         return unacceptable
 
-    def __cycle__(self):  # noqa
-        super().__cycle__()
-        if self.has_eyetracker:
+    def get_attending(self):
+        if self._attention_mode == "gaze":
             gaze_elements, gaze = self.gaze_at_elements, self.gaze_position
-        else:
+        elif self._attention_mode == "mouse":
             # no eyetracker, use mouse coordinates instead
             gaze_elements, gaze = self.mouse_at_elements, self.mouse_position
+        else:
+            raise ValueError(f"Unknown attention mode: {self._attention_mode}")
+        return gaze_elements, gaze
 
-        # TODO gaze_elements can be none? hmm
+    def __cycle__(self):  # noqa
+        super().__cycle__()
+        gaze_elements, gaze = self.get_attending()
+        
+        # TODO gaze_elements can be none? hmmm...
         if gaze is None:
             pass  # might be an issue with the eyetracker... or it may be loading up
 
-        # # TODO an option for this (its a timeout)
-        # if self._missing_gaze_since > 1:
-        #     raise ValueError(
-        #         "Guidance agent has not recieved gaze input for more than 1 second.")
-
-        # gaze_elements, gaze = self.gaze_at_elements, self.gaze_position
-        # this is the last gaze timestamp, it should be relatively close to NOW, otherwise the eyetracker may not be functioning
-        # gaze_timestamp = gaze['timestamp']  # TODO check this...
-
         # =================================================== #
         # here the agent is deciding whether to show guidance
-        # it uses the same rules as icua version 1 (TODO grace period)
+        # it uses the same rules as icua version 1 (TODO check this)
         # =================================================== #
         if self._guidance_on_task:
             # guidance is active, should it be?

@@ -16,6 +16,7 @@ from icua.event import (
     WindowOpenEvent,
     WindowCloseEvent,
     KeyEvent,
+    RenderEvent,
 )
 
 # load configuration file
@@ -38,11 +39,10 @@ parser.add_argument(
     "-e", "--experiment", required=False, help="ID of the experiment.", default=None
 )
 
-
 args = parser.parse_args()
 
 # TODO remove this is just for testing!
-args.dir = "C:/Users/brjw/Documents/repos/dicelab/matbii/example/logs"
+args.dir = "C:/Users/szonya/Documents/matbii-experiment/logs"
 args.experiment = "C"
 args.participant = "P00"
 
@@ -64,8 +64,6 @@ parser.discover_event_classes("matbii")
 
 events = list(parser.parse(event_log))
 
-
-# fig = plot_timestamps(events, RenderEvent, alpha=0.1)
 
 # plt.show()
 
@@ -114,5 +112,7 @@ plot_timestamps(
     events, MouseButtonEvent, ax=plt.gca(), ymin=0.0, ymax=0.1, color="lime"
 )
 plot_timestamps(events, KeyEvent, ax=plt.gca(), ymin=0.1, ymax=0.2, color="cyan")
+
+plot_timestamps(events, RenderEvent, alpha=0.1, ax=plt.gca())
 
 plt.show()

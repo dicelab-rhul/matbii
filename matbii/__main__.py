@@ -92,7 +92,7 @@ if __name__ == "__main__":
     eyetracking_sensor = config.eyetracking.new_eyetracking_sensor()
     if eyetracking_sensor:
         avatar.add_component(eyetracking_sensor)
-
+    
     agents = []  # will be given to the environment
 
     if config.guidance.enable:
@@ -125,6 +125,7 @@ if __name__ == "__main__":
             ],
             break_ties="random",  # TODO should be a config option?
             grace_period=2.0,  # TODO configuration options
+            attention_mode="gaze" if config.eyetracking.enabled else "mouse",
             counter_factual=config.guidance.counter_factual,
         )
         agents.append(guidance_agent)
