@@ -184,13 +184,21 @@ class UIConfiguration(BaseModel, validate_assignment=True):
     """Configuration relating to rendering and the UI."""
 
     size: tuple[PositiveInt, PositiveInt] = Field(
-        default=(800, 600),
+        default=(810, 680),
         description="The width and height of the canvas used to render the tasks. This should fully encapsulate all task elements. If a task appears to be off screen, try increasing this value.",
     )
     offset: tuple[NonNegativeInt, NonNegativeInt] = Field(
         default=(0, 0),
         description="The x and y offset used when rendering the root UI element, can be used to pad the top/left of the window.",
     )
+
+
+def _default_window_configuration_factory():
+    window_config = WindowConfiguration()
+    window_config.width = 810
+    window_config.height = 680
+    window_config.title = "icua matbii"
+    return window_config
 
 
 class Configuration(BaseModel, validate_assignment=True):
@@ -213,7 +221,9 @@ class Configuration(BaseModel, validate_assignment=True):
         default_factory=ParticipantConfiguration
     )
     guidance: GuidanceConfiguration = Field(default_factory=GuidanceConfiguration)
-    window: WindowConfiguration = Field(default_factory=WindowConfiguration)
+    window: WindowConfiguration = Field(
+        default_factory=_default_window_configuration_factory
+    )
     eyetracking: EyetrackingConfiguration = Field(
         default_factory=EyetrackingConfiguration
     )
