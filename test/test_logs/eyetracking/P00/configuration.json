@@ -1,0 +1,53 @@
+{
+  "experiment": {
+    "id": "C",
+    "path": "./experiment-C/",
+    "duration": 20,
+    "enable_video_recording": false,
+    "enable_tasks": [
+      "system_monitoring",
+      "resource_management",
+      "tracking"
+    ],
+    "meta": {}
+  },
+  "participant": {
+    "id": "P00",
+    "meta": {}
+  },
+  "guidance": {
+    "enable": true,
+    "counter_factual": false
+  },
+  "window": {
+    "x": 0,
+    "y": 0,
+    "width": 800,
+    "height": 700,
+    "title": "window",
+    "resizable": false,
+    "fullscreen": false,
+    "background_color": "#ffffff"
+  },
+  "eyetracking": {
+    "uri": "tet-tcp://172.28.195.1",
+    "sdk": "tobii",
+    "enabled": true,
+    "moving_average_n": 5,
+    "velocity_threshold": 0.5
+  },
+  "logging": {
+    "level": "DEBUG",
+    "path": "./logs/"
+  },
+  "ui": {
+    "size": [
+      800,
+      700
+    ],
+    "offset": [
+      0,
+      0
+    ]
+  }
+}

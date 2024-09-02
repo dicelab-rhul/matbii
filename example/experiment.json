@@ -30,7 +30,7 @@
         "background_color": "#ffffff"
     },
     "eyetracking": {
-        "uri": null,
+        "uri": "tet-tcp://172.28.195.1",
         "sdk": "tobii",
         "enabled": false,
         "moving_average_n": 5,
