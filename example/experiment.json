@@ -1,6 +1,6 @@
 {
     "experiment": {
-        "id": "C",
+        "id": null,
         "path": "./experiment-C/",
         "duration": 20,
         "enable_video_recording": false,
@@ -12,7 +12,7 @@
         "meta": {}
     },
     "participant": {
-        "id": "P00",
+        "id": null,
         "meta": {}
     },
     "guidance": {

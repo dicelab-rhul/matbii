@@ -92,7 +92,7 @@ if __name__ == "__main__":
     eyetracking_sensor = config.eyetracking.new_eyetracking_sensor()
     if eyetracking_sensor:
         avatar.add_component(eyetracking_sensor)
-    
+
     agents = []  # will be given to the environment
 
     if config.guidance.enable:
@@ -147,7 +147,8 @@ if __name__ == "__main__":
         avatar_actuators=[
             partial(
                 AvatarTrackingActuator,
-                target_speed=50.0,  # TODO a config option for this?
+                # Negative values will invert the direction of movement
+                target_speed=-50.0,  # TODO a config option for this?
             )
         ],
         enable=TASK_ID_TRACKING in config.experiment.enable_tasks,
