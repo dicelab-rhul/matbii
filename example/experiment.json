@@ -2,7 +2,7 @@
     "experiment": {
         "id": null,
         "path": "./experiment-C/",
-        "duration": 20,
+        "duration": 60,
         "enable_video_recording": false,
         "enable_tasks": [
             "system_monitoring",
@@ -16,7 +16,7 @@
         "meta": {}
     },
     "guidance": {
-        "enable": true,
+        "enable": false,
         "counter_factual": false
     },
     "window": {
