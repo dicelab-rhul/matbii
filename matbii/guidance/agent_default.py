@@ -151,6 +151,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         return unacceptable
 
     def get_attending(self):
+        """Get attention data from mouse or eyetracker."""
         if self._attention_mode == "gaze":
             gaze_elements, gaze = self.gaze_at_elements, self.gaze_position
         elif self._attention_mode == "mouse":
@@ -163,7 +164,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
     def __cycle__(self):  # noqa
         super().__cycle__()
         gaze_elements, gaze = self.get_attending()
-        
+
         # TODO gaze_elements can be none? hmmm...
         if gaze is None:
             pass  # might be an issue with the eyetracker... or it may be loading up

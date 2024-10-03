@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 import typing
 from matbii.utils import LOGGER
+from pprint import pprint
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -63,6 +64,8 @@ event_log_file = next(
 
 parser = EventLogParser()
 parser.discover_event_classes("matbii")
+
+pprint(parser._event_cls_map.keys())
 events = list(parser.parse(event_log_file))
 
 
@@ -194,12 +197,13 @@ def plot_eyetracking(
         # plt.scatter(*mouse_motion.T)
         # plt.show()
 
-        # eye_events = _get_events(events, EyeMotionEvent)
-        # screen_positions = np.array([e[1].position_screen for e in eye_events])
-        # screen_positions *= np.array(screen_size)[np.newaxis, :]
-        # print(screen_positions.shape)
-        # plt.scatter(*screen_positions.T)
-        # plt.show()
+        eye_events = _get_events(events, EyeMotionEvent)
+        screen_positions = np.array([e[1].position_screen for e in eye_events])
+        screen_positions *= np.array(screen_size)[np.newaxis, :]
+        print(screen_positions.shape)
+        plt.scatter(*screen_positions.T)
+        plt.show()
 
 
 plot_eyetracking(events, space="canvas")
+plt.show()

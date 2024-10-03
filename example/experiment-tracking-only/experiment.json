@@ -1,0 +1,40 @@
+{
+    "experiment": {
+        "id": null,
+        "path": ".",
+        "duration": 60,
+        "enable_video_recording": false,
+        "enable_tasks": [
+            "tracking"
+        ],
+        "meta": {}
+    },
+    "participant": {
+        "id": null,
+        "meta": {}
+    },
+    "guidance": {
+        "enable": true,
+        "counter_factual": false
+    },
+    "window": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 320,
+        "title": "window",
+        "resizable": false,
+        "fullscreen": false,
+        "background_color": "#ffffff"
+    },
+    "logging": {
+        "level": "DEBUG",
+        "path": "./logs/"
+    },
+    "ui": {
+        "size": [
+            320,
+            320
+        ]
+    }
+}

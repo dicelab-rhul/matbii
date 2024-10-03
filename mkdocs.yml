@@ -5,16 +5,21 @@ nav:
   - Home: index.md
   - Getting started: 
     - Getting started: getting_started/index.md
+    - Key Concepts: getting_started/key-concepts.md
     - Configuration: getting_started/configuration.md
-    - Experiments: getting_started/experiments.md
+    - Experiments:
+      - Experiments: getting_started/experiments/index.md
+      - Logging: getting_started/experiments/logging.md
+      - Post analysis: getting_started/experiments/post-analysis.md
     - Devices:
       - Devices: getting_started/devices/index.md
       - Mouse & keyboard: getting_started/devices/mouse_keyboard.md
       - Eye tracking: getting_started/devices/eye_tracking.md
       - Window & UI: getting_started/devices/window_ui.md
-      - Advanced: getting_started/devices/advanced.md
-
-
+  - Advanced: 
+    - Advanced: advanced/index.md
+    - Custom Entry Points: advanced/custom_entry_points.md
+    - Custom Devices: advanced/custom_devices.md
   - Reference: reference/  
 
 theme:

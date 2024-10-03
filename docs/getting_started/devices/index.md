@@ -8,6 +8,6 @@ Users interact with `matbii` via various input devices. Currently three devices 
 
 Other events that come from the UI or window are also avaliable to agents see [window & UI](window_ui.md).
 
-For more advanced usage and information on implementating new devices see [Advanced usage](advanced.md).
+For more advanced usage and information on implementating new devices see [Advanced usage](/matbii/advanced/custom_devices.md).
 
 

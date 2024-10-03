@@ -1,6 +1,6 @@
 # Eye tracking
 
-Courtesy of [`icua`](https://github.com/dicelab-rhul/icua2), `matbii` supports eye-tracking out of the box. Currently only [tobii pro eye trackers](https://www.tobii.com/) are supported. If you want to make use of another eye tracker provider, see [eye tracker API](#eye-tracker-api).
+Courtesy of [`icua`](https://github.com/dicelab-rhul/icua2), `matbii` supports eye-tracking out of the box. Currently only [tobii pro eye trackers](https://www.tobii.com/) are supported. If you want to make use of another eye tracker provider, see [eye tracker API](#eye-tracking-api).
 
 Events:
 
@@ -10,8 +10,6 @@ Events:
 ## Configuration
 
 Eye tracking can be configured via the [main configuration file](../configuration.md).
-
-Otherwise, make use of the [eye tracking api](#eye-tracker-api).
 
 ## Calibration
 
@@ -32,6 +30,6 @@ The URI is used by `matbii` to locate and connect to your eye tracker device. w
 
 ## Eye tracking API
 
-!!! failure "DOCUMENTATION COMING SOON"
+If your eyetracker brand is not yet supported then you will need to use the device API provided by `icua`. This is an advanced topic, see [here](/matbii/advanced/custom_devices.md).
 
 

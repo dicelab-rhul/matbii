@@ -202,19 +202,7 @@ def _default_window_configuration_factory():
 
 
 class Configuration(BaseModel, validate_assignment=True):
-    """Matbii can be configured using a .json file.
-
-    The path of this file is supplied as `-c CONFIG PATH`, for example:
-
-    ```
-    python -m matbii -c ./experiment-config.json
-    ```
-
-    !!! note "Custom entry points"
-        The main configuration outlined here is used in the default entry point (`__main__.py`), but may also be useful for custom entry points.
-
-    The default entry point (main) configuration has sections corresponding to a specific aspect of the simulation. Not all options need to be specified and most have reasonable default values.
-    """
+    """Main configuration class for the default entry point."""
 
     experiment: ExperimentConfiguration = Field(default_factory=ExperimentConfiguration)
     participant: ParticipantConfiguration = Field(

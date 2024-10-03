@@ -2,7 +2,40 @@
 
 import subprocess
 import re
+import griffe
+from itertools import islice
+from typing import Any
+from collections.abc import Generator
+
 from matbii.config import Configuration
+from icua.agent import attempt  # noqa # check that this is at the path we expect
+
+
+def get_attempts(fqcn: str) -> Generator[str, Any, None]:
+    """Get all the attempt methods (those annotated with "@attempt") for the given class.
+
+    The class will typically be an actuator.
+
+    Args:
+        fqcn (str): the fully qualified path of the class.
+
+    Yields:
+        Generator[str, Any, None]: each attempt method signature NAME(*PARAMS)
+    """
+    ATTEMPT_DECORATOR_PATH = "icua.agent.attempt"  # if this moves we are in trouble...
+
+    for member_name, member in griffe.load(fqcn, resolve_aliases=True).members.items():
+        if any(
+            d.value.canonical_path == ATTEMPT_DECORATOR_PATH for d in member.decorators
+        ):
+            # has the attempt decorator, this is an attempt method!
+            def get_params_doc(member):
+                params = member.parameters
+                for param in islice(params, 1, None, None):
+                    yield f"{param.name}: {param.annotation}"
+
+            doc = f"`{member_name}({', '.join(get_params_doc(member))})`"
+            yield doc
 
 
 def options_to_markdown(lines):
@@ -131,6 +164,11 @@ def define_env(env):
     """Entry point for mkdocs macros."""
 
     @env.macro
+    def list_attempt_methods(fqcn: str):
+        """Create a list of all the attempt methods for the given (Actuator) class."""
+        return "- " + "\n- ".join(get_attempts(fqcn))
+
+    @env.macro
     def cmd_help():
         """Get command line options for matbii."""
         # Command to run Python module as a script
@@ -141,16 +179,25 @@ def define_env(env):
         return options_to_markdown(lines)
 
     @env.macro
-    def admonition(title: str, data: str, indent: int = 1):
+    def admonition(title: str, data: str, indent: int = 1, admon: str = "quote"):
+        """Quick admonition macro."""
         indent: str = "\n" + "    " * indent
-        return indent.join(f'??? quote "{title}"\n\n{data}\n'.split("\n"))
+        return indent.join(f'??? {admon} "{title}"\n\n{data}\n'.split("\n"))
+
+    @env.macro
+    def indent(data: str, indent: int = 1):
+        """Indent a markdown string, this is useful when using macros inside admonitions."""
+        indent: str = "\n" + "    " * indent
+        return data.replace("\n", indent)
 
     @env.macro
     def default_entry_config():
+        """Compile the default entry point config as markdown with examples."""
         result = []
-        main_schema = Configuration.model_json_schema()
-        markdown = "## Main Configuration\n\n"
-        markdown += f"{main_schema['description']}\n\n"
+
+        # main_schema = Configuration.model_json_schema()
+        markdown = ""  # "## Main Configuration\n\n"
+        # markdown += f"{main_schema['description']}\n\n"
         # markdown += schema_to_md(main_schema)
         result.append(markdown)
         for name, field in Configuration.model_fields.items():
@@ -159,8 +206,11 @@ def define_env(env):
             example = admonition(
                 "Example",
                 f'```\n"{name}": {field.annotation().model_dump_json(indent=2)}\n```',
+                admon="example",
             )
-            markdown = admonition(field.annotation.__name__, markdown + example)
+            markdown = admonition(
+                field.annotation.__name__, markdown + example, admon="info"
+            )
             result.append(markdown)
             # admon = f'??? quote "Example" \n```\n"{name}": {field.annotation().model_dump_json(indent=2)}\n```'.replace(
             #     "\n", "\n    "
@@ -170,7 +220,7 @@ def define_env(env):
         result.append(
             "The default configuration file can be found below, you can simply copy it and modify as needed."
         )
-        admon = f'??? quote "default-configuration.json"\n```\n{Configuration().model_dump_json(indent=2)}\n```'.replace(
+        admon = f'??? example "default-configuration.json"\n```\n{Configuration().model_dump_json(indent=2)}\n```'.replace(
             "\n", "\n    "
         )
         result.append(admon)
