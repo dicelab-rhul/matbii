@@ -17,7 +17,7 @@
     },
     "guidance": {
         "enable": true,
-        "counter_factual": true
+        "counter_factual": false
     },
     "window": {
         "x": 0,
