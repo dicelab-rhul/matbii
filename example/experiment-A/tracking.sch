@@ -1,4 +1,4 @@
 ####  Tracking Task Schedule ####
 
-# this moves the target around randomly by 1 unit (in svg space) every 0.1 seconds
-perturb_target(1) @ [0.1]:*
+# this moves the target around randomly
+perturb_target(5) @ [0.1]:*

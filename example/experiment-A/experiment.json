@@ -1,7 +1,7 @@
 {
     "experiment": {
         "id": null,
-        "path": "./experiment-C/",
+        "path": ".",
         "duration": 60,
         "enable_video_recording": false,
         "enable_tasks": [
