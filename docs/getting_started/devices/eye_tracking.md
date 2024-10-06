@@ -21,7 +21,7 @@ Eye tracking can be configured via the [main configuration file](../configuratio
 
 ## Finding your eye tracker URI
 
-The URI is used by `matbii` to locate and connect to your eye tracker device. w
+The URI is used by `matbii` to locate and connect to your eye tracker device.
 
 === "Tobii"
     ![](tobii-eyetracker-manager-uri-find.png){.card width=45% align=left}

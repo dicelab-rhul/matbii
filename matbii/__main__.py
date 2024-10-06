@@ -5,6 +5,9 @@
 
 if __name__ == "__main__":
     from functools import partial
+    from pathlib import Path
+
+    from icua.extras.logging import LogActuator
 
     # imports for creating the environment
     from matbii.environment import MultiTaskEnvironment
@@ -95,42 +98,44 @@ if __name__ == "__main__":
 
     agents = []  # will be given to the environment
 
-    if config.guidance.enable:
-        # create the guidance agent
-        # - sensors will determine the acceptability of each task - if the task is enabled.
-        # - change actuators for different guidance to be shown (must inherit from GuidanceActuator)
-        guidance_agent = DefaultGuidanceAgent(
-            [
-                # add more if there are more tasks!
-                SystemMonitoringTaskAcceptabilitySensor(),
-                ResourceManagementTaskAcceptabilitySensor(),
-                TrackingTaskAcceptabilitySensor(),
-            ],
-            [
-                # shows arrow pointing at a task as guidance
-                ArrowGuidanceActuator(
-                    # TODO should be a config option?
-                    arrow_mode="gaze" if config.eyetracking.enabled else "mouse",
-                    arrow_scale=1.0,  # TODO should be a config option?
-                    arrow_fill_color="none",  # TODO should be a config option?
-                    arrow_stroke_color="#ff0000",  # TODO should be a config option?
-                    arrow_stroke_width=4.0,  # TODO should be a config option?
-                    arrow_offset=(80, 80),  # TODO should be a config option?
-                ),
-                # shows a box around a task as guidance
-                BoxGuidanceActuator(
-                    box_stroke_color="#ff0000",  # TODO should be a config option?
-                    box_stroke_width=4.0,  # TODO should be a config option?
-                ),
-            ],
-            break_ties="random",  # TODO should be a config option?
-            grace_period=2.0,  # TODO configuration options
-            attention_mode="gaze" if config.eyetracking.enabled else "mouse",
-            counter_factual=config.guidance.counter_factual,
-        )
-        agents.append(guidance_agent)
+    # create the guidance agent
+    # - sensors will determine the acceptability of each task - if the task is enabled.
+    # - change actuators for different guidance to be shown (must inherit from GuidanceActuator)
+    guidance_agent = DefaultGuidanceAgent(
+        [
+            # add more if there are more tasks!
+            SystemMonitoringTaskAcceptabilitySensor(),
+            ResourceManagementTaskAcceptabilitySensor(),
+            TrackingTaskAcceptabilitySensor(),
+        ],
+        [
+            # used to log this agents beliefs for post experiment analysis
+            LogActuator(path=Path(config.logging.path) / "guidance_logs.log"),
+            # shows arrow pointing at a task as guidance
+            ArrowGuidanceActuator(
+                # TODO should be a config option?
+                arrow_mode="gaze" if config.eyetracking.enabled else "mouse",
+                arrow_scale=1.0,  # TODO should be a config option?
+                arrow_fill_color="none",  # TODO should be a config option?
+                arrow_stroke_color="#ff0000",  # TODO should be a config option?
+                arrow_stroke_width=4.0,  # TODO should be a config option?
+                arrow_offset=(80, 80),  # TODO should be a config option?
+            ),
+            # shows a box around a task as guidance
+            BoxGuidanceActuator(
+                box_stroke_color="#ff0000",  # TODO should be a config option?
+                box_stroke_width=4.0,  # TODO should be a config option?
+            ),
+        ],
+        break_ties="random",  # TODO should be a config option?
+        grace_period=2.0,  # TODO configuration options
+        attention_mode="gaze" if config.eyetracking.enabled else "mouse",
+        counter_factual=config.guidance.counter_factual,
+    )
+    agents.append(guidance_agent)
 
     env = MultiTaskEnvironment(
+        wait=0.0,  # this can be zero as long as it doesnt matter that the scheduler hogs asyncio, TODO test this with IO devices (eyetracker particularly)
         avatar=avatar,
         agents=agents,
         svg_size=config.ui.size,

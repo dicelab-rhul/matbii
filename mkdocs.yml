@@ -19,6 +19,7 @@ nav:
   - Advanced: 
     - Advanced: advanced/index.md
     - Custom Entry Points: advanced/custom_entry_points.md
+    - Custom Tasks: advanced/custom_tasks.md
     - Custom Devices: advanced/custom_devices.md
   - Reference: reference/  
 
@@ -66,4 +67,6 @@ markdown_extensions:
       alternate_style: true
   - toc:
       permalink: true
-
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg

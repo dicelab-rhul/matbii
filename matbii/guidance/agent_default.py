@@ -32,6 +32,9 @@ class DefaultGuidanceAgent(GuidanceAgent):
     # used to break ties when multiple tasks could be highlighted. See `break_guidance_tie` method below.
     BREAK_TIES = ("random", "longest", "since")
 
+    # if we havent had fresh eyetracking data for more than this, there may be something wrong... display a warning
+    MISSING_GAZE_DATA_THRESHOLD = 0.1
+
     def __init__(
         self,
         sensors: list[Sensor],
@@ -59,6 +62,12 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
         # this agent is tracking the following tasks (based on the provided sensors)
         self._tracking_tasks = [s.task_name for s in self.task_acceptability_sensors]
+        # initialise beliefs (empty)
+        for task in self._tracking_tasks:
+            self.beliefs[task] = dict(guidance=False)
+        # also record some attention information (for logging)
+        self.beliefs["attention"] = dict()
+
         # time since tasks went into an unacceptable state
         self._task_unacceptable_start: dict[str, float] = None
         # time since tasks become inactive
@@ -104,6 +113,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
             task (str): the task to show guidance for.
         """
         self._guidance_on_task = task
+        self.beliefs[task]["guidance"] = True
         if not self._counter_factual:
             for actuator in self.guidance_actuators:
                 actuator.show_guidance(task=task)
@@ -118,6 +128,8 @@ class DefaultGuidanceAgent(GuidanceAgent):
         Args:
             task (str): the task to hide guidance for.
         """
+        if self._guidance_on_task:
+            self.beliefs[self._guidance_on_task]["guidance"] = False
         self._guidance_on_task = None
         if not self._counter_factual:
             for actuator in self.guidance_actuators:
@@ -153,21 +165,52 @@ class DefaultGuidanceAgent(GuidanceAgent):
     def get_attending(self):
         """Get attention data from mouse or eyetracker."""
         if self._attention_mode == "gaze":
-            gaze_elements, gaze = self.gaze_at_elements, self.gaze_position
+            elements, gaze = self.gaze_at_elements, self.gaze_position
+            # check if the gaze data is None, if so we need to see how long and give a warning, it may indicate that the eyetracker
+            # has stopped functioning which may invalidate an experimental trial!
+            if gaze is None:
+                if self._missing_gaze_since is None:
+                    self._missing_gaze_since = time.time()
+                elif (
+                    time.time() - self._missing_gaze_since
+                    > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
+                ):
+                    LOGGER.warning(
+                        f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
+                    )
+                return {"elements": elements}
+            else:
+                self._missing_gaze_since = None
+            # gaze data may be present, but it may be old (its stored in a buffer until fresh data arrives)
+            if (
+                time.time() - gaze["timestamp"]
+                > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
+            ):
+                LOGGER.warning(
+                    f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
+                )
+            return {"elements": elements, **(gaze if gaze else {})}
         elif self._attention_mode == "mouse":
-            # no eyetracker, use mouse coordinates instead
-            gaze_elements, gaze = self.mouse_at_elements, self.mouse_position
+            position_data = self.mouse_position
+            return {
+                "elements": self.mouse_at_elements,
+                **(position_data if position_data else {}),
+            }
         else:
             raise ValueError(f"Unknown attention mode: {self._attention_mode}")
-        return gaze_elements, gaze
 
     def __cycle__(self):  # noqa
         super().__cycle__()
-        gaze_elements, gaze = self.get_attending()
+        attending = self.get_attending()
+        att_to = attending["elements"]
 
-        # TODO gaze_elements can be none? hmmm...
-        if gaze is None:
-            pass  # might be an issue with the eyetracker... or it may be loading up
+        # TODO we might also care about recording other info in the event!
+        # this is the one that is being used by the agent to make its guidance decisions either way...
+        self.beliefs["attention"]["timestamp"] = attending.get("timestamp")
+        self.beliefs["attention"]["position"] = attending.get("position")
+        self.beliefs["attention"]["attending"] = next(
+            iter([e for e in att_to if e in self._tracking_tasks]), None
+        )
 
         # =================================================== #
         # here the agent is deciding whether to show guidance
@@ -178,7 +221,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
             if self._is_task_acceptable[self._guidance_on_task]:
                 # the task is now acceptable - hide guidance for this task
                 self.hide_guidance(self._guidance_on_task)
-            if self._guidance_on_task in gaze_elements:
+            if self._guidance_on_task in att_to:
                 # turn off guidance, the user is looking at the task - hide guidance
                 self.hide_guidance(self._guidance_on_task)
             else:
@@ -189,7 +232,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
             # guidance is not active, should it be?
             unacceptable = self.get_unacceptable_tasks()
             # is the user looking at the task? (remove if they are)
-            unacceptable = [x for x in unacceptable if x not in gaze_elements]
+            unacceptable = [x for x in unacceptable if x not in att_to]
             # is the grace period over for the task?
             unacceptable = [
                 x
@@ -236,26 +279,34 @@ class DefaultGuidanceAgent(GuidanceAgent):
             )
 
     def on_acceptable(self, task: str):  # noqa
+        self.beliefs[task]["acceptable"] = True
         self._log_acceptability(task, "acceptable", True)
 
     def on_active(self, task: str):  # noqa
+        self.beliefs[task]["active"] = True
+
         self._log_acceptability(task, "active", True)
 
     def on_unacceptable(self, task: str):  # noqa
         # NOTE: this time is not the exact time that the task went into failure.
         # for this we would need to track the exact events that caused the failure, this is easier said than done...
+        self.beliefs[task]["acceptable"] = False
+
         self._task_unacceptable_start[task] = time.time()
         self._log_acceptability(task, "acceptable", False)
 
     def on_inactive(self, task: str):  # noqa
-        self._log_acceptability(task, "active", False)
+        self.beliefs[task]["active"] = False
         self._task_inactive_start[task] = time.time()
+
+        self._log_acceptability(task, "active", False)
 
     @observe([EyeMotionEvent, MouseMotionEvent])
     def _on_motion_event(self, event: MouseMotionEvent | EyeMotionEvent):
-        """It may be useful to the actuators to get these events."""
+        """It may be useful to the actuators to get these events. It is a trick to forward sensory input to the agents actuators. The `ArrowGuidanceActuator` is an example that requires this information to display the array at the gaze/mouse position."""
         # TODO we may need to guard against actuators executing these actions...?
-        self.attempt(event)  # manually attempt the event
+        # manually attempt the event, we could specify which actuators need this information...?
+        self.attempt(event)
 
     @property
     def task_acceptability_sensors(self) -> list[TaskAcceptabilitySensor]:

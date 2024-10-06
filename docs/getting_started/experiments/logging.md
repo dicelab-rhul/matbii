@@ -33,9 +33,9 @@ Some actions are task specific, for example:
 
 Some actions are due to guidance, for example: `DrawBoxAction`, `DrawArrowAction`, `HideElementAction`, `ShowElementAction`
 
-### Primitive
+### Primitive Actions
 
-Primitive events typically represent changes made internally by `matbii` or parent packages (`icua` or `star-ray`), for example when initially configuring the UI. These include: `Update, Insert, Replace, Delete` which are used to directly modify the state of `matbii`.  
+Primitive events typically represent changes made internally by `matbii` or parent packages (`icua` or `star-ray`), for example when initially configuring the UI. These include: `Update, Insert, Replace, Delete` which are used to directly modify the state of `matbii`.
 
 ### Device
 

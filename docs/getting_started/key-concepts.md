@@ -2,11 +2,11 @@ This page presents some key concepts and explains terminology used in the [getti
 
 ### Environment
 
-The environment contains all of the [agents](#agent), [tasks](#task), and a [state](#state), and is responsible for running the simulation.
+The environment contains all of the [agents](#agent), [tasks](#task), and a [state](#state), and is responsible for running the simulation. `matbii` relies on the [agent](#agent)-based abstractions provided by the [`star-ray`](https://github.com/dicelab-rhul/star-ray) and [`icua`](https://github.com/dicelab-rhul/icua2) packages. It is at its heart an multi-[agent](#agent) simulation that includes the _user_ as one of these [agent](#agent). 
 
 ### State
 
-The state of `matbii` is represented using [XML](https://en.wikipedia.org/wiki/XML), more specifically using [SVG](https://en.wikipedia.org/wiki/SVG). The state represents all of the persistent data in the `matbii` environment, [agents](#agent) have access to this data via their [sensors](#sensor) and can modify it using their [actuators](#actuator). The state is represented internally as a data structure which can be queried using [XPATH](https://en.wikipedia.org/wiki/XPath), [actions](#action) at base are compiled queries that read or write XML data. 
+The state of `matbii` is represented using [XML](https://en.wikipedia.org/wiki/XML), more specifically using [SVG](https://en.wikipedia.org/wiki/SVG). The state represents all of the persistent data in the `matbii` environment, [agents](#agent) have access to this data via their [sensors](#sensor) and can modify it using their [actuators](#actuator). The state is represented internally as a data structure which can be queried using [XPATH](https://en.wikipedia.org/wiki/XPath), [actions](#action) are compiled queries that read or write XML data. 
 
 Part of what makes `matbii` so configurable is that User Interface (UI) data is represented directly as part of the state. This is a departure from the more common [Model-View-Controller (MVC)](https://en.wikipedia.org/wiki/Model–view–controller) architecture where there is clearer seperation between the model (the state) and the view (the UI). The benefit of this architecture is that [agents](#agent) can directly modify the UI. This will happen as part of the normal running of the system (e.g. when updating a [task](#task)) or when providing [visual feedback or guidance](#guidance-agents) to the user. In short, it enables maximum flexiblity and scope for experimentation with different kinds of visual feedback. It also makes the process of add new tasks or developing new multi-task systems more straightforward (see [advanced topics](../advanced/index.md)for details).
 
@@ -67,19 +67,20 @@ The goal of the guidance agent on the other hand is more demanding, it is to dec
 
 An avatar is a special kind of agent which acts on behalf of the user, think of an avatar as your virtual double. It captures input from periferal devices (mouse, keyboard, eyetracker, etc.) and performs [actions](#action) on your behalf. There is a mapping from user input to tasks-specific [actions](#action) which it uses to do so. This mapping forms part of the [task](#task) definition and is implemented as a task-specific [actuator](#actuator). The avatar also provides its own [observations](#observation) to the user in a human-friendly fashion, in this case, it observes the state of the [environment](#environment) (the SVG data) and displays it in a window. Avatars don't have their own goals, they instead act as a bridge between the real world and virtual environment making your goals _their_ goals.
 
-### Actuator
+#### Actuator
 
 An actuator is an interface between an [agent](#agent) and its [environment](#environment), it allows the agent to have tangible influence of the [state](#state) of its [environment](#environment). The real world analogue are your muscles, or your hands. They enable you to take certain situation-dependent [actions](#action) and to acheive your goals. 
 
-### Action
+#### Sensor
+
+A sensor is an interface between an [agent](#agent) and its [environment](#environment) which allows the agent to [observe](#observation) the [state](#state) of its [environment](#environment). Sensors do not have influence over the [state](#state), but instead provide information crucial to the acheivement of an [agents](#agent) goals. 
+
+
+#### Action
 
 An action is a discrete event or query which will modify (in the case of an [actuator](#actuator)) or retrieve 
 (in the case of a [sensor](#sensor)) data from the [environment](#environment) [state](#state).
 
-### Sensor
-
-A sensor is an interface between an [agent](#agent) and its [environment](#environment) which allows the agent to [observe](#observation) the [state](#state) of its [environment](#environment). Sensors do not have influence over the [state](#state), but instead provide information crucial to the acheivement of an [agents][#agent] goals. 
-
-### Observation
+#### Observation
 
 An observation is typically the result of an [action](#action), it contains data that an [agent](#agent) may use to make its decisions or review its beliefs. Typically observations are recived by [sensors](#sensor) as a result of a sensing action, but [actuators](#actuator) may also received them - think of the strain feedback your hand may give you when doing something strenuous.

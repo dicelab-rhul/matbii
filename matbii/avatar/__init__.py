@@ -11,8 +11,6 @@ from ..tasks import (
 # eyetracking
 from icua.extras.eyetracking import EyetrackerIOSensor, tobii
 
-# ui
-
 __all__ = (
     "Avatar",
     "AvatarActuator",

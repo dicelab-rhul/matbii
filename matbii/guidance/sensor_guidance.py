@@ -42,7 +42,7 @@ class TaskAcceptabilitySensor(_TaskAcceptabilitySensor):
             return super().on_error_observation(observation)
 
     def _update_is_active(self, observations: list[Observation]) -> bool:
-        """Checks whether the task is currently active based on the observation resulting from the is_active action."""
+        """Checks whether the task is currently active based on the observation resulting from the `is_active` action."""
         is_active_observation = list(
             filter(
                 lambda x: isinstance(x, ActiveObservation)
