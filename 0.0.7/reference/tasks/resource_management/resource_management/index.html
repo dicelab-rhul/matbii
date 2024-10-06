@@ -1,0 +1,4814 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://dicelab-rhul.github.io/matbii/0.0.7/reference/tasks/resource_management/resource_management/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../system_monitoring/">
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.30">
+    
+    
+      
+        <title>Resource management - matbii</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.3cba04c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#matbii.tasks.resource_management.resource_management" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="matbii" class="md-header__button md-logo" aria-label="matbii" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            matbii
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Resource management
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../getting_started/" class="md-tabs__link">
+          
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../advanced/" class="md-tabs__link">
+          
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="../../../" class="md-tabs__link">
+        
+  
+    
+  
+  Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="matbii" class="md-nav__button md-logo" aria-label="matbii" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    matbii
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../getting_started/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started/key-concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Key Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started/configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../getting_started/experiments/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Experiments
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Experiments
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started/experiments/logging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started/experiments/post-analysis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Post analysis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../getting_started/devices/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Devices
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Devices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started/devices/mouse_keyboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mouse & keyboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started/devices/eye_tracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Eye tracking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting_started/devices/window_ui/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Window & UI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../advanced/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Advanced
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../advanced/custom_entry_points/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Entry Points
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../advanced/custom_tasks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Tasks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../advanced/custom_devices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Devices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../avatar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Avatar
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../environment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../guidance/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Guidance
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            Guidance
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guidance/agent_base/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agent base
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guidance/agent_default/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agent default
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guidance/sensor_guidance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor guidance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guidance/sensor_resource_management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor resource management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guidance/sensor_system_monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor system monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guidance/sensor_tracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor tracking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Tasks
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            Tasks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6_1" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Resource management
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6_1" id="__nav_4_6_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_6_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            Resource management
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Resource management
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Resource management
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management" class="md-nav__link">
+    <span class="md-ellipsis">
+      resource_management
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator" class="md-nav__link">
+    <span class="md-ellipsis">
+      AvatarResourceManagementActuator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AvatarResourceManagementActuator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.attempt_mouse_event" class="md-nav__link">
+    <span class="md-ellipsis">
+      attempt_mouse_event
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.get_click_targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_click_targets
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.BurnFuelAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      BurnFuelAction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.PumpAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      PumpAction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.PumpFuelAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      PumpFuelAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PumpFuelAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.PumpFuelAction.is_pump_on" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_pump_on
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator" class="md-nav__link">
+    <span class="md-ellipsis">
+      ResourceManagementActuator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ResourceManagementActuator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.burn_fuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      burn_fuel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.pump_fuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      pump_fuel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump" class="md-nav__link">
+    <span class="md-ellipsis">
+      toggle_pump
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      toggle_pump_failure
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      SetPumpAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SetPumpAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.coerce_pump_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      coerce_pump_state
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      new_failure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_off" class="md-nav__link">
+    <span class="md-ellipsis">
+      new_off
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_on" class="md-nav__link">
+    <span class="md-ellipsis">
+      new_on
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      TogglePumpAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TogglePumpAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpAction.new" class="md-nav__link">
+    <span class="md-ellipsis">
+      new
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      TogglePumpFailureAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TogglePumpFailureAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction.new" class="md-nav__link">
+    <span class="md-ellipsis">
+      new
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_6_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../system_monitoring/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    System monitoring
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6_2" id="__nav_4_6_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            System monitoring
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_monitoring/system_monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_6_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tracking/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Tracking
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6_3" id="__nav_4_6_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tracking
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tracking/tracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Utils
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management" class="md-nav__link">
+    <span class="md-ellipsis">
+      resource_management
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator" class="md-nav__link">
+    <span class="md-ellipsis">
+      AvatarResourceManagementActuator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AvatarResourceManagementActuator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.attempt_mouse_event" class="md-nav__link">
+    <span class="md-ellipsis">
+      attempt_mouse_event
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.get_click_targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_click_targets
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.BurnFuelAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      BurnFuelAction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.PumpAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      PumpAction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.PumpFuelAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      PumpFuelAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PumpFuelAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.PumpFuelAction.is_pump_on" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_pump_on
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator" class="md-nav__link">
+    <span class="md-ellipsis">
+      ResourceManagementActuator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ResourceManagementActuator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.burn_fuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      burn_fuel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.pump_fuel" class="md-nav__link">
+    <span class="md-ellipsis">
+      pump_fuel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump" class="md-nav__link">
+    <span class="md-ellipsis">
+      toggle_pump
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      toggle_pump_failure
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      SetPumpAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SetPumpAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.coerce_pump_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      coerce_pump_state
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_failure" class="md-nav__link">
+    <span class="md-ellipsis">
+      new_failure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_off" class="md-nav__link">
+    <span class="md-ellipsis">
+      new_off
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_on" class="md-nav__link">
+    <span class="md-ellipsis">
+      new_on
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      TogglePumpAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TogglePumpAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpAction.new" class="md-nav__link">
+    <span class="md-ellipsis">
+      new
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction" class="md-nav__link">
+    <span class="md-ellipsis">
+      TogglePumpFailureAction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TogglePumpFailureAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction.new" class="md-nav__link">
+    <span class="md-ellipsis">
+      new
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>Resource management</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="matbii.tasks.resource_management.resource_management"></a>
+    <div class="doc doc-contents first">
+
+      <p>Module that implements the <a class="autorefs autorefs-internal" href="../#matbii.tasks.resource_management">resource management task</a>.</p>
+
+
+<details class="this-files-contains" open>
+  <summary>This files contains</summary>
+  <ul>
+<li>avatar actuator: <code>AvatarResourceManagementActuator</code></li>
+<li>agent actuator: <code>ResourceManagementActuator</code></li>
+<li>actions: [<code>SetPumpAction</code>, <code>TogglePumpAction</code>, <code>TogglePumpFailureAction</code>, <code>PumpFuelAction</code>, <code>BurnFuelAction</code>]</li>
+</ul>
+</details>
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator" class="doc doc-heading">
+            <code>AvatarResourceManagementActuator</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="icua.agent.Actuator">Actuator</span></code></p>
+
+
+      <p>Actuator class that should be added to the Avatar when the resource management task is enabled. It allows the user to control the pumps in this task..</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AvatarResourceManagementActuator</span><span class="p">(</span><span class="n">Actuator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Actuator class that should be added to the Avatar when the resource management task is enabled. It allows the user to control the pumps in this task..&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (list[Any], optional): additional optional arguments.</span>
+<span class="sd">            kwargs (dict[Any], optional): additional optional keyword arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_pump_targets</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+            <span class="n">AvatarResourceManagementActuator</span><span class="o">.</span><span class="n">get_click_targets</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;pump-([a-z]+)-button&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nd">@attempt</span>
+    <span class="k">def</span> <span class="nf">attempt_mouse_event</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">user_action</span><span class="p">:</span> <span class="n">MouseButtonEvent</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TogglePumpAction&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Attempt method that takes a `MouseButtonEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.</span>
+
+<span class="sd">        This will attempt a `TogglePumpAction` depending on what svg element was clicked (assuming the mouse event registers as a click).</span>
+
+<span class="sd">        Effects:</span>
+<span class="sd">        - `TogglePumpAction`: toggle the pump on-&gt;off or off-&gt;on.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_action (MouseButtonEvent): the users mouse button action.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[TogglePumpAction]: the action to be attempted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_action</span><span class="p">,</span> <span class="n">MouseButtonEvent</span><span class="p">)</span>
+        <span class="c1"># always include the user action as it needs to be logged</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">user_action</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">MouseButtonEvent</span><span class="o">.</span><span class="n">DOWN</span>
+            <span class="ow">and</span> <span class="n">user_action</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="n">MouseButtonEvent</span><span class="o">.</span><span class="n">BUTTON_LEFT</span>
+        <span class="p">):</span>
+            <span class="n">actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_pump_actions</span><span class="p">(</span><span class="n">user_action</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">actions</span>
+
+    <span class="k">def</span> <span class="nf">_get_pump_actions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">user_action</span><span class="p">:</span> <span class="n">MouseButtonEvent</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TogglePumpAction&quot;</span><span class="p">]:</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pump_targets</span><span class="p">(</span><span class="n">user_action</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TogglePumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span> <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_click_targets</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extras the `id` field of a target in `targets` if it matches the pattern.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pattern (str): pattern to test.</span>
+<span class="sd">            targets (list[str]): targets to search.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[str]: matching targets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_get</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                    <span class="n">target</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">target</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_get</span><span class="p">())</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+<a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Constructor.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>args</code></td>
+            <td>
+                  <code>list[<span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>additional optional arguments.</p>
+              </div>
+            </td>
+            <td>
+                  <code>()</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>kwargs</code></td>
+            <td>
+                  <code>dict[<span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>additional optional keyword arguments.</p>
+              </div>
+            </td>
+            <td>
+                  <code>{}</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args (list[Any], optional): additional optional arguments.</span>
+<span class="sd">        kwargs (dict[Any], optional): additional optional keyword arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_get_pump_targets</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+        <span class="n">AvatarResourceManagementActuator</span><span class="o">.</span><span class="n">get_click_targets</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;pump-([a-z]+)-button&quot;</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.attempt_mouse_event" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">attempt_mouse_event</span><span class="p">(</span><span class="n">user_action</span><span class="p">)</span></code>
+
+<a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.attempt_mouse_event" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Attempt method that takes a <code>MouseButtonEvent</code> as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.</p>
+<p>This will attempt a <code>TogglePumpAction</code> depending on what svg element was clicked (assuming the mouse event registers as a click).</p>
+<p>Effects:
+- <code>TogglePumpAction</code>: toggle the pump on-&gt;off or off-&gt;on.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>user_action</code></td>
+            <td>
+                  <code><span title="icua.event.MouseButtonEvent">MouseButtonEvent</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the users mouse button action.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>list[<a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.TogglePumpAction" href="#matbii.tasks.resource_management.resource_management.TogglePumpAction">TogglePumpAction</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>list[TogglePumpAction]: the action to be attempted</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@attempt</span>
+<span class="k">def</span> <span class="nf">attempt_mouse_event</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">user_action</span><span class="p">:</span> <span class="n">MouseButtonEvent</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;TogglePumpAction&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attempt method that takes a `MouseButtonEvent` as input from the user. It is up to the avatar to provide this event to this actuator. The information is essential if the user is to control this task.</span>
+
+<span class="sd">    This will attempt a `TogglePumpAction` depending on what svg element was clicked (assuming the mouse event registers as a click).</span>
+
+<span class="sd">    Effects:</span>
+<span class="sd">    - `TogglePumpAction`: toggle the pump on-&gt;off or off-&gt;on.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_action (MouseButtonEvent): the users mouse button action.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[TogglePumpAction]: the action to be attempted</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_action</span><span class="p">,</span> <span class="n">MouseButtonEvent</span><span class="p">)</span>
+    <span class="c1"># always include the user action as it needs to be logged</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">user_action</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="n">MouseButtonEvent</span><span class="o">.</span><span class="n">DOWN</span>
+        <span class="ow">and</span> <span class="n">user_action</span><span class="o">.</span><span class="n">button</span> <span class="o">==</span> <span class="n">MouseButtonEvent</span><span class="o">.</span><span class="n">BUTTON_LEFT</span>
+    <span class="p">):</span>
+        <span class="n">actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_pump_actions</span><span class="p">(</span><span class="n">user_action</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">actions</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.get_click_targets" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_click_targets</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#matbii.tasks.resource_management.resource_management.AvatarResourceManagementActuator.get_click_targets" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Extras the <code>id</code> field of a target in <code>targets</code> if it matches the pattern.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>pattern</code></td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>pattern to test.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>targets</code></td>
+            <td>
+                  <code>list[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>targets to search.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>list[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>list[str]: matching targets.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">get_click_targets</span><span class="p">(</span><span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extras the `id` field of a target in `targets` if it matches the pattern.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pattern (str): pattern to test.</span>
+<span class="sd">        targets (list[str]): targets to search.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str]: matching targets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_get</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">target</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">target</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_get</span><span class="p">())</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.BurnFuelAction" class="doc doc-heading">
+            <code>BurnFuelAction</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.BurnFuelAction" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="star_ray_xml.query.XMLUpdateQuery">XMLUpdateQuery</span></code></p>
+
+
+      <p>Action class that will burn fuel in one of the main tanks (tank id = "a", "b" or "*" which indicates both tanks).</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BurnFuelAction</span><span class="p">(</span><span class="n">XMLUpdateQuery</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Action class that will burn fuel in one of the main tanks (tank id = &quot;a&quot;, &quot;b&quot; or &quot;*&quot; which indicates both tanks).&quot;&quot;&quot;</span>
+
+    <span class="n">target</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">burn</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_validate_target</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">TANK_MAIN_IDS</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">TANK_MAIN_IDS</span> <span class="o">+</span> <span class="p">[</span><span class="n">ALL</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid tank </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, must be one of </span><span class="si">{</span><span class="n">TANK_MAIN_IDS</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">[</span><span class="n">ALL</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__execute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_state</span><span class="p">:</span> <span class="n">XMLState</span><span class="p">):</span>  <span class="c1"># noqa</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_targets</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">_get_tank_data</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="s2">&quot;data-level&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># fuel is already 0, no fuel to burn</span>
+            <span class="n">new_level</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;data-level&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">burn</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">_update_tank_level</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">new_level</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">!=</span> <span class="n">ALL</span><span class="p">:</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="n">TANK_MAIN_IDS</span>
+        <span class="k">return</span> <span class="n">targets</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.PumpAction" class="doc doc-heading">
+            <code>PumpAction</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.PumpAction" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="star_ray_xml.query.XMLUpdateQuery">XMLUpdateQuery</span></code></p>
+
+
+      <p>Base class for pump related actions.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PumpAction</span><span class="p">(</span><span class="n">XMLUpdateQuery</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for pump related actions.&quot;&quot;&quot;</span>
+
+    <span class="n">target</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="n">OFF</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ON</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">FAILURE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_validate_target</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">PUMP_IDS</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PUMP_IDS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">SetPumpAction</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> `target` </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> must be one of </span><span class="si">{</span><span class="n">PUMP_IDS</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.PumpFuelAction" class="doc doc-heading">
+            <code>PumpFuelAction</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.PumpFuelAction" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.PumpAction" href="#matbii.tasks.resource_management.resource_management.PumpAction">PumpAction</a></code></p>
+
+
+      <p>Action class that will pump fuel from one tank to another.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PumpFuelAction</span><span class="p">(</span><span class="n">PumpAction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Action class that will pump fuel from one tank to another.&quot;&quot;&quot;</span>
+
+    <span class="n">flow</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">XPATH_PUMP</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;//svg:rect[@id=&#39;pump-</span><span class="si">%s</span><span class="s2">-button&#39;]&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__execute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_state</span><span class="p">:</span> <span class="n">XMLState</span><span class="p">):</span>  <span class="c1"># noqa</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pump_on</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">):</span>
+            <span class="n">id_from</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">id_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">_from</span> <span class="o">=</span> <span class="n">_get_tank_data</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="n">id_from</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_from</span><span class="p">[</span><span class="s2">&quot;data-level&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span>  <span class="c1"># there is no fuel to transfer</span>
+            <span class="n">_to</span> <span class="o">=</span> <span class="n">_get_tank_data</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="n">id_to</span><span class="p">)</span>
+            <span class="n">remain</span> <span class="o">=</span> <span class="n">_to</span><span class="p">[</span><span class="s2">&quot;data-capacity&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">_to</span><span class="p">[</span><span class="s2">&quot;data-level&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">remain</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span>  <span class="c1"># the tank is full</span>
+
+            <span class="c1"># compute flow value and new levels</span>
+            <span class="c1"># TODO potential weird bug here if _from[&quot;data-level&quot;] is lower than flow for an infinite tank</span>
+            <span class="n">flow</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">_from</span><span class="p">[</span><span class="s2">&quot;data-level&quot;</span><span class="p">],</span> <span class="n">remain</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span><span class="p">)</span>
+            <span class="n">new_to_level</span> <span class="o">=</span> <span class="n">_to</span><span class="p">[</span><span class="s2">&quot;data-level&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flow</span>
+            <span class="n">_update_tank_level</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="n">id_to</span><span class="p">,</span> <span class="n">_to</span><span class="p">,</span> <span class="n">new_to_level</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">id_from</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TANK_INF_IDS</span><span class="p">:</span>
+                <span class="c1"># &quot;from&quot; tank is a normal tank, fuel should be removed</span>
+                <span class="n">new_from_level</span> <span class="o">=</span> <span class="n">_from</span><span class="p">[</span><span class="s2">&quot;data-level&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">flow</span>
+                <span class="n">_update_tank_level</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="n">id_from</span><span class="p">,</span> <span class="n">_from</span><span class="p">,</span> <span class="n">new_from_level</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_pump_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_state</span><span class="p">:</span> <span class="n">XMLState</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Is the given pump current in the &quot;on&quot; state?</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            xml_state (XMLState): environment state.</span>
+<span class="sd">            target (str): target pump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: whether the pump is on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xpath</span> <span class="o">=</span> <span class="n">PumpFuelAction</span><span class="o">.</span><span class="n">XPATH_PUMP</span> <span class="o">%</span> <span class="n">target</span>
+        <span class="n">data_state</span> <span class="o">=</span> <span class="n">xml_state</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">xpath</span><span class="o">=</span><span class="n">xpath</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;data-state&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">][</span>
+            <span class="s2">&quot;data-state&quot;</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">data_state</span> <span class="o">==</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.PumpFuelAction.is_pump_on" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">is_pump_on</span><span class="p">(</span><span class="n">xml_state</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span></code>
+
+<a href="#matbii.tasks.resource_management.resource_management.PumpFuelAction.is_pump_on" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Is the given pump current in the "on" state?</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>xml_state</code></td>
+            <td>
+                  <code><span title="star_ray_xml.XMLState">XMLState</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>environment state.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>bool</code></td>            <td>
+                  <code>bool</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>whether the pump is on.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_pump_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_state</span><span class="p">:</span> <span class="n">XMLState</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Is the given pump current in the &quot;on&quot; state?</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        xml_state (XMLState): environment state.</span>
+<span class="sd">        target (str): target pump.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: whether the pump is on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xpath</span> <span class="o">=</span> <span class="n">PumpFuelAction</span><span class="o">.</span><span class="n">XPATH_PUMP</span> <span class="o">%</span> <span class="n">target</span>
+    <span class="n">data_state</span> <span class="o">=</span> <span class="n">xml_state</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">xpath</span><span class="o">=</span><span class="n">xpath</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;data-state&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">][</span>
+        <span class="s2">&quot;data-state&quot;</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">data_state</span> <span class="o">==</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.ResourceManagementActuator" class="doc doc-heading">
+            <code>ResourceManagementActuator</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="icua.agent.Actuator">Actuator</span></code></p>
+
+
+      <p>Actuator class that will be part of a <code>ScheduledAgent</code> or any other agent that controls the evolution of the resource management task.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ResourceManagementActuator</span><span class="p">(</span><span class="n">Actuator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Actuator class that will be part of a `ScheduledAgent` or any other agent that controls the evolution of the resource management task.&quot;&quot;&quot;</span>
+
+    <span class="nd">@attempt</span>
+    <span class="k">def</span> <span class="nf">burn_fuel</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">burn</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BurnFuelAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Burns a given amount of fuel in the `target` tank, if the tank is empty this has no effect.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | Literal[&quot;a&quot;, &quot;b&quot;]): target tank</span>
+<span class="sd">            burn (float): amount of fuel to burn.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BurnFuelAction: the action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BurnFuelAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="n">burn</span><span class="p">)</span>
+
+    <span class="nd">@attempt</span>
+    <span class="k">def</span> <span class="nf">pump_fuel</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">flow</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PumpFuelAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pumps the given amount of fuel via the given pump.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump (this will determine which tanks are pumped to/from).</span>
+<span class="sd">            flow (float): amount of fuel to pump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PumpFuelAction: the action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PumpFuelAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">flow</span><span class="o">=</span><span class="n">flow</span><span class="p">)</span>
+
+    <span class="nd">@attempt</span>
+    <span class="k">def</span> <span class="nf">toggle_pump_failure</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpFailureAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Toggle a pump failure (on/off -&gt; failure, failure -&gt; off).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TogglePumpFailureAction: the action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TogglePumpFailureAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+
+    <span class="nd">@attempt</span>
+    <span class="k">def</span> <span class="nf">toggle_pump</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Toggle pump state (on -&gt; off, off -&gt; on).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TogglePumpFailureAction: the action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TogglePumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.ResourceManagementActuator.burn_fuel" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">burn_fuel</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">burn</span><span class="p">)</span></code>
+
+<a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.burn_fuel" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Burns a given amount of fuel in the <code>target</code> tank, if the tank is empty this has no effect.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | <span title="typing.Literal">Literal</span>[&#39;a&#39;, &#39;b&#39;]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target tank</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>burn</code></td>
+            <td>
+                  <code>float</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>amount of fuel to burn.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>BurnFuelAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.BurnFuelAction" href="#matbii.tasks.resource_management.resource_management.BurnFuelAction">BurnFuelAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@attempt</span>
+<span class="k">def</span> <span class="nf">burn_fuel</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">burn</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BurnFuelAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Burns a given amount of fuel in the `target` tank, if the tank is empty this has no effect.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | Literal[&quot;a&quot;, &quot;b&quot;]): target tank</span>
+<span class="sd">        burn (float): amount of fuel to burn.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        BurnFuelAction: the action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">BurnFuelAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="n">burn</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.ResourceManagementActuator.pump_fuel" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">pump_fuel</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">flow</span><span class="p">)</span></code>
+
+<a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.pump_fuel" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Pumps the given amount of fuel via the given pump.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | <span title="typing.Literal">Literal</span>[&#39;ab&#39;, &#39;ba&#39;, &#39;ca&#39;, &#39;ec&#39;, &#39;ea&#39;, &#39;db&#39;, &#39;fd&#39;, &#39;fb&#39;]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump (this will determine which tanks are pumped to/from).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>flow</code></td>
+            <td>
+                  <code>float</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>amount of fuel to pump.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>PumpFuelAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.PumpFuelAction" href="#matbii.tasks.resource_management.resource_management.PumpFuelAction">PumpFuelAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@attempt</span>
+<span class="k">def</span> <span class="nf">pump_fuel</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">flow</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PumpFuelAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pumps the given amount of fuel via the given pump.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump (this will determine which tanks are pumped to/from).</span>
+<span class="sd">        flow (float): amount of fuel to pump.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PumpFuelAction: the action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">PumpFuelAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">flow</span><span class="o">=</span><span class="n">flow</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">toggle_pump</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></code>
+
+<a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Toggle pump state (on -&gt; off, off -&gt; on).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | <span title="typing.Literal">Literal</span>[&#39;ab&#39;, &#39;ba&#39;, &#39;ca&#39;, &#39;ec&#39;, &#39;ea&#39;, &#39;db&#39;, &#39;fd&#39;, &#39;fb&#39;]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>TogglePumpFailureAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.TogglePumpAction" href="#matbii.tasks.resource_management.resource_management.TogglePumpAction">TogglePumpAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@attempt</span>
+<span class="k">def</span> <span class="nf">toggle_pump</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Toggle pump state (on -&gt; off, off -&gt; on).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        TogglePumpFailureAction: the action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">TogglePumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump_failure" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">toggle_pump_failure</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></code>
+
+<a href="#matbii.tasks.resource_management.resource_management.ResourceManagementActuator.toggle_pump_failure" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Toggle a pump failure (on/off -&gt; failure, failure -&gt; off).</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | <span title="typing.Literal">Literal</span>[&#39;ab&#39;, &#39;ba&#39;, &#39;ca&#39;, &#39;ec&#39;, &#39;ea&#39;, &#39;db&#39;, &#39;fd&#39;, &#39;fb&#39;]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>TogglePumpFailureAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.TogglePumpFailureAction" href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction">TogglePumpFailureAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@attempt</span>
+<span class="k">def</span> <span class="nf">toggle_pump_failure</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpFailureAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Toggle a pump failure (on/off -&gt; failure, failure -&gt; off).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        TogglePumpFailureAction: the action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">TogglePumpFailureAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.SetPumpAction" class="doc doc-heading">
+            <code>SetPumpAction</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.SetPumpAction" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.PumpAction" href="#matbii.tasks.resource_management.resource_management.PumpAction">PumpAction</a></code></p>
+
+
+      <p>Action class for setting the state of a pump. Pumps states are off=0, on=1, failure=2.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SetPumpAction</span><span class="p">(</span><span class="n">PumpAction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Action class for setting the state of a pump. Pumps states are off=0, on=1, failure=2.&quot;&quot;&quot;</span>
+
+    <span class="n">state</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_validate_state</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">SetPumpAction</span><span class="o">.</span><span class="n">coerce_pump_state</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">OFF</span><span class="p">,</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span><span class="p">,</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid state `</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">` must be one of </span><span class="si">{</span><span class="p">[</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">OFF</span><span class="p">,</span><span class="w"> </span><span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span><span class="p">,</span><span class="w"> </span><span class="n">PumpAction</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">coerce_pump_state</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Coerce a state that is specified as a string to an int: &quot;off -&gt; 0, &quot;on&quot; -&gt; 1, &quot;failure&quot; -&gt; 2.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (str | int): the value to coerce.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if the given state cannot be coerced.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: the integer state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;on&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;off&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">OFF</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;failure&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">FAILURE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid state `</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">` must be one of [&#39;on&#39;, &#39;off&#39;, &#39;failure&#39;]&quot;</span>
+            <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">new_on</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SetPumpAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Factory method that returns an action that will turn the given pump on.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | str): target pump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SetPumpAction: the action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SetPumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">new_off</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SetPumpAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Factory method that returns an action that will turn the given pump off.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | str): target pump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SetPumpAction: the action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SetPumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">OFF</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">new_failure</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SetPumpAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Factory function that returns an action that will make the pump fail.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | str): target pump.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SetPumpAction: the action</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">SetPumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__execute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">XMLState</span><span class="p">):</span>  <span class="c1"># noqa</span>
+        <span class="k">return</span> <span class="n">state</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">update</span><span class="p">(</span>
+                <span class="n">xpath</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;//*[@id=&#39;pump-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="si">}</span><span class="s2">-button&#39;]&quot;</span><span class="p">,</span>
+                <span class="n">attrs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;data-state&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">),</span>
+                    <span class="s2">&quot;fill&quot;</span><span class="p">:</span> <span class="n">Expr</span><span class="p">(</span><span class="s2">&quot;{data-colors}[</span><span class="si">{state}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">),</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.SetPumpAction.coerce_pump_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">coerce_pump_state</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.coerce_pump_state" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Coerce a state that is specified as a string to an int: "off -&gt; 0, "on" -&gt; 1, "failure" -&gt; 2.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>value</code></td>
+            <td>
+                  <code>str | int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the value to coerce.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>ValueError</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>if the given state cannot be coerced.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>int</code></td>            <td>
+                  <code>int</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the integer state.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">coerce_pump_state</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Coerce a state that is specified as a string to an int: &quot;off -&gt; 0, &quot;on&quot; -&gt; 1, &quot;failure&quot; -&gt; 2.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (str | int): the value to coerce.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if the given state cannot be coerced.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: the integer state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;on&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;off&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">OFF</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;failure&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PumpAction</span><span class="o">.</span><span class="n">FAILURE</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid state `</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">` must be one of [&#39;on&#39;, &#39;off&#39;, &#39;failure&#39;]&quot;</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.SetPumpAction.new_failure" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">new_failure</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_failure" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Factory function that returns an action that will make the pump fail.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>SetPumpAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.SetPumpAction" href="#matbii.tasks.resource_management.resource_management.SetPumpAction">SetPumpAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">new_failure</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SetPumpAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory function that returns an action that will make the pump fail.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | str): target pump.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SetPumpAction: the action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">SetPumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">FAILURE</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.SetPumpAction.new_off" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">new_off</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_off" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Factory method that returns an action that will turn the given pump off.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>SetPumpAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.SetPumpAction" href="#matbii.tasks.resource_management.resource_management.SetPumpAction">SetPumpAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">new_off</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SetPumpAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory method that returns an action that will turn the given pump off.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | str): target pump.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SetPumpAction: the action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">SetPumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">OFF</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.SetPumpAction.new_on" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">new_on</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#matbii.tasks.resource_management.resource_management.SetPumpAction.new_on" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Factory method that returns an action that will turn the given pump on.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | str</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>SetPumpAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.SetPumpAction" href="#matbii.tasks.resource_management.resource_management.SetPumpAction">SetPumpAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">new_on</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SetPumpAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory method that returns an action that will turn the given pump on.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | str): target pump.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        SetPumpAction: the action</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">SetPumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">PumpAction</span><span class="o">.</span><span class="n">ON</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.TogglePumpAction" class="doc doc-heading">
+            <code>TogglePumpAction</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.TogglePumpAction" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.PumpAction" href="#matbii.tasks.resource_management.resource_management.PumpAction">PumpAction</a></code></p>
+
+
+      <p>Action class that will toggle the pump on -&gt; off, off -&gt; on.</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">TogglePumpAction</span><span class="p">(</span><span class="n">PumpAction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Action class that will toggle the pump on -&gt; off, off -&gt; on.&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span>
+        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ab&quot;</span><span class="p">,</span> <span class="s2">&quot;ba&quot;</span><span class="p">,</span> <span class="s2">&quot;ca&quot;</span><span class="p">,</span> <span class="s2">&quot;ec&quot;</span><span class="p">,</span> <span class="s2">&quot;ea&quot;</span><span class="p">,</span> <span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="s2">&quot;fd&quot;</span><span class="p">,</span> <span class="s2">&quot;fb&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Factory function for a `TogglePumpAction`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TogglePumpAction: the action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TogglePumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__execute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_state</span><span class="p">:</span> <span class="n">XMLState</span><span class="p">):</span>  <span class="c1"># noqa</span>
+        <span class="c1"># check if pump is in a failure state</span>
+        <span class="n">pump_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pump-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="si">}</span><span class="s2">-button&quot;</span>
+        <span class="c1"># 0 -&gt; 1, 1 -&gt; 0, 2 -&gt; 2 (cannot toggle if the pump is in failure)</span>
+        <span class="n">new_state</span> <span class="o">=</span> <span class="s2">&quot;(1-{data-state})%3&quot;</span>
+        <span class="n">xml_state</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">update</span><span class="p">(</span>
+                <span class="n">xpath</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;//*[@id=&#39;</span><span class="si">{</span><span class="n">pump_id</span><span class="si">}</span><span class="s2">&#39;]&quot;</span><span class="p">,</span>
+                <span class="n">attrs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;data-state&quot;</span><span class="p">:</span> <span class="n">Expr</span><span class="p">(</span><span class="n">new_state</span><span class="p">),</span>
+                    <span class="c1"># GOTCHA! data-state will be updated first (from above) and used to update fill! the order matters here.</span>
+                    <span class="s2">&quot;fill&quot;</span><span class="p">:</span> <span class="n">Expr</span><span class="p">(</span><span class="s2">&quot;{data-colors}[{data-state}]&quot;</span><span class="p">),</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.TogglePumpAction.new" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">new</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#matbii.tasks.resource_management.resource_management.TogglePumpAction.new" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Factory function for a <code>TogglePumpAction</code>.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | <span title="typing.Literal">Literal</span>[&#39;ab&#39;, &#39;ba&#39;, &#39;ca&#39;, &#39;ec&#39;, &#39;ea&#39;, &#39;db&#39;, &#39;fd&#39;, &#39;fb&#39;]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>TogglePumpAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.TogglePumpAction" href="#matbii.tasks.resource_management.resource_management.TogglePumpAction">TogglePumpAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">new</span><span class="p">(</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ab&quot;</span><span class="p">,</span> <span class="s2">&quot;ba&quot;</span><span class="p">,</span> <span class="s2">&quot;ca&quot;</span><span class="p">,</span> <span class="s2">&quot;ec&quot;</span><span class="p">,</span> <span class="s2">&quot;ea&quot;</span><span class="p">,</span> <span class="s2">&quot;db&quot;</span><span class="p">,</span> <span class="s2">&quot;fd&quot;</span><span class="p">,</span> <span class="s2">&quot;fb&quot;</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory function for a `TogglePumpAction`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        TogglePumpAction: the action.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">TogglePumpAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="matbii.tasks.resource_management.resource_management.TogglePumpFailureAction" class="doc doc-heading">
+            <code>TogglePumpFailureAction</code>
+
+
+<a href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.PumpAction" href="#matbii.tasks.resource_management.resource_management.PumpAction">PumpAction</a></code></p>
+
+
+      <p>Action class that will cause a pump failure (on/off -&gt; failure, failure -&gt; off).</p>
+
+              <details class="quote">
+                <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">TogglePumpFailureAction</span><span class="p">(</span><span class="n">PumpAction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Action class that will cause a pump failure (on/off -&gt; failure, failure -&gt; off).&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpFailureAction&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Factory function for a `TogglePumpFailureAction`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TogglePumpFailureAction: the action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TogglePumpFailureAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__execute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml_state</span><span class="p">:</span> <span class="n">XMLState</span><span class="p">):</span>  <span class="c1"># noqa</span>
+        <span class="n">pump_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pump-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="si">}</span><span class="s2">-button&quot;</span>
+        <span class="c1"># 0 -&gt; 2, 1 -&gt; 2, 2 -&gt; 0</span>
+        <span class="n">new_state</span> <span class="o">=</span> <span class="s2">&quot;2 * (1 - {data-state} // 2)&quot;</span>
+        <span class="n">xml_state</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">update</span><span class="p">(</span>
+                <span class="n">xpath</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;//*[@id=&#39;</span><span class="si">{</span><span class="n">pump_id</span><span class="si">}</span><span class="s2">&#39;]&quot;</span><span class="p">,</span>
+                <span class="n">attrs</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;data-state&quot;</span><span class="p">:</span> <span class="n">Expr</span><span class="p">(</span><span class="n">new_state</span><span class="p">),</span>
+                    <span class="c1"># GOTCHA! data-state will be updated first (from above) and used to update fill! the order matters here.</span>
+                    <span class="s2">&quot;fill&quot;</span><span class="p">:</span> <span class="n">Expr</span><span class="p">(</span><span class="s2">&quot;{data-colors}[{data-state}]&quot;</span><span class="p">),</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="matbii.tasks.resource_management.resource_management.TogglePumpFailureAction.new" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">new</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction.new" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+      <p>Factory function for a <code>TogglePumpFailureAction</code>.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>target</code></td>
+            <td>
+                  <code>int | <span title="typing.Literal">Literal</span>[&#39;ab&#39;, &#39;ba&#39;, &#39;ca&#39;, &#39;ec&#39;, &#39;ea&#39;, &#39;db&#39;, &#39;fd&#39;, &#39;fb&#39;]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>target pump</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>TogglePumpFailureAction</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="matbii.tasks.resource_management.resource_management.TogglePumpFailureAction" href="#matbii.tasks.resource_management.resource_management.TogglePumpFailureAction">TogglePumpFailureAction</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the action.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>matbii\tasks\resource_management\resource_management.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TogglePumpFailureAction&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory function for a `TogglePumpFailureAction`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        target (int | Literal[&quot;ab&quot;, &quot;ba&quot;, &quot;ca&quot;, &quot;ec&quot;, &quot;ea&quot;, &quot;db&quot;, &quot;fd&quot;, &quot;fb&quot;]): target pump</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        TogglePumpFailureAction: the action.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">TogglePumpFailureAction</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Resource management">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Resource management
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../system_monitoring/" class="md-footer__link md-footer__link--next" aria-label="Next: System monitoring">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                System monitoring
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["content.code.copy", "navigation.footer", "navigation.expand", "navigation.tabs", "navigation.indexes"], "search": "../../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      
+    
+  </body>
+</html>
