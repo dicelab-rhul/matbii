@@ -1,0 +1,4 @@
+<svg x="0" y="0" width="640" height="640" xmlns="http://www.w3.org/2000/svg">
+    <circle id="c1" cx="50" cy="50" r="20" fill="red" />
+    <circle id="c2" cx="50" cy="50" r="20" fill="blue" />
+</svg>
