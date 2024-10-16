@@ -1,0 +1,4 @@
+1. add fixed mode for arrow guidance (display in fixed position, or at different position for each task)
+2. enable -> enabled
+3. guidance based on fixation rather than most recent timestamp
+4. guidance agent behaviour should be from last failure, not last guidance.
