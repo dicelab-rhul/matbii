@@ -16,7 +16,7 @@
         "meta": {}
     },
     "guidance": {
-        "enable": false,
+        "enable": true,
         "counter_factual": false
     },
     "window": {
@@ -30,9 +30,9 @@
         "background_color": "#ffffff"
     },
     "eyetracking": {
-        "uri": "tet-tcp://172.28.195.1",
+        "uri": "tet-tcp://169.254.126.68",
         "sdk": "tobii",
-        "enabled": false,
+        "enabled": true,
         "moving_average_n": 5,
         "velocity_threshold": 0.5
     },
