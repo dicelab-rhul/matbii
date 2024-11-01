@@ -20,8 +20,8 @@
     "eyetracking": {
         "uri": "tet-tcp://169.254.126.68",
         "sdk": "tobii",
-        "enabled": true,
-        "moving_average_n": 5, 
+        "enabled": false,
+        "moving_average_n": 5,
         "velocity_threshold": 0.5
     },
     "window": {

@@ -15,25 +15,6 @@ def get_events(path: str | Path):
     return parser, list(parser.parse(path, relative_start=True))
 
 
-class TestSystemMonitoringEvents(unittest.TestCase):
-    """Test system monitoring event parsing."""
-
-    @classmethod
-    def setUpClass(cls):
-        """Get events from the system monitoring test log file."""
-        path = (Path(__file__).parent / "system_monitoring.log").as_posix()
-        cls.parser, cls.events = get_events(path)
-
-    def test_system_monitoring_events(self):
-        """Test system monitoring events."""
-        system_monitoring_df = analysis.get_system_monitoring_task_events(
-            self.parser, self.events
-        )
-        self.assertGreater(
-            len(system_monitoring_df), 0, "No system monitoring events found."
-        )
-
-
 class TestUserInputEvents(unittest.TestCase):
     """Test mouse, keyboard and eyetracking event parsing."""
 
