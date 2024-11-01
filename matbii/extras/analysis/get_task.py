@@ -4,7 +4,7 @@ import warnings
 import pandas as pd
 from star_ray_xml import XMLState, Insert, Update, Replace, Delete
 from star_ray_pygame import SVGAmbient
-from icua.event import Event, MouseButtonEvent, KeyEvent, Select
+from icua.event import Event, RenderEvent, MouseButtonEvent, KeyEvent, Select
 from icua.extras.analysis import EventLogParser
 
 # these sensors are going to be used to get the relevant state information via their sense actions
@@ -36,6 +36,7 @@ def get_tracking_task_events(
 
     Columns:
         - timestamp: float - the (logging) timestamp of the event
+        - frame: int - the frame number of the event, events with a frame number of 0 happen BEFORE the first frame is rendered to the user.
         - user: bool - whether the event was triggered by the user or not.
         - x: float - the x coordinate of the tracking target
         - y: float - the y coordinate of the tracking target
@@ -45,7 +46,7 @@ def get_tracking_task_events(
         events (list[tuple[float, Event]]): list of events that were parsed from the event log file.
 
     Returns:
-        pd.DataFrame: dataframe with columns: ["timestamp", "user", "x", "y"]
+        pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", "x", "y"]
     """
     # use the default state, the actual size etc. of the svg is not important for our purposes.
     # we only want to track the task events (which do not depend on the svg or window config.)
@@ -61,22 +62,23 @@ def get_tracking_task_events(
             Replace,
             TargetMoveAction,
             KeyEvent,
+            RenderEvent,
         ),
     )
-    print(fevents)
     # sort the events by their log timestamp
     fevents = sorted(fevents, key=lambda x: x[0])
 
     # sense actions to get relevant data from the state
     sense_actions = TrackingTaskAcceptabilitySensor().sense()
 
-    def _rename_column(k: str):
-        return k  # TODO?
-
     def _get_task_events(fevents: list[tuple[float, Event]]):
         """Execute the events in order and yield the current task state."""
         input_preceded = False
+        frame = 0
         for i, (t, event) in enumerate(fevents):
+            if isinstance(event, RenderEvent):
+                frame += 1
+                continue
             if isinstance(event, KeyEvent):
                 input_preceded = event.status == KeyEvent.DOWN
                 continue  # nothing to execute on the actual mouse event
@@ -96,6 +98,7 @@ def get_tracking_task_events(
             # this is to distinguish between use triggered events and internal task events
             result["source"] = int(event.source) if event.source is not None else 0
             result["input_preceded"] = input_preceded
+            result["frame"] = frame
             input_preceded = False
             yield result
 
@@ -108,8 +111,8 @@ def get_tracking_task_events(
     df["user"] = df["source"] == infered_user_sources[0]
     # drop unused columns
     df.drop(columns=["input_preceded", "source"], inplace=True)
-    state_columns = sorted(list(set(df.columns) - set(["timestamp", "user"])))
-    df = df[["timestamp", "user", *state_columns]]
+    state_columns = sorted(list(set(df.columns) - set(["timestamp", "frame", "user"])))
+    df = df[["timestamp", "frame", "user", *state_columns]]
     return df
 
 
@@ -121,6 +124,7 @@ def get_system_monitoring_task_events(
 
     Columns:
         - timestamp: float - the (logging) timestamp of the event
+        - frame: int - the frame number of the event, events with a frame number of 0 happen BEFORE the first frame is rendered to the user.
         - user: bool - whether the event was triggered by the user or not.
         - light-1: int - the state of light-1
         - light-2: int - the state of light-2
@@ -137,24 +141,27 @@ def get_system_monitoring_task_events(
 
 
     Returns:
-        pd.DataFrame: dataframe with columns: ["timestamp", "user", "light-1", "light-2", "slider-1", "slider-2", "slider-3", "slider-4"]
+        pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", "light-1", "light-2", "slider-1", "slider-2", "slider-3", "slider-4"]
     """
     # use the default state, the actual size etc. of the svg is not important for our purposes.
     # we only want to track the task events (which do not depend on the svg or window config.)
     xml_state = SVGAmbient([]).get_state()
-
-    # collect all the relevant events for this task
-    fevents = []
     # these are raw events that may be triggered internally by matbii
     # insert events insert the tasks into the xml state at the start of the simulation
-    fevents.extend(parser.filter_events(events, Insert))
-    fevents.extend(parser.filter_events(events, Delete))
-    fevents.extend(parser.filter_events(events, Update))
-    fevents.extend(parser.filter_events(events, Replace))
-    fevents.extend(parser.filter_events(events, SetLightAction))
-    fevents.extend(parser.filter_events(events, ToggleLightAction))
-    fevents.extend(parser.filter_events(events, SetSliderAction))
-    fevents.extend(parser.filter_events(events, MouseButtonEvent))
+    fevents = parser.filter_events(
+        events,
+        (
+            Insert,
+            Delete,
+            Replace,
+            Update,
+            SetLightAction,
+            ToggleLightAction,
+            SetSliderAction,
+            MouseButtonEvent,
+            RenderEvent,
+        ),
+    )
     # sort the events by their log timestamp
     fevents = sorted(fevents, key=lambda x: x[0])
 
@@ -167,7 +174,11 @@ def get_system_monitoring_task_events(
     def _get_task_events(fevents: list[tuple[float, Event]]):
         """Execute the events in order and yield the current task state."""
         input_preceded = False
+        frame = 0
         for i, (t, event) in enumerate(fevents):
+            if isinstance(event, RenderEvent):
+                frame += 1
+                continue
             if isinstance(event, MouseButtonEvent):
                 input_preceded = event.status == MouseButtonEvent.DOWN
                 continue  # nothing to execute on the actual mouse event
@@ -189,6 +200,7 @@ def get_system_monitoring_task_events(
             # this is to distinguish between use triggered events and internal task events
             result["source"] = int(event.source) if event.source is not None else 0
             result["input_preceded"] = input_preceded
+            result["frame"] = frame
             input_preceded = False
             yield result
 
@@ -201,8 +213,8 @@ def get_system_monitoring_task_events(
     df["user"] = df["source"] == infered_user_sources[0]
     # drop unused columns
     df.drop(columns=["input_preceded", "source"], inplace=True)
-    state_columns = sorted(list(set(df.columns) - set(["timestamp", "user"])))
-    df = df[["timestamp", "user", *state_columns]]
+    state_columns = sorted(list(set(df.columns) - set(["timestamp", "frame", "user"])))
+    df = df[["timestamp", "frame", "user", *state_columns]]
     return df
 
 
@@ -219,7 +231,6 @@ def sense(state: XMLState, sense_actions: list[Select]):
             for value in obs:
                 id = value.pop("id")
                 data[id] = value
-    except Exception as e:
-        print(e)
+    except Exception:
         return None
     return data

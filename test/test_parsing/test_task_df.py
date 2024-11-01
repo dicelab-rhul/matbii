@@ -24,7 +24,7 @@ class TestTasks(unittest.TestCase):
         parser, events = get_events(path)
 
         tracking_df = analysis.get_tracking_task_events(parser, events)
-        # print(tracking_df)
+        print(tracking_df)
         self.assertGreater(len(tracking_df), 0, "No tracking events found.")
 
     # def test_system_monitoring_events(self):

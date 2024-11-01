@@ -12,6 +12,10 @@ from icua.extras.analysis import (
     get_mouse_motion_events,
     get_keyboard_events,
     get_eyetracking_events,
+    get_acceptable_intervals,
+    get_guidance_intervals,
+    merge_intervals,
+    isin_intervals,
 )
 
 __all__ = [
@@ -23,4 +27,8 @@ __all__ = [
     "get_mouse_motion_events",
     "get_keyboard_events",
     "get_eyetracking_events",
+    "get_acceptable_intervals",
+    "get_guidance_intervals",
+    "merge_intervals",
+    "isin_intervals",
 ]

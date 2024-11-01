@@ -9,13 +9,6 @@ TODO acceptaility intervals should contain relevant state information about the 
 
 - Guidance intervals: A dataframe of intervals (t1, t2, task) that indicate the time at which a guidance was shown.At times inbetween intervals, no guidance was shown.
 
-### User input 
-
-- Mouse movement events: A dataframe of mouse movements (t, x, y).
-- Mouse click events: A dataframe of mouse click events (t, x, y, b). b indicates which button was clicked.
-- Keyboard events: A dataframe of keyboard events (t, key).
-- Eye movement events: A dataframe of eye tracking events (t, x, y, f). f indicates whether the event part of a fixation or saccade. Note that the (x, y) coordinates already have been passed through filters.
-
 ### Task specific 
 
 - Tracking: A dataframe of tracking events (t, x, y) showing the position of the tracking target.
