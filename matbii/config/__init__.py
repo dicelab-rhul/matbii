@@ -10,6 +10,7 @@ from pydantic import (
     NonNegativeInt,
     PositiveInt,
     PositiveFloat,
+    model_validator,
 )
 from typing import Any, ClassVar
 from pathlib import Path
@@ -104,7 +105,7 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
         default="tobii",
         description="The eye tracking SDK to use, current options are: `['tobii']`.",
     )
-    enabled: bool = Field(default=False, description="Whether eye tracking is enabled.")
+    enable: bool = Field(default=False, description="Whether eye tracking is enabled.")
     moving_average_n: PositiveInt = Field(
         default=5,
         description="The window size to used to smooth eye tracking coordinates.",
@@ -113,6 +114,17 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
         default=0.5,
         description="The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. **IMPORTANT NOTE:** different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent).",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_model(cls, data: dict[str, Any]):
+        if "enabled" in data:
+            LOGGER.warning(
+                "Configuration option: `eyetracking.enabled` is deprecated and will be removed in the future, please use `eyetracking.enable` instead."
+            )
+            data["enable"] = data["enabled"]
+            del data["enabled"]
+        return data
 
     @field_validator("sdk", mode="before")
     @classmethod
@@ -129,7 +141,7 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
         Returns:
             EyetrackerIOSensor | None: the sensor, created based on this eyetracking configuration.
         """
-        if self.enabled:
+        if self.enable:
             eyetracker = self.new_eyetracker()
             return EyetrackerIOSensor(
                 eyetracker, self.velocity_threshold, self.moving_average_n
@@ -142,7 +154,7 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
         Returns:
             EyetrackerBase | None: the eyetracker created based on this eyetracking configuration.
         """
-        if self.enabled:
+        if self.enable:
             if self.sdk == "tobii":
                 return self._new_tobii_eyetracker()
             else:
@@ -258,8 +270,13 @@ class Configuration(BaseModel, validate_assignment=True):
         Returns:
             Configuration: the configuration (with updated path variables - modified in place)
         """
+        # set logging level
+        LOGGER.set_level(config.logging.level)
+
         # set the logger path
         path = Path(config.logging.path).expanduser().resolve()
+
+        # create the full path
         full_path = path
         if config.experiment.id:
             full_path = full_path / config.experiment.id

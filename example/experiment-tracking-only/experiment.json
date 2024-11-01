@@ -35,7 +35,7 @@
         "background_color": "#ffffff"
     },
     "logging": {
-        "level": "DEBUG",
+        "level": "WARNING",
         "path": "./logs/"
     },
     "ui": {

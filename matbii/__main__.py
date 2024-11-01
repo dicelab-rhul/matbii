@@ -114,7 +114,7 @@ if __name__ == "__main__":
             # shows arrow pointing at a task as guidance
             ArrowGuidanceActuator(
                 # TODO should be a config option?
-                arrow_mode="gaze" if config.eyetracking.enabled else "mouse",
+                arrow_mode="gaze" if config.eyetracking.enable else "mouse",
                 arrow_scale=1.0,  # TODO should be a config option?
                 arrow_fill_color="none",  # TODO should be a config option?
                 arrow_stroke_color="#ff0000",  # TODO should be a config option?
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         ],
         break_ties="random",  # TODO should be a config option?
         grace_period=2.0,  # TODO configuration options
-        attention_mode="gaze" if config.eyetracking.enabled else "mouse",
+        attention_mode="gaze" if config.eyetracking.enable else "mouse",
         counter_factual=config.guidance.counter_factual,
     )
     agents.append(guidance_agent)
