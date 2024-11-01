@@ -3,8 +3,11 @@
 import argparse
 import json
 from pathlib import Path
-from icua.extras.analysis import EventLogParser, get_svg_as_image
-from icua.event import MouseMotionEvent
+from icua.extras.analysis import (
+    EventLogParser,
+    get_mouse_motion_events,
+    get_svg_as_image,
+)
 import matplotlib.pyplot as plt
 
 # load configuration file
@@ -32,6 +35,8 @@ log_file_path = parser.get_event_log_file(args.path)
 # this parses the log file and produces a list of events (in order of the file)
 events = list(parser.parse(log_file_path))
 
+mouse_motion_df = get_mouse_motion_events(parser, events)
+
 # load the configuration file and get the size of the svg canvas
 with open(Path(args.path) / "configuration.json") as f:
     config = json.load(f)
@@ -42,21 +47,10 @@ fig, ax = plt.subplots(figsize=(4, 4))
 ax.set_xlim(0, svg_size[0])
 ax.set_ylim(svg_size[1], 0)
 
-
 # load the initial render of the svg
 image = get_svg_as_image(svg_size, events)
 # show the tasks as part of the plot. NOTE: the image is already the correct size (in svg space)
 ax.imshow(image)
-
-# filter events of interest, you can use any event type here, but we are interested in mouse motion events
-mouse_motion_events = parser.filter_events(events, MouseMotionEvent)
-# convert the events from a list to a dataframe. NOTE: that `timestamp_log` is used as the column name for the logging timestamp
-mouse_motion_df = parser.as_dataframe(
-    mouse_motion_events, include=["timestamp", "position"]
-)
-mouse_motion_df["x"] = mouse_motion_df["position"].apply(lambda p: p[0])
-mouse_motion_df["y"] = mouse_motion_df["position"].apply(lambda p: p[1])
-mouse_motion_df = mouse_motion_df[["timestamp", "x", "y"]]
 
 # plot the mouse coordinate, they will be overlayed over the tasks
 ax.scatter(

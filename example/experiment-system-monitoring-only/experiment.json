@@ -2,18 +2,11 @@
     "experiment": {
         "id": null,
         "path": ".",
-        "duration": 60,
+        "duration": 10,
         "enable_video_recording": false,
         "enable_tasks": [
-            "system_monitoring",
-            "resource_management",
-            "tracking"
-        ],
-        "meta": {}
-    },
-    "participant": {
-        "id": null,
-        "meta": {}
+            "system_monitoring"
+        ]
     },
     "guidance": {
         "enable": true,
@@ -22,19 +15,12 @@
     "window": {
         "x": 0,
         "y": 0,
-        "width": 800,
-        "height": 700,
-        "title": "window",
+        "width": 240,
+        "height": 330,
+        "title": "System Monitoring",
         "resizable": false,
         "fullscreen": false,
         "background_color": "#ffffff"
-    },
-    "eyetracking": {
-        "uri": "tet-tcp://169.254.126.68",
-        "sdk": "tobii",
-        "enabled": false,
-        "moving_average_n": 5,
-        "velocity_threshold": 0.5
     },
     "logging": {
         "level": "DEBUG",
@@ -42,8 +28,8 @@
     },
     "ui": {
         "size": [
-            800,
-            700
+            240,
+            330
         ],
         "offset": [
             0,
