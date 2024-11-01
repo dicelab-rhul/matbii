@@ -195,14 +195,34 @@ class LoggingConfiguration(BaseModel, validate_assignment=True):
 class UIConfiguration(BaseModel, validate_assignment=True):
     """Configuration relating to rendering and the UI."""
 
-    size: tuple[PositiveInt, PositiveInt] = Field(
-        default=(810, 680),
-        description="The width and height of the canvas used to render the tasks. This should fully encapsulate all task elements. If a task appears to be off screen, try increasing this value.",
+    width: PositiveInt = Field(
+        default=810,
+        description="The width of the canvas used to render the tasks.",
     )
+    height: PositiveInt = Field(
+        default=680,
+        description="The height of the canvas used to render the tasks.",
+    )
+    # size: tuple[PositiveInt, PositiveInt] = Field(
+    #     default=(810, 680),
+    #     description="The width and height of the canvas used to render the tasks. This should fully encapsulate all task elements. If a task appears to be off screen, try increasing this value.",
+    # )
     offset: tuple[NonNegativeInt, NonNegativeInt] = Field(
         default=(0, 0),
         description="The x and y offset used when rendering the root UI element, can be used to pad the top/left of the window.",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate_model(cls, data: dict[str, Any]):
+        if "size" in data:
+            LOGGER.warning(
+                "Configuration option: `ui.size` is deprecated and will be removed in the future, please use `ui.width` and `ui.height` instead."
+            )
+            data["width"] = data["size"][0]
+            data["height"] = data["size"][1]
+            del data["size"]
+        return data
 
 
 def _default_window_configuration_factory():

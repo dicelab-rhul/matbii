@@ -138,7 +138,7 @@ if __name__ == "__main__":
         wait=0.0,  # this can be zero as long as it doesnt matter that the scheduler hogs asyncio, TODO test this with IO devices (eyetracker particularly)
         avatar=avatar,
         agents=agents,
-        svg_size=config.ui.size,
+        svg_size=(config.ui.width, config.ui.height),
         svg_position=config.ui.offset,
         logging_path=config.logging.path,
         terminate_after=config.experiment.duration,
