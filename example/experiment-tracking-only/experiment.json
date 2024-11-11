@@ -25,13 +25,9 @@
         "velocity_threshold": 0.5
     },
     "window": {
-        "x": 0,
-        "y": 0,
         "width": 320,
         "height": 320,
-        "title": "window",
-        "resizable": false,
-        "fullscreen": false,
+        "title": "Tracking Task",
         "background_color": "#ffffff"
     },
     "logging": {
@@ -39,13 +35,11 @@
         "path": "./logs/"
     },
     "ui": {
-        "size": [
-            320,
-            320
-        ],
+        "width": 640,
+        "height": 640,
         "offset": [
-            0,
-            0
+            20,
+            20
         ]
     }
 }
