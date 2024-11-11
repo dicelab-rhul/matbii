@@ -1,7 +1,8 @@
 """Package defining avatar related functionality."""
 
 # avatar
-from icua.agent import Avatar, AvatarActuator
+from icua.agent import Avatar
+from .avatar_actuator import AvatarActuator
 from ..tasks import (
     AvatarTrackingActuator,
     AvatarSystemMonitoringActuator,
