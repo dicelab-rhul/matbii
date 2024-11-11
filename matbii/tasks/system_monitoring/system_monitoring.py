@@ -66,7 +66,7 @@ class AvatarSystemMonitoringActuator(Actuator):
         This will attempt either a `SetLightAction` or a `SetSliderAction` depending on what svg element was clicked (assuming the mouse event registers as a click).
 
         Effects:
-        - `SetLightAction`: will always set the light to its preferred (acceptable) state.
+        - `SetLightAction`: will always set the light to its preferred (acceptable) state (which is ON for light 1 and OFF for light 2).
         - `SetSliderAction` will reset the slider to its preferred (acceptable) state (which is the central position), see `ResetSliderAction`.
 
         Args:
@@ -89,7 +89,15 @@ class AvatarSystemMonitoringActuator(Actuator):
         self, user_action: MouseButtonEvent
     ) -> list["ToggleLightAction"]:
         targets = [int(x) for x in self._get_light_targets(user_action.target)]
-        return [ToggleLightAction(target=target) for target in targets]
+        # the user can only set the state to the "acceptable" state
+        acceptable = [
+            SetLightAction.ON,
+            SetLightAction.OFF,
+        ]
+        return [
+            SetLightAction(target=target, state=acceptable[target - 1])
+            for target in targets
+        ]
 
     def _get_slider_actions(
         self, user_action: MouseButtonEvent
