@@ -1,8 +1,8 @@
 """Package defining avatar related functionality."""
 
 # avatar
-from icua.agent import Avatar
-from .avatar_actuator import AvatarActuator
+from icua.agent import Avatar, AvatarActuator
+from .exit_actuator import ExitActuator
 from ..tasks import (
     AvatarTrackingActuator,
     AvatarSystemMonitoringActuator,
@@ -15,6 +15,7 @@ from icua.extras.eyetracking import EyetrackerIOSensor, tobii
 __all__ = (
     "Avatar",
     "AvatarActuator",
+    "ExitActuator",
     "AvatarTrackingActuator",
     "AvatarSystemMonitoringActuator",
     "AvatarResourceManagementActuator",

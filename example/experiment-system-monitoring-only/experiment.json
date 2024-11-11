@@ -10,7 +10,12 @@
     },
     "guidance": {
         "enable": true,
-        "counter_factual": false
+        "counter_factual": false,
+        "grace_mode": "attention",
+        "attention_mode": "mouse",
+        "arrow": {
+            "mode": "mouse"
+        }
     },
     "window": {
         "x": 0,
@@ -30,10 +35,6 @@
         "size": [
             240,
             330
-        ],
-        "offset": [
-            0,
-            0
         ]
     }
 }

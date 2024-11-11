@@ -27,6 +27,7 @@ if __name__ == "__main__":
     from matbii.avatar import (
         Avatar,
         AvatarActuator,
+        ExitActuator,
         AvatarTrackingActuator,
         AvatarSystemMonitoringActuator,
         AvatarResourceManagementActuator,
@@ -85,7 +86,7 @@ if __name__ == "__main__":
     # - task related actuators are added when their corresponding task is enabled
     avatar = Avatar(
         [],
-        [AvatarActuator()],  # will log user events by default
+        [AvatarActuator(), ExitActuator()],  # will log user events by default
         window_config=config.window,
     )
 

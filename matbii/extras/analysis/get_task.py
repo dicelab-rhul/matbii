@@ -207,6 +207,9 @@ def get_system_monitoring_task_events(
     df = pd.DataFrame(_get_task_events(fevents))
     # infer the sources based on mouse clicks, user events are always immediately proceeded by mouse events
     infered_user_sources = df[df["input_preceded"]]["source"].unique()
+
+    print(df)
+
     assert (
         len(infered_user_sources) == 1
     ), "Multiple user sources inferred, this should not happen, has there been a change to the event logging system?"

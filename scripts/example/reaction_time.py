@@ -35,8 +35,9 @@ acceptable_intervals = dict(get_acceptable_intervals(events))["system_monitoring
 # `acceptable_intervals` contains N pairs (t1, t2) which are logging timestamps recording when the guidance agent judged the task to be acceptable.
 
 # 2. Get the relevant task data
-df = get_system_monitoring_task_events(events)
+df = get_system_monitoring_task_events(parser, events)
 # `df` is a pandas DataFrame that contains a running update of the state of the task (one entry each time the task state was changed).
+
 
 # For each entry of `df` we want to know if the task was in an acceptable state - according to the guidance agent.
 # NOTE: There may be small discrepencies in whether the state was actually (according to its state).
