@@ -13,10 +13,7 @@ from star_ray.environment import State
 
 
 class GuidanceAgent(_GuidanceAgent):
-    """Base class for matbii guidance agents.
-
-    This class implements belief logging, assuming it has an attached `LogActuator`. Any updates to beliefs are logged by the actuator at the end of each cycle (during __execute__). This information, along with the raw event logs can be used for post-experiment analysis. Working with the guidance agent's beliefs may be easier than with the raw event logs as they contain relevant guidance & task acceptability info and custom data can be added in any subclass (simply by updating `self.beliefs`).
-    """
+    """Base class for matbii guidance agents."""
 
     def __init__(  # noqa inherited docs
         self,

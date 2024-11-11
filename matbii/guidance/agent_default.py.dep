@@ -26,7 +26,7 @@ __all__ = (
 class DefaultGuidanceAgent(GuidanceAgent):
     """Default implementation of a guidance agent for the matbii system.
 
-    TODO document behaviour.
+    TODO document
     """
 
     # used to break ties when multiple tasks could be highlighted. See `break_guidance_tie` method below.
@@ -58,9 +58,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         """
         _counter_factual_guidance_actuator = CounterFactualGuidanceActuator()
         actuators.append(_counter_factual_guidance_actuator)
-        super().__init__(
-            list(filter(None, sensors)), list(filter(None, actuators)), **kwargs
-        )
+        super().__init__(sensors, actuators, **kwargs)
 
         # this agent is tracking the following tasks (based on the provided sensors)
         self._tracking_tasks = [s.task_name for s in self.task_acceptability_sensors]

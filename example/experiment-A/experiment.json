@@ -17,7 +17,10 @@
     },
     "guidance": {
         "enable": true,
-        "counter_factual": false
+        "counter_factual": false,
+        "arrow": {
+            "mode": "mouse"
+        }
     },
     "window": {
         "x": 0,
@@ -29,13 +32,6 @@
         "fullscreen": false,
         "background_color": "#ffffff"
     },
-    "eyetracking": {
-        "uri": "tet-tcp://169.254.126.68",
-        "sdk": "tobii",
-        "enabled": false,
-        "moving_average_n": 5,
-        "velocity_threshold": 0.5
-    },
     "logging": {
         "level": "DEBUG",
         "path": "./logs/"
@@ -44,10 +40,6 @@
         "size": [
             800,
             700
-        ],
-        "offset": [
-            0,
-            0
         ]
     }
 }

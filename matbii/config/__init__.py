@@ -12,11 +12,73 @@ from pydantic import (
     PositiveFloat,
     model_validator,
 )
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Literal
 from pathlib import Path
+from icua.agent.actuator_guidance import ArrowGuidanceActuator, BoxGuidanceActuator
 from star_ray.ui import WindowConfiguration
 from icua.extras.eyetracking import EyetrackerBase, EyetrackerIOSensor
 from ..utils import LOGGER
+
+
+class GuidanceArrowConfiguration(BaseModel, validate_assignment=True):
+    """Configuration relating to the arrow guidance."""
+
+    enable: bool = Field(
+        default=True,
+        description="Whether to enable arrow guidance.",
+    )
+    mode: Literal["gaze", "mouse", "fixed"] = Field(
+        default="gaze",
+        description="The mode to use for the arrow guidance, `gaze` will use the current gaze position, `mouse` will use the current mouse position, `fixed` will use the fixed offset specified in `arrow_offset`.",
+    )
+    scale: float = Field(default=1.0, description="The scale of the arrow.")
+    fill_color: str = Field(default="none", description="The fill colour of the arrow.")
+    stroke_color: str = Field(
+        default="#ff0000", description="The line colour of the arrow outline."
+    )
+    stroke_width: float = Field(
+        default=4.0, description="The line width of the arrow outline."
+    )
+    offset: tuple[float, float] = Field(
+        default=(80, 80),
+        description='The offset of the arrow from its set position, this is the position of the arrow if in "fixed" mode.',
+    )
+
+    def to_actuator(self, config: "Configuration") -> ArrowGuidanceActuator:
+        """Factory method for a guidance arrow actuator."""
+        if not config.eyetracking.enable and self.mode == "gaze":
+            raise ValueError(
+                'Guidance mode: "gaze" is not supported when eyetracking is disabled.'
+            )
+        return ArrowGuidanceActuator(
+            arrow_mode=self.mode,
+            arrow_scale=self.scale,
+            arrow_fill_color=self.fill_color,
+            arrow_stroke_color=self.stroke_color,
+            arrow_stroke_width=self.stroke_width,
+            arrow_offset=self.offset,
+        )
+
+
+class GuidanceBoxConfiguration(BaseModel, validate_assignment=True):
+    """Configuration relating to the guidance box."""
+
+    enable: bool = Field(
+        default=True, description="Whether to enable the guidance box."
+    )
+    stroke_color: str = Field(
+        default="#ff0000", description="The line colour of the box outline."
+    )
+    stroke_width: float = Field(
+        default=4.0, description="The line width of the box outline."
+    )
+
+    def to_actuator(self, config: "Configuration") -> BoxGuidanceActuator:
+        """Factory method for a guidance box actuator."""
+        return BoxGuidanceActuator(
+            box_stroke_color=self.stroke_color,
+            box_stroke_width=self.stroke_width,
+        )
 
 
 class GuidanceConfiguration(BaseModel, validate_assignment=True):
@@ -29,6 +91,14 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
     counter_factual: bool = Field(
         default=False,
         description="Whether to show guidance to the user, if False then guidance agent will be configured NOT to display guidance but will still take actions for logging purposes (if they support this).",
+    )
+    arrow: GuidanceArrowConfiguration = Field(
+        default_factory=GuidanceArrowConfiguration,
+        description="Configuration relating to the arrow guidance.",
+    )
+    box: GuidanceBoxConfiguration = Field(
+        default_factory=GuidanceBoxConfiguration,
+        description="Configuration relating to the guidance box.",
     )
 
 

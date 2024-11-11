@@ -15,8 +15,6 @@ if __name__ == "__main__":
     # imports for creating guidance agents
     from matbii.guidance import (
         DefaultGuidanceAgent,
-        ArrowGuidanceActuator,
-        BoxGuidanceActuator,
         SystemMonitoringTaskAcceptabilitySensor,
         TrackingTaskAcceptabilitySensor,
         ResourceManagementTaskAcceptabilitySensor,
@@ -112,20 +110,9 @@ if __name__ == "__main__":
             # used to log this agents beliefs for post experiment analysis
             LogActuator(path=Path(config.logging.path) / "guidance_logs.log"),
             # shows arrow pointing at a task as guidance
-            ArrowGuidanceActuator(
-                # TODO should be a config option?
-                arrow_mode="gaze" if config.eyetracking.enable else "mouse",
-                arrow_scale=1.0,  # TODO should be a config option?
-                arrow_fill_color="none",  # TODO should be a config option?
-                arrow_stroke_color="#ff0000",  # TODO should be a config option?
-                arrow_stroke_width=4.0,  # TODO should be a config option?
-                arrow_offset=(80, 80),  # TODO should be a config option?
-            ),
+            config.guidance.arrow.to_actuator(config),
             # shows a box around a task as guidance
-            BoxGuidanceActuator(
-                box_stroke_color="#ff0000",  # TODO should be a config option?
-                box_stroke_width=4.0,  # TODO should be a config option?
-            ),
+            config.guidance.box.to_actuator(config),
         ],
         break_ties="random",  # TODO should be a config option?
         grace_period=2.0,  # TODO configuration options
