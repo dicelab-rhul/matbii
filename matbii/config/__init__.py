@@ -7,7 +7,7 @@ from pydantic import (
     BaseModel,
     Field,
     field_validator,
-    NonNegativeInt,
+    # NonNegativeInt,
     PositiveInt,
     PositiveFloat,
     model_validator,
@@ -207,10 +207,10 @@ class UIConfiguration(BaseModel, validate_assignment=True):
     #     default=(810, 680),
     #     description="The width and height of the canvas used to render the tasks. This should fully encapsulate all task elements. If a task appears to be off screen, try increasing this value.",
     # )
-    offset: tuple[NonNegativeInt, NonNegativeInt] = Field(
-        default=(0, 0),
-        description="The x and y offset used when rendering the root UI element, can be used to pad the top/left of the window.",
-    )
+    # offset: tuple[NonNegativeInt, NonNegativeInt] = Field(
+    #     default=(0, 0),
+    #     description="The x and y offset used when rendering the root UI element, can be used to pad the top/left of the window.",
+    # )
 
     @model_validator(mode="before")
     @classmethod
@@ -222,6 +222,11 @@ class UIConfiguration(BaseModel, validate_assignment=True):
             data["width"] = data["size"][0]
             data["height"] = data["size"][1]
             del data["size"]
+        if "offset" in data:
+            LOGGER.warning(
+                "Configuration option: `ui.offset` is deprecated and has been removed as an option, please instead modify the coordinates of each task to reflect the desired offset."
+            )
+            del data["offset"]
         return data
 
 

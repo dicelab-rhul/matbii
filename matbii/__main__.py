@@ -139,7 +139,6 @@ if __name__ == "__main__":
         avatar=avatar,
         agents=agents,
         svg_size=(config.ui.width, config.ui.height),
-        svg_position=config.ui.offset,
         logging_path=config.logging.path,
         terminate_after=config.experiment.duration,
     )
