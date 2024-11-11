@@ -18,6 +18,10 @@
     "guidance": {
         "enable": true,
         "counter_factual": false,
+        "grace_period": 3.0,
+        "grace_mode": "attention",
+        "break_ties": "random",
+        "attention_mode": "mouse",
         "arrow": {
             "mode": "mouse"
         }

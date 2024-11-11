@@ -110,19 +110,20 @@ if __name__ == "__main__":
             # used to log this agents beliefs for post experiment analysis
             LogActuator(path=Path(config.logging.path) / "guidance_logs.log"),
             # shows arrow pointing at a task as guidance
-            config.guidance.arrow.to_actuator(config),
+            config.guidance.arrow.to_actuator(),
             # shows a box around a task as guidance
-            config.guidance.box.to_actuator(config),
+            config.guidance.box.to_actuator(),
         ],
-        break_ties="random",  # TODO should be a config option?
-        grace_period=2.0,  # TODO configuration options
-        attention_mode="gaze" if config.eyetracking.enable else "mouse",
+        break_ties=config.guidance.break_ties,
+        grace_period=config.guidance.grace_period,
+        grace_mode=config.guidance.grace_mode,
+        attention_mode=config.guidance.attention_mode,
         counter_factual=config.guidance.counter_factual,
     )
     agents.append(guidance_agent)
 
     env = MultiTaskEnvironment(
-        wait=0.0,  # this can be zero as long as it doesnt matter that the scheduler hogs asyncio, TODO test this with IO devices (eyetracker particularly)
+        wait=0.01,  # this can be zero as long as it doesnt matter that the env scheduler hogs asyncio: TODO test this with IO devices (eyetracker particularly)
         avatar=avatar,
         agents=agents,
         svg_size=(config.ui.width, config.ui.height),

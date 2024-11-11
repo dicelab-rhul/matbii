@@ -1,19 +1,15 @@
 """Module contains a default implementation for a guidance agent, see `DefaultGuidanceAgent` documentation for details."""
 
-import time
 import random
 from typing import Any, Literal
+from collections.abc import Iterable
 from star_ray.agent import Actuator, Sensor, observe
 from icua.event import MouseMotionEvent, EyeMotionEvent
 from icua.agent import (
-    GuidanceActuator,
-    CounterFactualGuidanceActuator,
     ArrowGuidanceActuator,
     BoxGuidanceActuator,
-    TaskAcceptabilitySensor,
 )
 from icua.utils import LOGGER
-from star_ray.environment import State  # type hint
 from .agent_base import GuidanceAgent
 
 __all__ = (
@@ -26,11 +22,21 @@ __all__ = (
 class DefaultGuidanceAgent(GuidanceAgent):
     """Default implementation of a guidance agent for the matbii system.
 
-    TODO document behaviour.
+    Show guidance if:
+        1. there is no guidance already active.
+        2. the task is unacceptable.
+        3. the user is not already attending on the task.
+        4. the grace period has elapsed.
     """
 
-    # used to break ties when multiple tasks could be highlighted. See `break_guidance_tie` method below.
-    BREAK_TIES = ("random", "longest", "since")
+    # used to break ties when multiple tasks could be highlighted. See `break_tie` method.
+    BREAK_TIES = ("random", "longest")
+
+    # condition 4. - whether to track the time since the last failure, or since the last guidance was shown
+    GRACE_ON = ("guidance_task", "guidance_any", "failure", "attention")
+
+    # method to use to determine which task the user is attending to
+    ATTENTION_MODES = ("fixation", "gaze", "mouse")
 
     # if we havent had fresh eyetracking data for more than this, there may be something wrong... display a warning
     MISSING_GAZE_DATA_THRESHOLD = 0.1
@@ -39,8 +45,11 @@ class DefaultGuidanceAgent(GuidanceAgent):
         self,
         sensors: list[Sensor],
         actuators: list[Actuator],
-        break_ties: Literal["random", "longest", "since"] = "random",
-        attention_mode: Literal["gaze", "mouse"] = "mouse",
+        break_ties: Literal["random", "longest"] = "random",
+        grace_mode: Literal[
+            "guidance_task", "guidance_any", "failure", "attention"
+        ] = "failure",
+        attention_mode: Literal["fixation", "gaze", "mouse"] = "fixation",
         grace_period: float = 3.0,
         counter_factual: bool = False,
         **kwargs: dict[str, Any],
@@ -51,257 +60,240 @@ class DefaultGuidanceAgent(GuidanceAgent):
             sensors (list[Sensor]): list of sensors, this will typically be a list of `icua.agent.TaskAcceptabilitySensor`s. A `UserInputSensor` will always be added automatically.
             actuators (list[Actuator]): list of actuators, this will typically contain actuators that are capable of providing visual feedback to a user, see e.g. `icua.agent.GuidanceActuator` and its concrete implementations. A `CounterFactualGuidanceActuator` will be added by default.
             break_ties (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest time.
-            attention_mode (Literal["gaze", "mouse"], optional): method of determining where the user is paying attention. "mouse" will track the mouse position, "gaze" will track the gaze position (if avaliable). Defaults to "mouse".
+            grace_mode (Literal["guidance_task", "guidance_any", "failure"], optional): how to track the grace period. "guidance_task" will track the time since guidance was last shown on the task, "guidance_any" will track the time since guidance was last shown on any task, "failure" will track the time since the last failure on the task. Defaults to "failure".
+            attention_mode (Literal["fixation", "gaze", "mouse"], optional): method of determining where the user is attending. "fixation" will use the most recent gaze fixation, "gaze" will use the gaze position (including saccades), "mouse" will use the current mouse position. Defaults to "fixation".
             grace_period (float, optional): the time to wait (seconds) before guidance may be shown for a task after the last time guidance was shown on the task. Defaults to 3.0 seconds.
             counter_factual (bool, optional): whether guidance should be shown to the user, or whether it should just be logged.  This allows counter-factual experiments to be run, we can track when guidance would have been shown, and compare the when it was actually shown (in a different run). Defaults to False.
             kwargs (dict[str,Any]): Additional optional keyword arguments.
         """
-        _counter_factual_guidance_actuator = CounterFactualGuidanceActuator()
-        actuators.append(_counter_factual_guidance_actuator)
         super().__init__(
-            list(filter(None, sensors)), list(filter(None, actuators)), **kwargs
+            list(filter(None, sensors)),
+            list(filter(None, actuators)),
+            counter_factual=counter_factual,
+            **kwargs,
         )
+        self._attention_mode = attention_mode
+        if self._attention_mode not in DefaultGuidanceAgent.ATTENTION_MODES:
+            raise ValueError(
+                f"Invalid argument: `attention_mode` {self._attention_mode} must be one of {DefaultGuidanceAgent.ATTENTION_MODES}"
+            )
 
-        # this agent is tracking the following tasks (based on the provided sensors)
-        self._tracking_tasks = [s.task_name for s in self.task_acceptability_sensors]
-        # initialise beliefs (empty)
-        for task in self._tracking_tasks:
-            self.beliefs[task] = dict(guidance=False)
-        # also record some attention information (for logging)
-        self.beliefs["attention"] = dict()
+        self._grace_mode = grace_mode
+        if self._grace_mode not in DefaultGuidanceAgent.GRACE_ON:
+            raise ValueError(
+                f"Invalid argument: `grace_mode` {self._grace_mode} must be one of {DefaultGuidanceAgent.GRACE_ON}"
+            )
 
-        # time since tasks went into an unacceptable state
-        self._task_unacceptable_start: dict[str, float] = None
-        # time since tasks become inactive
-        self._task_inactive_start: dict[str, float] = None
-        # TODO track the time since user input (gaze) has been provided, we can trigger an error if this is too long
-        self._missing_gaze_since: float = None
-        # guidance shown on task?
-        self._guidance_on_task: str = None
-        # time since guidance was shown for each task (for grace period)
-        self._guidance_last: dict[str, float] = None
-        # method to use to break ties when more than one task meets the guidance criteria
-        self._break_ties = break_ties  # ("random", "longest", "since")
-        if self._break_ties not in ("random", "longest", "since"):
+        self._break_ties = break_ties
+        if self._break_ties not in DefaultGuidanceAgent.BREAK_TIES:
             raise ValueError(
                 f"Invalid argument: `break_ties` {self._break_ties} must be one of {DefaultGuidanceAgent.BREAK_TIES}"
             )
-        # time to wait before showing guidance again on a task (can be zero)
+
         self._grace_period = grace_period  # TODO
         if self._grace_period < 0.0:
             raise ValueError(
                 f"Invalid argument: `grace_period` {self._grace_period} must be > 0 "
             )
-        # whether to actually display guidance, or just trigger a guidance event
-        self._counter_factual = counter_factual
-        self._counter_factual_guidance_actuator = _counter_factual_guidance_actuator
-        self._attention_mode = attention_mode
 
-    def __initialise__(self, state: State):  # noqa
-        super().__initialise__(state)
-        # initialise task unacceptability and inactivity
-        start_time = time.time()  # not accurate but good enough
-        self._task_inactive_start = {t: start_time for t in self._tracking_tasks}
-        self._task_unacceptable_start = {t: start_time for t in self._tracking_tasks}
-        # initialise time to last guidance shown
-        self._guidance_last = {t: start_time for t in self._tracking_tasks}
+    def decide(self):  # noqa
+        # update when the user was last attending to a task
+        for task in self.attending_tasks:
+            self.beliefs[task]["last_attended"] = self._cycle_start_time
 
-    def show_guidance(self, task: str):
-        """Show guidance for a given task.
+        # make guidance decisions
+        if self.guidance_on_tasks:
+            # guidance is active, should it be?
+            guidance_and_acceptable = self.guidance_on_tasks & self.acceptable_tasks
+            if guidance_and_acceptable:
+                # the task has guidance showing, but is now acceptable - hide guidance for this task
+                for task in guidance_and_acceptable:
+                    self.hide_guidance(task)
+                return
 
-        If overriding you must call super() to ensure consistent behaviour.
+            guidance_and_attending = self.guidance_on_tasks & self.attending_tasks
+            if guidance_and_attending:
+                # the task has guidance showing, but the user is attending to it - hide guidance for this task
+                for task in guidance_and_attending:
+                    self.hide_guidance(task)
+                return
+
+            # keep showing guidance
+        else:
+            # guidance is NOT active, should it be?
+            # these tasks are candidates for showing guidance
+            unacceptable = self.unacceptable_tasks
+            # remove those tasks that the user is currently attending
+            unacceptable -= self.attending_tasks
+            # check the grace period
+            unacceptable = self.grace_period_over(unacceptable)
+
+            task = self.break_tie(unacceptable)
+            if task:
+                # we have selected a task to show guidance on
+                self.show_guidance(task)
+
+            # no task meets the criteria, the user is doing well!
+
+    def grace_period_over(self, tasks: set[str]) -> set[str]:
+        """Get the set of (unacceptable) tasks that have had their grace period elapse.
 
         Args:
-            task (str): the task to show guidance for.
-        """
-        self._guidance_on_task = task
-        self.beliefs[task]["guidance"] = True
-        if not self._counter_factual:
-            for actuator in self.guidance_actuators:
-                actuator.show_guidance(task=task)
-        else:
-            self._counter_factual_guidance_actuator.show_guidance(task=task)
-
-    def hide_guidance(self, task: str):
-        """Hide guidance for a given task.
-
-        If overriding you must call super() to ensure consistent behaviour.
-
-        Args:
-            task (str): the task to hide guidance for.
-        """
-        if self._guidance_on_task:
-            self.beliefs[self._guidance_on_task]["guidance"] = False
-        self._guidance_on_task = None
-        if not self._counter_factual:
-            for actuator in self.guidance_actuators:
-                actuator.hide_guidance(task=task)
-        else:
-            self._counter_factual_guidance_actuator.hide_guidance(task=task)
-
-        # update the last time guidance was shown for the given task (for the grace period check)
-        self._guidance_last[task] = time.time()
-
-    def get_inactive_tasks(self) -> set[str]:
-        """Get the set of inactive tasks.
+            tasks (set[str]): the set of tasks to check.
 
         Returns:
-            set[str]: set of inactive tasks.
+            set[str]: the set of tasks that have had their grace period elapse.
         """
-        active = list(self._is_task_active.items())
-        return set([x[0] for x in active if not x[1]])
+        if self._grace_mode == "guidance_task":
+            # how long since guidance was last shown on the task?
+            def _grace_met(t):
+                tsgs = self.time_since_guidance_start(t)
+                # check if grace period has elapsed, or if guidance has never been shown on the task (NaN value)
+                return tsgs > self._grace_period or tsgs != tsgs
 
-    def get_unacceptable_tasks(self) -> set[str]:
-        """Get the set of unacceptable tasks.
-
-        Returns:
-            set[str]: set of unacceptable tasks.
-        """
-        unacceptable = list(self._is_task_acceptable.items())
-        # is the task in an unacceptable state? (remove if they are acceptable)
-        unacceptable = set([x[0] for x in unacceptable if not x[1]])
-        # remove all inactive tasks (never display guidance for these)
-        unacceptable -= self.get_inactive_tasks()
-        return unacceptable
-
-    def get_attending(self):
-        """Get attention data from mouse or eyetracker."""
-        if self._attention_mode == "gaze":
-            elements, gaze = self.gaze_at_elements, self.gaze_position
-            # check if the gaze data is None, if so we need to see how long and give a warning, it may indicate that the eyetracker
-            # has stopped functioning which may invalidate an experimental trial!
-            if gaze is None:
-                if self._missing_gaze_since is None:
-                    self._missing_gaze_since = time.time()
-                elif (
-                    time.time() - self._missing_gaze_since
-                    > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
-                ):
-                    LOGGER.warning(
-                        f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
-                    )
-                return {"elements": elements}
+            return set(t for t in tasks if _grace_met(t))
+        elif self._grace_mode == "guidance_any":
+            # how long since guidance was last shown on any task?
+            tsgs = self.time_since_guidance_start(None)
+            if tsgs > self._grace_period or tsgs != tsgs:
+                return tasks  # guidance has not been shown recently
             else:
-                self._missing_gaze_since = None
-            # gaze data may be present, but it may be old (its stored in a buffer until fresh data arrives)
-            if (
-                time.time() - gaze["timestamp"]
-                > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
-            ):
-                LOGGER.warning(
-                    f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
-                )
-            return {"elements": elements, **(gaze if gaze else {})}
-        elif self._attention_mode == "mouse":
-            position_data = self.mouse_position
-            return {
-                "elements": self.mouse_at_elements,
-                **(position_data if position_data else {}),
-            }
+                return set()  # a task has recently had guidance shown, we should not show guidance for any task yet
+        elif self._grace_mode == "attention":
+
+            def _grace_met(t):
+                tsgs = self.time_since_last_attended(t)
+                # check if grace period has elapsed, or if guidance has never been shown on the task (NaN value)
+                return tsgs > self._grace_period or tsgs != tsgs
+
+            # print({t: (_grace_met(t), self.time_since_last_attended(t)) for t in tasks})
+            # how long since the user was last attending to a task?
+            return set(t for t in tasks if _grace_met(t))
+        elif self._grace_mode == "failure":
+            # how long has this task been in failure?
+            return set(
+                t
+                for t in tasks
+                if self.time_since_failure_start(t) > self._grace_period
+            )
         else:
-            raise ValueError(f"Unknown attention mode: {self._attention_mode}")
+            raise ValueError(
+                f"Unknown grace mode: {self._grace_mode}, must be one of {DefaultGuidanceAgent.GRACE_ON}"
+            )
 
-    def __cycle__(self):  # noqa
-        super().__cycle__()
-        attending = self.get_attending()
-        att_to = attending["elements"]
-
-        # TODO we might also care about recording other info in the event!
-        # this is the one that is being used by the agent to make its guidance decisions either way...
-        self.beliefs["attention"]["timestamp"] = attending.get("timestamp")
-        self.beliefs["attention"]["position"] = attending.get("position")
-        self.beliefs["attention"]["attending"] = next(
-            iter([e for e in att_to if e in self._tracking_tasks]), None
+    def time_since_last_attended(self, task: str) -> float:
+        """Get the time since the user was last attending to a task."""
+        return self._cycle_start_time - self.beliefs[task].get(
+            "last_attended", float("nan")
         )
 
-        # =================================================== #
-        # here the agent is deciding whether to show guidance
-        # it uses the same rules as icua version 1 (TODO check this)
-        # =================================================== #
-        if self._guidance_on_task:
-            # guidance is active, should it be?
-            if self._is_task_acceptable[self._guidance_on_task]:
-                # the task is now acceptable - hide guidance for this task
-                self.hide_guidance(self._guidance_on_task)
-            if self._guidance_on_task in att_to:
-                # turn off guidance, the user is looking at the task - hide guidance
-                self.hide_guidance(self._guidance_on_task)
-            else:
-                # the user is not looking at the task and its unacceptable, keep guidance on.
-                pass
-        else:
-            current_time = time.time()
-            # guidance is not active, should it be?
-            unacceptable = self.get_unacceptable_tasks()
-            # is the user looking at the task? (remove if they are)
-            unacceptable = [x for x in unacceptable if x not in att_to]
-            # is the grace period over for the task?
-            unacceptable = [
-                x
-                for x in unacceptable
-                if current_time - self._guidance_last[x] > self._grace_period
-            ]
-            if len(unacceptable) > 0:
-                # there are tasks in failure, decide which one to highlight
-                task = self.break_guidance_tie(unacceptable, self._break_ties)
-                self.show_guidance(task)  # show guidance on the chosen task
-            else:
-                pass  # no task is in failure, no guidance should be shown.
-
-    def break_guidance_tie(
-        self, tasks: list[str], method: Literal["random", "longest", "since"] = "random"
-    ) -> str:
-        """Break a tie on tasks that all met the criteria for displaying guiance.
-
-        Args:
-            tasks (list[str]): tasks to break the tie, one of which will be returned.
-            method (Literal["random", "longest", "since"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random". "random" will randomly break the tie, "longest" will choose the task that has been in failure for the longest, "since" will choose the task that has not had guidance shown for the longest.
+    @property
+    def attending_tasks(self) -> set[str]:
+        """Get the set of tasks that the user is currently attending to - this is typically only one task.
 
         Returns:
-            str: the chosen task.
+            set[str]: set of tasks that the user is currently attending to.
         """
-        assert len(tasks) > 0
+        if self._attention_mode == "fixation":
+            result = self.attending_task_fixation()
+        elif self._attention_mode == "gaze":
+            result = self.gaze_target
+        elif self._attention_mode == "mouse":
+            result = self.mouse_target
+        else:
+            raise ValueError(f"Unknown attention mode: {self._attention_mode}")
+        if result is None:
+            return set()
+        else:
+            return set([result])
+
+    def attending_task_fixation(self) -> str | None:
+        """Use fixation to determine which task the user is attending to."""
+        raise NotImplementedError("TODO")  # TODO
+
+    # def get_attending(self):
+    #     """Get attention data from mouse or eyetracker."""
+    #     if self._attention_mode == "gaze":
+    #         elements, gaze = self.gaze_at_elements, self.gaze_position
+    #         # check if the gaze data is None, if so we need to see how long and give a warning, it may indicate that the eyetracker
+    #         # has stopped functioning which may invalidate an experimental trial!
+    #         if gaze is None:
+    #             if self._missing_gaze_since is None:
+    #                 self._missing_gaze_since = time.time()
+    #             elif (
+    #                 time.time() - self._missing_gaze_since
+    #                 > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
+    #             ):
+    #                 LOGGER.warning(
+    #                     f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
+    #                 )
+    #             return {"elements": elements}
+    #         else:
+    #             self._missing_gaze_since = None
+    #         # gaze data may be present, but it may be old (its stored in a buffer until fresh data arrives)
+    #         if (
+    #             time.time() - gaze["timestamp"]
+    #             > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
+    #         ):
+    #             LOGGER.warning(
+    #                 f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
+    #             )
+    #         return {"elements": elements, **(gaze if gaze else {})}
+    #     elif self._attention_mode == "mouse":
+    #         position_data = self.mouse_position
+    #         return {
+    #             "elements": self.mouse_at_elements,
+    #             **(position_data if position_data else {}),
+    #         }
+    #     else:
+    #         raise ValueError(f"Unknown attention mode: {self._attention_mode}")
+
+    # def __cycle__(self):  # noqa
+    #     super().__cycle__()
+    #     attending = self.get_attending()
+    #     att_to = attending["elements"]
+
+    #     # TODO we might also care about recording other info in the event!
+    #     # this is the one that is being used by the agent to make its guidance decisions either way...
+    #     self.beliefs["attention"]["timestamp"] = attending.get("timestamp")
+    #     self.beliefs["attention"]["position"] = attending.get("position")
+    #     self.beliefs["attention"]["attending"] = next(
+    #         iter([e for e in att_to if e in self._tracking_tasks]), None
+    #     )
+
+    def break_tie(
+        self,
+        tasks: Iterable[str],
+        method: Literal["random", "longest"] = "random",
+    ) -> str | None:
+        """Break a tie on tasks that all met the criteria for displaying guiance.
+
+        The tie is broken using the `method` argument:
+        - "random" will randomly break the tie.
+        - "longest" will choose the task that has been in failure for the longest.
+
+        Args:
+            tasks (Iterable[str]): tasks to break the tie, one of which will be returned.
+            method (Literal["random", "longest"], optional): how to break ties if guidance may be shown on multiple tasks simultaneously. Defaults to "random".
+
+        Returns:
+            str: the chosen task, or None if there are no tasks to choose from.
+        """
+        if len(tasks) == 0:
+            return None
         if method == "random":
             # randomly break the tie
-            return random.choice(tasks)
+            return random.choice(list(tasks))
         elif method == "longest":
+            # choose the task longest in failure
             return max(
-                [(x, self._task_unacceptable_start[x]) for x in tasks],
+                [(task, self.time_since_failure_start(task)) for task in tasks],
                 key=lambda x: x[1],
-            )[0]
-            # choose the one longest in failure
-        elif method == "since":
-            # choose the one with with the longest time since guidance was last shown
-            return max(
-                [(x, self._guidance_last[x]) for x in tasks], key=lambda x: x[1]
             )[0]
         else:
             raise ValueError(
-                f"Unknown guidance tie break method: {self._break_ties}, must be one of {DefaultGuidanceAgent.BREAK_TIES}"
+                f"Unknown guidance tie break method: {method}, must be one of {DefaultGuidanceAgent.BREAK_TIES}"
             )
-
-    def on_acceptable(self, task: str):  # noqa
-        self.beliefs[task]["acceptable"] = True
-        self._log_acceptability(task, "acceptable", True)
-
-    def on_active(self, task: str):  # noqa
-        self.beliefs[task]["active"] = True
-
-        self._log_acceptability(task, "active", True)
-
-    def on_unacceptable(self, task: str):  # noqa
-        # NOTE: this time is not the exact time that the task went into failure.
-        # for this we would need to track the exact events that caused the failure, this is easier said than done...
-        self.beliefs[task]["acceptable"] = False
-
-        self._task_unacceptable_start[task] = time.time()
-        self._log_acceptability(task, "acceptable", False)
-
-    def on_inactive(self, task: str):  # noqa
-        self.beliefs[task]["active"] = False
-        self._task_inactive_start[task] = time.time()
-
-        self._log_acceptability(task, "active", False)
 
     @observe([EyeMotionEvent, MouseMotionEvent])
     def _on_motion_event(self, event: MouseMotionEvent | EyeMotionEvent):
@@ -310,29 +302,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         # manually attempt the event, we could specify which actuators need this information...?
         self.attempt(event)
 
-    @property
-    def task_acceptability_sensors(self) -> list[TaskAcceptabilitySensor]:
-        """Getter for task acceptability sensors (sensors that derive the type: `icua.agent.TaskAcceptabilitySensor`).
-
-        Returns:
-            list[TaskAcceptabilitySensor]: the sensors.
-        """
-        return list(self.get_sensors(oftype=TaskAcceptabilitySensor))
-
-    @property
-    def guidance_actuators(self) -> list[GuidanceActuator]:
-        """Getter for guidance actuators (actuators that derive the type: `icua.agent.GuidanceActuator`).
-
-        Returns:
-            list[GuidanceActuator]: the GuidanceActuator.
-        """
-        candidates = list(self.get_actuators(oftype=GuidanceActuator))
-        if len(candidates) == 0:
-            raise ValueError(
-                f"Missing required actuator of type: `{GuidanceActuator.__qualname__}`"
-            )
-        return candidates
-
     def _log_acceptability(self, task, z, ok):
+        """Log the acceptability of a task to the console."""
         info = "task %20s %20s %s" % (z, task, ["✘", "✔"][int(ok)])
         LOGGER.info(info)

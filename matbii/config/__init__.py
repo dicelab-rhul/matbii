@@ -44,12 +44,14 @@ class GuidanceArrowConfiguration(BaseModel, validate_assignment=True):
         description='The offset of the arrow from its set position, this is the position of the arrow if in "fixed" mode.',
     )
 
-    def to_actuator(self, config: "Configuration") -> ArrowGuidanceActuator:
-        """Factory method for a guidance arrow actuator."""
-        if not config.eyetracking.enable and self.mode == "gaze":
+    def validate_from_context(self, context: "Configuration"):  # noqa
+        if not context.eyetracking.enable and self.mode == "gaze":
             raise ValueError(
-                'Guidance mode: "gaze" is not supported when eyetracking is disabled.'
+                '`guidance.arrow.mode`: "gaze" is not supported when eyetracking is disabled.'
             )
+
+    def to_actuator(self) -> ArrowGuidanceActuator:
+        """Factory method for a guidance arrow actuator."""
         return ArrowGuidanceActuator(
             arrow_mode=self.mode,
             arrow_scale=self.scale,
@@ -73,7 +75,10 @@ class GuidanceBoxConfiguration(BaseModel, validate_assignment=True):
         default=4.0, description="The line width of the box outline."
     )
 
-    def to_actuator(self, config: "Configuration") -> BoxGuidanceActuator:
+    def validate_from_context(self, context: "Configuration"):  # noqa
+        pass
+
+    def to_actuator(self) -> BoxGuidanceActuator:
         """Factory method for a guidance box actuator."""
         return BoxGuidanceActuator(
             box_stroke_color=self.stroke_color,
@@ -86,20 +91,49 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
 
     enable: bool = Field(
         default=True,
-        description="Whether to enable guidance, if this is False then no guidance agent will be created.",
+        description="Whether to enable guidance, if this is False then no guidance agent will be created. Only set this False if you do not plan to use AT ALL in your experiments, otherwise set `counter_factual` to True.",
     )
     counter_factual: bool = Field(
         default=False,
         description="Whether to show guidance to the user, if False then guidance agent will be configured NOT to display guidance but will still take actions for logging purposes (if they support this).",
     )
+    break_ties: Literal["random", "longest"] = Field(
+        default="random",
+        description="How to break ties if guidance may be shown on multiple tasks simultaneously.",
+    )
+    grace_mode: Literal["guidance_task", "guidance_any", "failure", "attention"] = (
+        Field(
+            default="attention",
+            description="How to track the grace period.",
+        )
+    )
+    attention_mode: Literal["fixation", "gaze", "mouse"] = Field(
+        default="fixation",
+        description="How to track the attention of the user.",
+    )
+    grace_period: float = Field(
+        default=3.0, description="The grace period to use (seconds)."
+    )
     arrow: GuidanceArrowConfiguration = Field(
         default_factory=GuidanceArrowConfiguration,
-        description="Configuration relating to the arrow guidance.",
+        description="Configuration for displaying arrow guidance.",
     )
     box: GuidanceBoxConfiguration = Field(
         default_factory=GuidanceBoxConfiguration,
-        description="Configuration relating to the guidance box.",
+        description="Configuration for displaying box guidance.",
     )
+
+    def validate_from_context(self, context: "Configuration"):  # noqa
+        if self.enable:
+            self.box.validate_from_context(context)
+            self.arrow.validate_from_context(context)
+            if (
+                self.attention_mode in ["gaze", "fixation"]
+                and not context.eyetracking.enable
+            ):
+                raise ValueError(
+                    f'`guidance.attention_mode`: "{self.attention_mode}" is not supported when eyetracking is disabled.'
+                )
 
 
 class ExperimentConfiguration(BaseModel, validate_assignment=True):
@@ -148,6 +182,9 @@ class ExperimentConfiguration(BaseModel, validate_assignment=True):
             )
         return value
 
+    def validate_from_context(self, context: "Configuration"):  # noqa
+        pass
+
 
 class ParticipantConfiguration(BaseModel, validate_assignment=True):
     """Configuration relating to the participant (or user)."""
@@ -160,6 +197,9 @@ class ParticipantConfiguration(BaseModel, validate_assignment=True):
         default={},
         description="Any additional meta data you wish to associate with the participant.",
     )
+
+    def validate_from_context(self, context: "Configuration"):  # noqa
+        pass
 
 
 class EyetrackingConfiguration(BaseModel, validate_assignment=True):
@@ -184,6 +224,9 @@ class EyetrackingConfiguration(BaseModel, validate_assignment=True):
         default=0.5,
         description="The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. **IMPORTANT NOTE:** different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent).",
     )
+
+    def validate_from_context(self, context: "Configuration"):  # noqa
+        pass
 
     @model_validator(mode="before")
     @classmethod
@@ -345,7 +388,9 @@ class Configuration(BaseModel, validate_assignment=True):
             with open(path) as f:
                 data = json.load(f)
                 data = always_merger.merge(data, context)
-                return Configuration.model_validate(data)
+                result = Configuration.model_validate(data)
+                result.validate_from_context()  # check consistency of nested fields
+                return result
         else:
             LOGGER.info("No config file was specified, using default configuration.")
             return Configuration()
@@ -395,3 +440,7 @@ class Configuration(BaseModel, validate_assignment=True):
 
         config.logging.path = full_path.as_posix()
         return config
+
+    def validate_from_context(self):  # noqa
+        self.guidance.validate_from_context(self)
+        self.eyetracking.validate_from_context(self)
