@@ -247,11 +247,9 @@ def _summary_plot(
     #     label="start/end",
     # )
 
-    # plt.legend(
-    #     loc="upper left",
-    #     bbox_to_anchor=(1.01, 1),
-    # )
-
+    # plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+    plt.legend(loc="lower center", bbox_to_anchor=(0.5, 1), ncol=100)
+    plt.tight_layout()
     plt.show()
 
 
