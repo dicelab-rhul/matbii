@@ -4,10 +4,8 @@
 """
 
 from functools import partial
-from pathlib import Path
 from typing import Any
 
-from icua.extras.logging import LogActuator
 
 # imports for creating the environment
 from matbii.environment import MultiTaskEnvironment
@@ -86,7 +84,7 @@ def main(
         ],
         [
             # used to log this agents beliefs for post experiment analysis
-            LogActuator(path=Path(config.logging.path) / "guidance_logs.log"),
+            # LogActuator(path=Path(config.logging.path) / "guidance_logs.log"),
             # shows arrow pointing at a task as guidance
             config.guidance.arrow.to_actuator(),
             # shows a box around a task as guidance

@@ -7,7 +7,7 @@ license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "icua[tobii]>=2.0.9",
+  "icua[tobii]>=2.0.10",
   "matplotlib",
   "pandas",
   "numpy",

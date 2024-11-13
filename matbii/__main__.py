@@ -99,7 +99,14 @@ def run_example(name: str, **kwargs: dict[str, Any]):
     """Run an example."""
     # navigate to the example directory
     example_dir = Path(importlib.resources.path("matbii", "example"))
+    if not example_dir.exists():
+        # try again, there are some issues with editable installs
+        example_dir = example_dir.parent / "matbii" / example_dir.name
+        if not example_dir.exists():
+            raise ImportError(f"Example path: {example_dir.as_posix()} not found.")
     example = example_dir / name
+    # from matbii.utils import LOGGER
+    # LOGGER.debug(f"Using example path: {example.as_posix()}")
     if not example.is_dir():
         avaliable_examples = "\n- ".join(
             [p.name for p in example_dir.iterdir() if p.is_dir()]
