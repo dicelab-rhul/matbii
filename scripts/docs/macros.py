@@ -5,6 +5,7 @@ import re
 import griffe
 from itertools import islice
 from typing import Any
+from pydantic import BaseModel
 from collections.abc import Generator
 
 from matbii.config import Configuration
@@ -126,22 +127,31 @@ def schema_to_md(schema: dict, indent: str = ""):
     # markdown.append(f"{title_prefix} {name}")
     # markdown.append(f"{schema['description']}\n")
     # TODO include description?
+    defs = schema.get("$defs", dict())
+
+    def _unpack_types(types):
+        for t in types:
+            if "$ref" in t:
+                yield t["$ref"].rsplit("/")[-1]
+            elif "type" in t:
+                yield t["type"]
 
     for name, property in schema["properties"].items():
         if "$ref" in property:
             # this is a reference type
-            type = (
-                property["$ref"].rsplit("/")[-1]
-                # .replace("Configuration", " Configuration")
-            )
-            # link = f"#{type}".replace(" ", "-").lower()
+            type = property["$ref"].rsplit("/")[-1]
             markdown.append(f"- `{name}`: {type}")
             continue
 
-        type = property.get("type", "")
+        type = property.get("type", None)
+        types = []
+        if type is None and "anyOf" in property:
+            types = list(_unpack_types(property.get("anyOf")))
+            type = " | ".join(types)
+        elif type is None and "allOf" in property:
+            types = list(_unpack_types(property.get("allOf")))
+            type = " | ".join(types)
 
-        if not type:
-            type = " | ".join([t["type"] for t in property.get("anyOf")])
         title = name  # property.get("title", name.capitalize())
         description = property.get("description")
         if not description:
@@ -157,7 +167,59 @@ def schema_to_md(schema: dict, indent: str = ""):
         else:
             markdown.append(f"- `{title} ({type})` _required_:")
         markdown.append(f"{description}\n")
+
+        # render sub types
+        for type in types:
+            tproperty = defs.get(type, None)
+            if tproperty:
+                markdown.append("    " + schema_to_md(tproperty, indent + "    "))
     return f"\n{indent}".join(markdown)
+
+
+def configuration_to_md(
+    base_model: type[BaseModel], indent: int = 1, show_example: bool = True
+):
+    """Compile the default entry point config as markdown with examples."""
+    result = []
+
+    # main_schema = Configuration.model_json_schema()
+    markdown = ""  # "## Main Configuration\n\n"
+    # markdown += f"{main_schema['description']}\n\n"
+    # markdown += schema_to_md(main_schema)
+    result.append(markdown)
+    for name, field in base_model.model_fields.items():
+        schema = field.annotation.model_json_schema()
+        markdown = f"{schema['description']}\n\n" + schema_to_md(schema)
+        if show_example:
+            example = admonition(
+                "Example",
+                f'```\n"{name}": {field.annotation().model_dump_json(indent=indent+1)}\n```',
+                admon="example",
+            )
+        markdown = admonition(
+            field.annotation.__name__, markdown + example, admon="info", indent=indent
+        )
+        result.append(markdown)
+        # admon = f'??? quote "Example" \n```\n"{name}": {field.annotation().model_dump_json(indent=2)}\n```'.replace(
+        #     "\n", "\n    "
+        # )
+
+    # this is the default config file!
+    result.append(
+        "The default configuration file can be found below, you can simply copy it and modify as needed."
+    )
+    admon = f'??? example "default-configuration.json"\n```\n{Configuration().model_dump_json(indent=2)}\n```'.replace(
+        "\n", "\n    "
+    )
+    result.append(admon)
+    result = "\n\n".join(result)
+    return result
+
+
+def admonition(title: str, data: str, indent: int = 1, admon: str = "quote"):
+    """Quick admonition macro."""
+    indent: str = "\n" + "    " * indent
+    return indent.join(f'??? {admon} "{title}"\n\n{data}\n'.split("\n"))
 
 
 def define_env(env):
@@ -192,37 +254,10 @@ def define_env(env):
 
     @env.macro
     def default_entry_config():
-        """Compile the default entry point config as markdown with examples."""
-        result = []
+        return configuration_to_md(Configuration)
 
-        # main_schema = Configuration.model_json_schema()
-        markdown = ""  # "## Main Configuration\n\n"
-        # markdown += f"{main_schema['description']}\n\n"
-        # markdown += schema_to_md(main_schema)
-        result.append(markdown)
-        for name, field in Configuration.model_fields.items():
-            schema = field.annotation.model_json_schema()
-            markdown = f"{schema['description']}\n\n" + schema_to_md(schema)
-            example = admonition(
-                "Example",
-                f'```\n"{name}": {field.annotation().model_dump_json(indent=2)}\n```',
-                admon="example",
-            )
-            markdown = admonition(
-                field.annotation.__name__, markdown + example, admon="info"
-            )
-            result.append(markdown)
-            # admon = f'??? quote "Example" \n```\n"{name}": {field.annotation().model_dump_json(indent=2)}\n```'.replace(
-            #     "\n", "\n    "
-            # )
 
-        # this is the default config file!
-        result.append(
-            "The default configuration file can be found below, you can simply copy it and modify as needed."
-        )
-        admon = f'??? example "default-configuration.json"\n```\n{Configuration().model_dump_json(indent=2)}\n```'.replace(
-            "\n", "\n    "
-        )
-        result.append(admon)
-        result = "\n\n".join(result)
-        return result
+if __name__ == "__main__":
+    # print(configuration_to_md())
+    result = configuration_to_md(Configuration)
+    print(result)

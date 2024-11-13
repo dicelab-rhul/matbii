@@ -104,15 +104,16 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
     grace_mode: Literal["guidance_task", "guidance_any", "failure", "attention"] = (
         Field(
             default="attention",
-            description="How to track the grace period.",
+            description="Condition for which the `grace_period` is waiting. Options: `'guidance_task'` - time from last guidance a task, `'guidance_any'` - time from last guidance on _any_ task, `'failure'` - time from last failure a task, `'attention'` - time from when the user last attended to a task (according to `attention_mode`).",
         )
     )
     attention_mode: Literal["fixation", "gaze", "mouse"] = Field(
         default="fixation",
-        description="How to track the attention of the user.",
+        description="Method used to track the attention of the user. Options: `'fixation'` - use eyetracking fixations, `'gaze'` - use eyetracking (fixation & saccade), `'mouse'` - use the mouse position.",
     )
     grace_period: float = Field(
-        default=3.0, description="The grace period to use (seconds)."
+        default=3.0,
+        description="The grace period to use (seconds) - how long to wait before guidance is shown to the user, see also `grace_mode`.",
     )
     arrow: GuidanceArrowConfiguration = Field(
         default_factory=GuidanceArrowConfiguration,

@@ -1,6 +1,6 @@
 [project]
 name = "matbii"
-version = "0.0.8"
+version = "0.0.9"
 description = "A configurable implementation of the MATB-II: Multi-Attribute Task Battery."
 authors = [{name = "Benedict Wilkins", email = "benrjw@gmail.com"}]
 license = { file = "LICENSE" }
