@@ -1,5 +1,4 @@
 from pathlib import Path
-from icua.utils import LOGGER
 
 # constants defining the task ids
 TASK_ID_TRACKING = "tracking"
@@ -8,7 +7,6 @@ TASK_ID_RESOURCE_MANAGEMENT = "resource_management"
 
 # path of the tasks (in this package)
 PACKAGE_PATH = Path(__file__).resolve().parent.parent  # root of the package
-LOGGER.debug(f"`matbii` package path: {PACKAGE_PATH.as_posix()}")
 TASKS_PATH = PACKAGE_PATH / "tasks"
 
 # tasks ids, add to this when/if more tasks are implemented
@@ -16,7 +14,6 @@ TASKS = [TASK_ID_TRACKING, TASK_ID_SYSTEM_MONITORING, TASK_ID_RESOURCE_MANAGEMEN
 # paths of each task (within this package), ensure that the task id matches the folder name in `matbii.tasks`
 TASK_PATHS = {t: (TASKS_PATH / t).as_posix() for t in TASKS}
 for task, path in TASK_PATHS.items():
-    LOGGER.debug(f"Checking {task} path: {path}")
     if not Path(path).exists():
         raise FileNotFoundError(f"Failed to find task: {task} at path: {path}")
 

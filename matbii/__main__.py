@@ -1,165 +1,161 @@
-"""Entry point of a `matbii` simulation.
+"""Entry point for the matbii simulation."""
 
-`matbii` may be run with `python -m matbii -c <CONFIG_FILE>` after installing with pip, where <CONFIG_FILE> is a path to a json configuration file, see the [wiki](https://github.com/dicelab-rhul/matbii/wiki) for details on configuring `matbii`.
-"""
+import importlib.resources
+from pathlib import Path
+from typing import Any
+from collections import defaultdict
+import os
+import argparse
+import importlib
 
-if __name__ == "__main__":
-    from functools import partial
-    from pathlib import Path
 
-    from icua.extras.logging import LogActuator
+from star_ray.utils import _LOGGER
 
-    # imports for creating the environment
-    from matbii.environment import MultiTaskEnvironment
+# avoid a pygame issue on linux. TODO this should be moved somewhere more suitable...
+os.environ["LD_PRELOAD"] = "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
 
-    # imports for creating guidance agents
-    from matbii.guidance import (
-        DefaultGuidanceAgent,
-        SystemMonitoringTaskAcceptabilitySensor,
-        TrackingTaskAcceptabilitySensor,
-        ResourceManagementTaskAcceptabilitySensor,
-    )
-    from matbii.agent import (
-        TrackingActuator,
-        SystemMonitoringActuator,
-        ResourceManagementActuator,
-    )
-    from matbii.avatar import (
-        Avatar,
-        AvatarActuator,
-        ExitActuator,
-        AvatarTrackingActuator,
-        AvatarSystemMonitoringActuator,
-        AvatarResourceManagementActuator,
-    )
-    from matbii.config import Configuration
-    from matbii.utils import (
-        TASK_PATHS,
-        TASK_ID_TRACKING,
-        TASK_ID_RESOURCE_MANAGEMENT,
-        TASK_ID_SYSTEM_MONITORING,
-    )
-    import argparse
-    import os
+# silence logs from star_ray logger
+_LOGGER.setLevel("WARNING")
 
-    from star_ray.utils import _LOGGER
 
-    # silence logs from star_ray logger
-    _LOGGER.setLevel("WARNING")
+def logging_level(verbosity: int) -> str:
+    """Convert a verbosity level to a logging level."""
+    return defaultdict(lambda: "DEBUG", {0: "WARNING", 1: "INFO", 2: "DEBUG"})[
+        verbosity
+    ]
 
-    # avoid a pygame issue on linux. TODO this should be moved somewhere more suitable...
-    os.environ["LD_PRELOAD"] = "/usr/lib/x86_64-linux-gnu/libstdc++.so.6"
 
+def parse_cmd_args() -> dict[str, Any]:
+    """Parse command line arguments."""
     # load configuration file
     parser = argparse.ArgumentParser()
+
+    # ======================================================================== #
+    # =============================== Options ================================ #
+    # ======================================================================== #
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity level (use -v, -vv, -vvv for more verbosity)",
+    )
+    # ======================================================================== #
+    # =========================== Options for main =========================== #
+    # ======================================================================== #
     parser.add_argument(
         "-c",
         "--config",
         required=False,
         help="Path to configuration file.",
-        default=None,
     )
     parser.add_argument(
         "-p",
         "--participant",
         required=False,
         help="ID of the participant.",
-        default=None,
     )
     parser.add_argument(
         "-e", "--experiment", required=False, help="ID of the experiment.", default=None
     )
-
+    # ======================================================================== #
+    # ========================= Options for examples ========================= #
+    # ======================================================================== #
+    parser.add_argument(
+        "-x",
+        "--example",
+        required=False,
+        help="Name of the example to run - see `https://github.com/dicelab-rhul/matbii/tree/main/example`",
+    )
+    # ======================================================================== #
+    # ========================= Options for scripts ========================== #
+    # ======================================================================== #
     args = parser.parse_args()
-    # args from command line can be used in config
-    context = dict(
-        experiment=dict(id=args.experiment) if args.experiment else dict(),
-        participant=dict(id=args.participant) if args.participant else dict(),
-    )
-    # load configuration from the config file
-    config = Configuration.from_file(args.config, context=context)
-    # initialise logging
-    config = Configuration.initialise_logging(config)
+    kwargs = {k.replace("-", "_"): v for k, v in vars(args).items()}
+    # create context for configuration from cmd line args
+    kwargs["logging"] = dict(level=logging_level(args.verbose))
+    if kwargs.get("experiment", None):
+        kwargs["experiment"] = dict(id=kwargs["experiment"])
+    else:
+        kwargs["experiment"] = dict()
+    if kwargs.get("participant", None):
+        kwargs["participant"] = dict(id=kwargs["participant"])
+    else:
+        kwargs["participant"] = dict()
 
-    # Create the avatar:
-    # - required sensors are added by default
-    # - task related actuators are added when their corresponding task is enabled
-    avatar = Avatar(
-        [],
-        [AvatarActuator(), ExitActuator()],  # will log user events by default
-        window_config=config.window,
-    )
+    if kwargs.get("example", None) and kwargs.get("script", None):
+        raise ValueError("Cannot specify both --example and --script")
+    return kwargs
 
-    # if eyetracking is enabled, add a sensor to the avatar
-    eyetracking_sensor = config.eyetracking.new_eyetracking_sensor()
-    if eyetracking_sensor:
-        avatar.add_component(eyetracking_sensor)
 
-    agents = []  # will be given to the environment
+def run_example(name: str, **kwargs: dict[str, Any]):
+    """Run an example."""
+    # navigate to the example directory
+    example_dir = Path(importlib.resources.path("matbii", "example"))
+    example = example_dir / name
+    if not example.is_dir():
+        avaliable_examples = "\n- ".join(
+            [p.name for p in example_dir.iterdir() if p.is_dir()]
+        )
+        raise ValueError(
+            f"Example: `{name}` not found at path: `{example.as_posix()}`. Avaliable examples:\n- {avaliable_examples}"
+        )
+    # record the current working directory, this will be used to store the log files
+    log_dir = Path.cwd() / f"{name}-logs"
+    kwargs["logging"]["path"] = log_dir.as_posix()
+    kwargs["experiment"]["path"] = example.as_posix()
 
-    # create the guidance agent
-    # - sensors will determine the acceptability of each task - if the task is enabled.
-    # - change actuators for different guidance to be shown (must inherit from GuidanceActuator)
-    guidance_agent = DefaultGuidanceAgent(
-        [
-            # add more if there are more tasks!
-            SystemMonitoringTaskAcceptabilitySensor(),
-            ResourceManagementTaskAcceptabilitySensor(),
-            TrackingTaskAcceptabilitySensor(),
-        ],
-        [
-            # used to log this agents beliefs for post experiment analysis
-            LogActuator(path=Path(config.logging.path) / "guidance_logs.log"),
-            # shows arrow pointing at a task as guidance
-            config.guidance.arrow.to_actuator(),
-            # shows a box around a task as guidance
-            config.guidance.box.to_actuator(),
-        ],
-        break_ties=config.guidance.break_ties,
-        grace_period=config.guidance.grace_period,
-        grace_mode=config.guidance.grace_mode,
-        attention_mode=config.guidance.attention_mode,
-        counter_factual=config.guidance.counter_factual,
-    )
-    agents.append(guidance_agent)
+    # TODO we might search for this instead so that the file name doesnt need to be experiment.json
+    if kwargs.get("config", None):
+        config_file = example / kwargs["config"]
+    else:
+        config_file = example / "experiment.json"
+    if not config_file.exists():
+        raise FileNotFoundError(
+            f"Example config file: {config_file.as_posix()} not found"
+        )
+    del kwargs["config"]
 
-    env = MultiTaskEnvironment(
-        wait=0.01,  # this can be zero as long as it doesnt matter that the env scheduler hogs asyncio: TODO test this with IO devices (eyetracker particularly)
-        avatar=avatar,
-        agents=agents,
-        svg_size=(config.ui.width, config.ui.height),
-        logging_path=config.logging.path,
-        terminate_after=config.experiment.duration,
-    )
+    from matbii.utils import LOGGER
 
-    # NOTE: if you have more tasks to add, add them here!
-    env.add_task(
-        name=TASK_ID_TRACKING,
-        path=[config.experiment.path, TASK_PATHS[TASK_ID_TRACKING]],
-        agent_actuators=[TrackingActuator],
-        avatar_actuators=[
-            partial(
-                AvatarTrackingActuator,
-                # Negative values will invert the direction of movement
-                target_speed=-50.0,  # TODO a config option for this?
-            )
-        ],
-        enable=TASK_ID_TRACKING in config.experiment.enable_tasks,
-    )
+    LOGGER.debug(f"Example path: {example.as_posix()}")
+    from matbii.main import main
 
-    env.add_task(
-        name=TASK_ID_SYSTEM_MONITORING,
-        path=[config.experiment.path, TASK_PATHS[TASK_ID_SYSTEM_MONITORING]],
-        agent_actuators=[SystemMonitoringActuator],
-        avatar_actuators=[AvatarSystemMonitoringActuator],
-        enable=TASK_ID_SYSTEM_MONITORING in config.experiment.enable_tasks,
-    )
+    main(config_file.as_posix(), **kwargs)
 
-    env.add_task(
-        name=TASK_ID_RESOURCE_MANAGEMENT,
-        path=[config.experiment.path, TASK_PATHS[TASK_ID_RESOURCE_MANAGEMENT]],
-        agent_actuators=[ResourceManagementActuator],
-        avatar_actuators=[AvatarResourceManagementActuator],
-        enable=TASK_ID_RESOURCE_MANAGEMENT in config.experiment.enable_tasks,
-    )
-    env.run()
+
+def run_script(name: str, **kwargs: dict[str, Any]):
+    """Run a script."""
+    raise NotImplementedError("TODO - run scripts")
+
+
+def main():
+    """Main entry point for the matbii."""
+    kwargs = parse_cmd_args()
+
+    # premeptively set the logging level
+    from matbii.utils import LOGGER
+
+    LOGGER.set_level(kwargs["logging"].get("level", "WARNING"))
+
+    # 1. Run an example if --example is specified
+    if kwargs.get("example", None):
+        run_example(kwargs.get("example"), **kwargs)
+
+    # 2. Run a script if --script is specified
+    if kwargs.get("script", None):
+        run_script(kwargs.get("script"), **kwargs)
+
+    # 1. Run the main simulation
+    if kwargs.get("config", None):
+        from matbii.main import main
+
+        main(**kwargs)
+    else:
+        raise ValueError(
+            "No configuration provided, use -c or --config to specify a config file."
+        )
+
+
+if __name__ == "__main__":
+    main()

@@ -38,6 +38,7 @@ include = ["matbii*"]
 
 [tool.setuptools.package-data]
 "matbii.tasks" = ["**/*.sch", "**/*.schema.json", "**/*.svg.jinja"]
+"matbii.example" = ["example/**/*"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
