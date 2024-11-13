@@ -5,7 +5,7 @@
     "duration": 30,
     "enable_video_recording": false,
     "enable_tasks": [
-      "tracking"
+      "system_monitoring"
     ],
     "meta": {}
   },
@@ -41,26 +41,26 @@
   "window": {
     "x": 0,
     "y": 0,
-    "width": 340,
-    "height": 340,
-    "title": "Tracking Task",
+    "width": 260,
+    "height": 350,
+    "title": "System Monitoring",
     "resizable": false,
     "fullscreen": false,
     "background_color": "#ffffff"
   },
   "eyetracking": {
-    "uri": "tet-tcp://169.254.126.68",
+    "uri": null,
     "sdk": "tobii",
     "enable": false,
     "moving_average_n": 5,
     "velocity_threshold": 0.5
   },
   "logging": {
-    "level": "WARNING",
+    "level": "DEBUG",
     "path": "./logs/"
   },
   "ui": {
-    "width": 340,
-    "height": 340
+    "width": 260,
+    "height": 350
   }
 }

@@ -2,9 +2,19 @@
 
 import warnings
 import pandas as pd
+import numpy as np
+from functools import partial
+from star_ray.agent.component.component import Component
 from star_ray_xml import XMLState, Insert, Update, Replace, Delete
 from star_ray_pygame import SVGAmbient
-from icua.event import Event, RenderEvent, MouseButtonEvent, KeyEvent, Select
+from icua.event import (
+    Event,
+    RenderEvent,
+    MouseButtonEvent,
+    KeyEvent,
+    Select,
+    UserInputEvent,
+)
 from icua.extras.analysis import EventLogParser
 
 # these sensors are going to be used to get the relevant state information via their sense actions
@@ -30,7 +40,9 @@ def get_resource_management_task_events(
 
 
 def get_tracking_task_events(
-    parser: EventLogParser, events: list[tuple[float, Event]]
+    parser: EventLogParser,
+    events: list[tuple[float, Event]],
+    norm: float | int = np.inf,
 ) -> pd.DataFrame:
     """Extracts useful data for the tracking task from the event log.
 
@@ -40,18 +52,17 @@ def get_tracking_task_events(
         - user: bool - whether the event was triggered by the user or not.
         - x: float - the x coordinate of the tracking target
         - y: float - the y coordinate of the tracking target
+        - distance: float - the distance to the center of the task (according to the given `norm`).
 
     Args:
         parser (EventLogParser): parser used to parse the event log file.
         events (list[tuple[float, Event]]): list of events that were parsed from the event log file.
+        norm (float | int, optional): the norm to use for the distance metric, either "inf" for the max norm or an integer for the p-norm.
 
     Returns:
-        pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", "x", "y"]
+        pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", "x", "y", "distance"]
     """
-    # use the default state, the actual size etc. of the svg is not important for our purposes.
-    # we only want to track the task events (which do not depend on the svg or window config.)
-    xml_state = SVGAmbient([]).get_state()
-
+    fn_norm = partial(np.linalg.norm, ord=norm)
     # collect all the relevant events for this task
     fevents = parser.filter_events(
         events,
@@ -62,58 +73,43 @@ def get_tracking_task_events(
             Replace,
             TargetMoveAction,
             KeyEvent,
+            MouseButtonEvent,
             RenderEvent,
         ),
     )
+
     # sort the events by their log timestamp
     fevents = sorted(fevents, key=lambda x: x[0])
 
-    # sense actions to get relevant data from the state
-    sense_actions = TrackingTaskAcceptabilitySensor().sense()
+    def _sense(state: XMLState):
+        sense_actions = TrackingTaskAcceptabilitySensor().sense()
+        result = sense(state, sense_actions)
+        if result is None:
+            return None
+        # TODO compute distance to the center of the task
+        bw, bh = (
+            result[TrackingTaskAcceptabilitySensor._BOX_ID]["width"],
+            result[TrackingTaskAcceptabilitySensor._BOX_ID]["height"],
+        )
+        bx, by = (
+            result[TrackingTaskAcceptabilitySensor._BOX_ID]["x"] + bw / 2,
+            result[TrackingTaskAcceptabilitySensor._BOX_ID]["y"] + bh / 2,
+        )
+        tw, th = (
+            result[TrackingTaskAcceptabilitySensor._TARGET_ID]["width"],
+            result[TrackingTaskAcceptabilitySensor._TARGET_ID]["height"],
+        )
+        tx, ty = (
+            result[TrackingTaskAcceptabilitySensor._TARGET_ID]["x"] + tw / 2,
+            result[TrackingTaskAcceptabilitySensor._TARGET_ID]["y"] + th / 2,
+        )
+        return dict(
+            x=tx,
+            y=ty,
+            distance=fn_norm((tx - bx, ty - by)),
+        )
 
-    def _get_task_events(fevents: list[tuple[float, Event]]):
-        """Execute the events in order and yield the current task state."""
-        input_preceded = False
-        frame = 0
-        for i, (t, event) in enumerate(fevents):
-            if isinstance(event, RenderEvent):
-                frame += 1
-                continue
-            if isinstance(event, KeyEvent):
-                input_preceded = event.status == KeyEvent.DOWN
-                continue  # nothing to execute on the actual mouse event
-            event.__execute__(xml_state)  # apply the event to the state
-            result = sense(xml_state, sense_actions)
-            if result is None:
-                # ignore this if the the task is not yet set up, its only a probably if you see it spammed lots!
-                warnings.warn(
-                    f"Error sensing data for event {i} of type {type(event)}."
-                )
-                continue
-            result = dict(
-                x=result["tracking_target"]["x"],
-                y=result["tracking_target"]["y"],
-            )
-            result["timestamp"] = t
-            # this is to distinguish between use triggered events and internal task events
-            result["source"] = int(event.source) if event.source is not None else 0
-            result["input_preceded"] = input_preceded
-            result["frame"] = frame
-            input_preceded = False
-            yield result
-
-    df = pd.DataFrame(_get_task_events(fevents))
-    # infer the sources based on mouse clicks, user events are always immediately proceeded by mouse events
-    infered_user_sources = df[df["input_preceded"]]["source"].unique()
-    assert (
-        len(infered_user_sources) == 1
-    ), "Multiple user sources inferred, this should not happen, has there been a change to the event logging system?"
-    df["user"] = df["source"] == infered_user_sources[0]
-    # drop unused columns
-    df.drop(columns=["input_preceded", "source"], inplace=True)
-    state_columns = sorted(list(set(df.columns) - set(["timestamp", "frame", "user"])))
-    df = df[["timestamp", "frame", "user", *state_columns]]
-    return df
+    return _get_task_dataframe(fevents, _sense)
 
 
 def get_system_monitoring_task_events(
@@ -125,7 +121,7 @@ def get_system_monitoring_task_events(
     Columns:
         - timestamp: float - the (logging) timestamp of the event
         - frame: int - the frame number of the event, events with a frame number of 0 happen BEFORE the first frame is rendered to the user.
-        - user: bool - whether the event was triggered by the user or not.
+        - user: bool - whether the event was triggered by the user (True) or not (False).
         - light-1: int - the state of light-1
         - light-2: int - the state of light-2
         - slider-1: int - the state of slider-1
@@ -139,13 +135,9 @@ def get_system_monitoring_task_events(
         parser (EventLogParser): parser used to parse the event log file.
         events (list[tuple[float, Event]]): list of events that were parsed from the event log file.
 
-
     Returns:
         pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", "light-1", "light-2", "slider-1", "slider-2", "slider-3", "slider-4"]
     """
-    # use the default state, the actual size etc. of the svg is not important for our purposes.
-    # we only want to track the task events (which do not depend on the svg or window config.)
-    xml_state = SVGAmbient([]).get_state()
     # these are raw events that may be triggered internally by matbii
     # insert events insert the tasks into the xml state at the start of the simulation
     fevents = parser.filter_events(
@@ -158,6 +150,7 @@ def get_system_monitoring_task_events(
             SetLightAction,
             ToggleLightAction,
             SetSliderAction,
+            KeyEvent,
             MouseButtonEvent,
             RenderEvent,
         ),
@@ -165,60 +158,75 @@ def get_system_monitoring_task_events(
     # sort the events by their log timestamp
     fevents = sorted(fevents, key=lambda x: x[0])
 
-    # sense actions to get relevant data from the state
-    sense_actions = SystemMonitoringTaskAcceptabilitySensor().sense()
-
     def _rename_column(k: str):
         return "-".join(k.split("-")[:2])
 
-    def _get_task_events(fevents: list[tuple[float, Event]]):
+    def _sense(state: XMLState):
+        # sense actions to get relevant data from the state
+        sense_actions = SystemMonitoringTaskAcceptabilitySensor().sense()
+        result = sense(state, sense_actions)
+        if result is None:
+            return None
+        return {
+            _rename_column(k): v["data-state"]
+            for k, v in result.items()
+            if "data-state" in v
+        }
+
+    return _get_task_dataframe(fevents, _sense)
+
+
+def _get_task_dataframe(fevents, fn_sense):
+    """Used internally to build a dataframe for a task."""
+    # use the default state, the actual size etc. of the svg is not important for our purposes.
+    # we only want to track the task events (which do not depend on the svg or window config.)
+    xml_state = SVGAmbient([]).get_state()
+    # sort the events by their log timestamp
+    fevents = sorted(fevents, key=lambda x: x[0])
+
+    def _get_task_events(fevents: list[tuple[float, Event]], avatar_ids: set[int]):
         """Execute the events in order and yield the current task state."""
-        input_preceded = False
         frame = 0
         for i, (t, event) in enumerate(fevents):
             if isinstance(event, RenderEvent):
                 frame += 1
                 continue
-            if isinstance(event, MouseButtonEvent):
-                input_preceded = event.status == MouseButtonEvent.DOWN
-                continue  # nothing to execute on the actual mouse event
+            if isinstance(event, UserInputEvent):
+                _, avatar_id = Component.unpack_source(event)
+                avatar_ids.add(avatar_id)
+                continue
             event.__execute__(xml_state)  # apply the event to the state
-            result = sense(xml_state, sense_actions)
+            result = fn_sense(xml_state)
             if result is None:
                 # ignore this if the the task is not yet set up, its only a probably if you see it spammed lots!
                 warnings.warn(
                     f"Error sensing data for event {i} of type {type(event)}."
                 )
                 continue
-            # get relevant data from the result
-            result = {
-                _rename_column(k): v["data-state"]
-                for k, v in result.items()
-                if "data-state" in v
-            }
+            if event.source is None:
+                warnings.warn(
+                    f"Event {i} of type {type(event)} has no source, your log file is out of date."
+                )
+                result["agent"] = 0
+            else:
+                _, result["agent"] = Component.unpack_source(event)
             result["timestamp"] = t
-            # this is to distinguish between use triggered events and internal task events
-            result["source"] = int(event.source) if event.source is not None else 0
-            result["input_preceded"] = input_preceded
             result["frame"] = frame
-            input_preceded = False
             yield result
 
-    df = pd.DataFrame(_get_task_events(fevents))
-    # infer the sources based on mouse clicks, user events are always immediately proceeded by mouse events
-    infered_user_sources = df[df["input_preceded"]]["source"].unique()
+    avatar_ids = set()
 
-    print(df)
-
-    assert (
-        len(infered_user_sources) == 1
-    ), "Multiple user sources inferred, this should not happen, has there been a change to the event logging system?"
-    df["user"] = df["source"] == infered_user_sources[0]
-    # drop unused columns
-    df.drop(columns=["input_preceded", "source"], inplace=True)
-    state_columns = sorted(list(set(df.columns) - set(["timestamp", "frame", "user"])))
-    df = df[["timestamp", "frame", "user", *state_columns]]
-    return df
+    df = pd.DataFrame(_get_task_events(fevents, avatar_ids))
+    if len(avatar_ids) > 1:
+        raise ValueError(
+            "Multiple avatar ids inferred, this should not happen, has there been a change to the event logging system?"
+        )
+    df["user"] = df["agent"] == avatar_ids.pop()
+    df.drop(columns=["agent"], inplace=True)
+    # organise columns
+    start_columns = ["timestamp", "frame", "user"]
+    state_columns = sorted(list(set(df.columns) - set(start_columns)))
+    return df[start_columns + state_columns]
 
 
 def sense(state: XMLState, sense_actions: list[Select]):

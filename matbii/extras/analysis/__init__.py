@@ -13,7 +13,11 @@ from icua.extras.analysis import (
     get_keyboard_events,
     get_eyetracking_events,
     get_acceptable_intervals,
+    get_unacceptable_intervals,
     get_guidance_intervals,
+    get_attention_intervals,
+    get_start_and_end_time,
+    get_svg_as_image,
     merge_intervals,
     isin_intervals,
 )
@@ -28,7 +32,11 @@ __all__ = [
     "get_keyboard_events",
     "get_eyetracking_events",
     "get_acceptable_intervals",
+    "get_unacceptable_intervals",
     "get_guidance_intervals",
+    "get_attention_intervals",
+    "get_start_and_end_time",
+    "get_svg_as_image",
     "merge_intervals",
     "isin_intervals",
 ]

@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 from icua.extras.analysis import EventLogParser
-from icua.event import MouseButtonEvent
+from icua.event import MouseButtonEvent, RenderEvent
 
 # load configuration file
 parser = argparse.ArgumentParser()
@@ -12,7 +12,7 @@ parser.add_argument(
     "--path",
     required=False,
     help="Path to trial directory, typically: .../<experiment.id>/<participant.id>/",
-    default=Path(__file__).parent / "logs/example/",  # default example log file
+    default=Path(__file__).parent / "example_logs/example/",  # default example log file
 )
 
 args = parser.parse_args()
@@ -28,6 +28,16 @@ events = list(parser.parse(log_file_path))
 # filter events of interest, you can use any event type here, but we are interested in mouse button events
 mouse_button_events = parser.filter_events(events, MouseButtonEvent)
 # convert the events from a list to a dataframe, note that `timestamp_log` is used as the column name for the logging timestamp
+# include `timestamp_log` if you want to use it (for user input events, use `timestamp` - this is actual event timestamp)
 mouse_button_df = parser.as_dataframe(
     mouse_button_events, include=["timestamp", "button", "status"]
 )
+
+# You might want to include the frame number, this can be done by including "RenderEvent" in the event filter. The frame number is stored in the "frame" column.
+# The frame number tells you which frame (as displayed to the user) the event occured in. You can be sure that if the event occurs in a given frame, it will be visible to the user in the NEXT frame.
+mouse_button_df = parser.as_dataframe(
+    parser.filter_events(events, MouseButtonEvent | RenderEvent),
+    include=["timestamp", "button", "status"],
+    include_frame=True,
+)
+print(mouse_button_df)

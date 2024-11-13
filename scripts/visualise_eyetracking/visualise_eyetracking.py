@@ -171,7 +171,6 @@ else:
 env = MultiTaskEnvironment(
     avatar=avatar,
     svg_size=svg_size,  # resize the svg to fit whatever the window size is...
-    svg_position=(0, 0),
 )
 env.add_task(
     name=TASK_ID,

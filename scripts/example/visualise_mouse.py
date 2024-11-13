@@ -12,9 +12,7 @@ import matplotlib.pyplot as plt
 
 # load configuration file
 parser = argparse.ArgumentParser()
-DEFAULT_PATH = Path(__file__).parent / "logs/example-mouse/"
-DEFAULT_PATH = "C:/Users/brjw/Documents/repos/dicelab/matbii/example/experiment-tracking-only/logs/20241006162305151"
-DEFAULT_PATH = "C:/Users/brjw/Documents/repos/dicelab/matbii/example/experiment-A/logs/20241006172309005"
+DEFAULT_PATH = Path(__file__).parent / "example_logs/example-mouse/"
 
 parser.add_argument(
     "-p",
