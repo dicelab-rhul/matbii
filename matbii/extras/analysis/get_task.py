@@ -35,8 +35,39 @@ from ...tasks import (
 def get_resource_management_task_events(
     parser: EventLogParser, events: list[tuple[float, Event]]
 ) -> pd.DataFrame:
-    """TODO."""
-    raise NotImplementedError("Resource management task not implemented yet.")
+    """Extracts useful data for the resource management task from the event log.
+
+    Columns:
+        - timestamp: float - the (logging) timestamp of the event
+        - frame: int - the frame number of the event, events with a frame number of 0 happen BEFORE the first frame is rendered to the user.
+        - user: bool - whether the event was triggered by the user or not.
+        - tank-a: float - tank a level
+        - tank-b: float - tank b level
+        - tank-c: float - tank c level
+        - tank-d: float - tank d level
+        - tank-e: float - tank e level
+        - tank-f: float - tank f level
+
+    Args:
+        parser (EventLogParser): parser used to parse the event log file.
+        events (list[tuple[float, Event]]): list of events that were parsed from the event log file.
+        norm (float | int, optional): the norm to use for the distance metric, either "inf" for the max norm or an integer for the p-norm.
+
+    Returns:
+        pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", *"tanks-{i}", *"pumps-{ij}"]
+    """
+    df = None
+    if df is None:
+        columns = [
+            "timestamp",
+            "frame",
+            "user",
+            "x",
+            "y",
+            "distance",
+        ]
+        return pd.DataFrame(columns=columns)
+    return df
 
 
 def get_tracking_task_events(
@@ -109,7 +140,18 @@ def get_tracking_task_events(
             distance=fn_norm((tx - bx, ty - by)),
         )
 
-    return _get_task_dataframe(fevents, _sense)
+    df = _get_task_dataframe(fevents, _sense)
+    if df is None:
+        columns = [
+            "timestamp",
+            "frame",
+            "user",
+            "x",
+            "y",
+            "distance",
+        ]
+        return pd.DataFrame(columns=columns)
+    return df
 
 
 def get_system_monitoring_task_events(
@@ -173,7 +215,21 @@ def get_system_monitoring_task_events(
             if "data-state" in v
         }
 
-    return _get_task_dataframe(fevents, _sense)
+    df = _get_task_dataframe(fevents, _sense)
+    if df is None:
+        columns = [
+            "timestamp",
+            "frame",
+            "user",
+            "light-1",
+            "light-2",
+            "slider-1",
+            "slider-2",
+            "slider-3",
+            "slider-4",
+        ]
+        return pd.DataFrame(columns=columns)
+    return df
 
 
 def _get_task_dataframe(fevents, fn_sense):
@@ -221,6 +277,9 @@ def _get_task_dataframe(fevents, fn_sense):
         raise ValueError(
             "Multiple avatar ids inferred, this should not happen, has there been a change to the event logging system?"
         )
+    if len(df) == 0:
+        return None
+
     df["user"] = df["agent"] == avatar_ids.pop()
     df.drop(columns=["agent"], inplace=True)
     # organise columns

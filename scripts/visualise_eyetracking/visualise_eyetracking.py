@@ -8,14 +8,15 @@ The blue dot will change its size depending on fixation/saccade. Small for fixat
 If the eyetracker fails to load you will get a message in the console saying so (its probably a URI issue, make sure you get it from your eyetracker manager and the eyetracker has been calibrated and is on.)
 """
 
+from star_ray_xml import Update
+from star_ray.utils import _LOGGER
+
 from icua import MultiTaskEnvironment
 from icua.agent import Avatar as _Avatar, Actuator as _Actuator, attempt, observe
 from icua.event import MouseMotionEvent, EyeMotionEvent, WindowCloseEvent
-from star_ray_xml import Update
 from matbii.config import EyetrackingConfiguration, WindowConfiguration
 import argparse
 
-from star_ray.utils import _LOGGER
 
 # silence logs from star_ray logger
 _LOGGER.setLevel("WARNING")

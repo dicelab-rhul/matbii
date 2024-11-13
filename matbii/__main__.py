@@ -7,6 +7,7 @@ from collections import defaultdict
 import os
 import argparse
 import importlib
+import inspect
 
 
 from star_ray.utils import _LOGGER
@@ -70,7 +71,13 @@ def parse_cmd_args() -> dict[str, Any]:
     # ======================================================================== #
     # ========================= Options for scripts ========================== #
     # ======================================================================== #
-    args = parser.parse_args()
+    parser.add_argument(
+        "-s",
+        "--script",
+        required=False,
+        help="Name of the script to run - see `matbii.extras.scripts`",
+    )
+    args, unknown_args = parser.parse_known_intermixed_args()
     kwargs = {k.replace("-", "_"): v for k, v in vars(args).items()}
     # create context for configuration from cmd line args
     kwargs["logging"] = dict(level=logging_level(args.verbose))
@@ -85,7 +92,7 @@ def parse_cmd_args() -> dict[str, Any]:
 
     if kwargs.get("example", None) and kwargs.get("script", None):
         raise ValueError("Cannot specify both --example and --script")
-    return kwargs
+    return kwargs, unknown_args
 
 
 def run_example(name: str, **kwargs: dict[str, Any]):
@@ -126,25 +133,46 @@ def run_example(name: str, **kwargs: dict[str, Any]):
 
 def run_script(name: str, **kwargs: dict[str, Any]):
     """Run a script."""
-    raise NotImplementedError("TODO - run scripts")
+    from matbii.extras import scripts
+
+    avaliable_scripts = {
+        func[0]: func[1]
+        for func in inspect.getmembers(scripts, inspect.isfunction)
+        if not func[0].startswith("_")  # Filter out private functions
+    }
+    if name not in avaliable_scripts:
+        script_names = "\n- ".join(avaliable_scripts.keys())
+        raise ValueError(
+            f"Script: `{name}` not found, avaliable scripts:\n- {script_names}"
+        )
+    avaliable_scripts[name](**kwargs)
+
+
+def _unknown_args_error(unknown_args: Any):
+    if unknown_args:
+        raise ValueError(f"Unknown arguments: {unknown_args} - see `matbii --help`")
 
 
 def main():
     """Main entry point for the matbii."""
-    kwargs = parse_cmd_args()
+    kwargs, unknown_args = parse_cmd_args()
 
     # premeptively set the logging level
     from matbii.utils import LOGGER
 
     LOGGER.set_level(kwargs["logging"].get("level", "WARNING"))
 
-    # 1. Run an example if --example is specified
+    # 1. Run a script if --script is specified
+    if kwargs.get("script", None):
+        # unknown arguments are ok, they will be grabbed by the script
+        run_script(kwargs.get("script"), **kwargs)
+        return
+
+    _unknown_args_error(unknown_args)
+    # 2. Run an example if --example is specified
     if kwargs.get("example", None):
         run_example(kwargs.get("example"), **kwargs)
-
-    # 2. Run a script if --script is specified
-    if kwargs.get("script", None):
-        run_script(kwargs.get("script"), **kwargs)
+        return
 
     # 1. Run the main simulation
     if kwargs.get("config", None):
