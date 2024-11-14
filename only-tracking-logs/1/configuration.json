@@ -1,0 +1,66 @@
+{
+  "experiment": {
+    "id": "1",
+    "path": "C:/Users/brjw/Documents/repos/dicelab/matbii/matbii/example/only-tracking",
+    "duration": 30,
+    "enable_video_recording": false,
+    "enable_tasks": [
+      "tracking"
+    ],
+    "meta": {}
+  },
+  "participant": {
+    "id": null,
+    "meta": {}
+  },
+  "guidance": {
+    "enable": true,
+    "counter_factual": false,
+    "break_ties": "random",
+    "grace_mode": "attention",
+    "attention_mode": "mouse",
+    "grace_period": 3.0,
+    "arrow": {
+      "enable": true,
+      "mode": "mouse",
+      "scale": 1.0,
+      "fill_color": "none",
+      "stroke_color": "#ff0000",
+      "stroke_width": 4.0,
+      "offset": [
+        80.0,
+        80.0
+      ]
+    },
+    "box": {
+      "enable": true,
+      "stroke_color": "#ff0000",
+      "stroke_width": 4.0
+    }
+  },
+  "window": {
+    "x": 0,
+    "y": 0,
+    "width": 340,
+    "height": 340,
+    "title": "Tracking Task",
+    "resizable": false,
+    "fullscreen": false,
+    "background_color": "#ffffff"
+  },
+  "eyetracking": {
+    "uri": "tet-tcp://169.254.126.68",
+    "sdk": "tobii",
+    "enable": false,
+    "moving_average_n": 5,
+    "velocity_threshold": 0.5
+  },
+  "logging": {
+    "level": "WARNING",
+    "path": "C:/Users/brjw/Documents/repos/dicelab/matbii/only-tracking-logs"
+  },
+  "ui": {
+    "width": 340,
+    "height": 340
+  }
+}

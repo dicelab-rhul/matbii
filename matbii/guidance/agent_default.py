@@ -200,7 +200,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
     def time_since_last_attended(self, task: str) -> float:
         """Get the time since the user was last attending to a task."""
-        return self._cycle_start_time - self.beliefs[task].get(
+        return self.get_cycle_start() - self.beliefs[task].get(
             "last_attended", float("nan")
         )
 

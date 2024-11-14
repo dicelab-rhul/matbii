@@ -26,6 +26,56 @@ def logging_level(verbosity: int) -> str:
     ]
 
 
+def dot_notation_to_dict(
+    dot_notation_dict: dict[str, Any], delim="."
+) -> dict[str, Any]:
+    """Convert a dictionary with keys in dot notation to a nested dictionary.
+
+    Args:
+        dot_notation_dict (dict[str, Any]): the dictionary to convert.
+        delim (str, optional): the delimiter used in the dot notation keys. Defaults to ".".
+
+    Returns:
+        dict[str, Any]: the nested dictionary.
+    """
+    nested_dict = {}
+    for key, value in dot_notation_dict.items():
+        parts = key.split(delim)
+        d = nested_dict
+        for part in parts[:-1]:
+            d = d.setdefault(part, {})
+        d[parts[-1]] = value
+    return nested_dict
+
+
+def parse_config_args(unknown_args: list[str]) -> dict[str, Any]:
+    """Parse configuration arguments from the unknown arguments."""
+    # scan unknown args for those that start with --config.
+    # find index of each --config
+    from ast import literal_eval
+
+    still_unknown_args = []
+    config_args = {}
+
+    config_indices = [i for i, arg in enumerate(unknown_args) if arg.startswith("-")]
+    for i, j in zip(config_indices[:-1], config_indices[1:]):
+        if unknown_args[i].startswith("--config"):
+            try:
+                value = tuple(literal_eval(arg) for arg in unknown_args[i + 1 : j])
+            except Exception:
+                raise ValueError(
+                    f"Error parsing config argument: {unknown_args[i]}, ensure the value(s): {unknown_args[i + 1 : j]} can be interpreted as a python literal. You may need to surround string values with single quotes."
+                )
+            if len(value) == 1:
+                value = value[0]
+            config_args[unknown_args[i].replace("--config.", "")] = value
+        else:
+            still_unknown_args.extend(unknown_args[i:j])
+
+    config_args = dot_notation_to_dict(config_args, delim=".")
+    return config_args, still_unknown_args
+
+
 def parse_cmd_args() -> dict[str, Any]:
     """Parse command line arguments."""
     # load configuration file
@@ -50,15 +100,6 @@ def parse_cmd_args() -> dict[str, Any]:
         required=False,
         help="Path to configuration file.",
     )
-    parser.add_argument(
-        "-p",
-        "--participant",
-        required=False,
-        help="ID of the participant.",
-    )
-    parser.add_argument(
-        "-e", "--experiment", required=False, help="ID of the experiment.", default=None
-    )
     # ======================================================================== #
     # ========================= Options for examples ========================= #
     # ======================================================================== #
@@ -78,25 +119,23 @@ def parse_cmd_args() -> dict[str, Any]:
         help="Name of the script to run - see `matbii.extras.scripts`",
     )
     args, unknown_args = parser.parse_known_intermixed_args()
-    kwargs = {k.replace("-", "_"): v for k, v in vars(args).items()}
-    # create context for configuration from cmd line args
-    kwargs["logging"] = dict(level=logging_level(args.verbose))
-    if kwargs.get("experiment", None):
-        kwargs["experiment"] = dict(id=kwargs["experiment"])
-    else:
-        kwargs["experiment"] = dict()
-    if kwargs.get("participant", None):
-        kwargs["participant"] = dict(id=kwargs["participant"])
-    else:
-        kwargs["participant"] = dict()
+    args = {k.replace("-", "_"): v for k, v in vars(args).items()}
+    # create context for configuration from cmd line args, other unknown args are ignored, they may be processed later
+    config_args, unknown_args = parse_config_args(unknown_args)
+    config_args.setdefault("logging", dict())
+    config_args["logging"].setdefault("level", logging_level(args["verbose"]))
 
-    if kwargs.get("example", None) and kwargs.get("script", None):
+    if args.get("example", None) and args.get("script", None):
         raise ValueError("Cannot specify both --example and --script")
-    return kwargs, unknown_args
+    return args, config_args, unknown_args
 
 
-def run_example(name: str, **kwargs: dict[str, Any]):
+def run_example(
+    name: str, config: str | None = None, config_args: dict[str, Any] | None = None
+):
     """Run an example."""
+    if config_args is None:
+        config_args = dict()
     # navigate to the example directory
     example_dir = Path(importlib.resources.path("matbii", "example"))
     if not example_dir.exists():
@@ -116,26 +155,26 @@ def run_example(name: str, **kwargs: dict[str, Any]):
         )
     # record the current working directory, this will be used to store the log files
     log_dir = Path.cwd() / f"{name}-logs"
-    kwargs["logging"]["path"] = log_dir.as_posix()
-    kwargs["experiment"]["path"] = example.as_posix()
+    config_args.setdefault("logging", dict())
+    config_args["logging"]["path"] = log_dir.as_posix()
+    config_args.setdefault("experiment", dict())
+    config_args["experiment"]["path"] = example.as_posix()
 
     # TODO we might search for this instead so that the file name doesnt need to be experiment.json
-    if kwargs.get("config", None):
-        config_file = example / kwargs["config"]
+    if config:
+        config_file = example / config
     else:
         config_file = example / "experiment.json"
     if not config_file.exists():
         raise FileNotFoundError(
             f"Example config file: {config_file.as_posix()} not found"
         )
-    del kwargs["config"]
-
     from matbii.utils import LOGGER
 
     LOGGER.debug(f"Example path: {example.as_posix()}")
     from matbii.main import main
 
-    main(config_file.as_posix(), **kwargs)
+    main(config_file.as_posix(), **config_args)
 
 
 def run_script(name: str, **kwargs: dict[str, Any]):
@@ -157,35 +196,42 @@ def run_script(name: str, **kwargs: dict[str, Any]):
 
 def _unknown_args_error(unknown_args: Any):
     if unknown_args:
-        raise ValueError(f"Unknown arguments: {unknown_args} - see `matbii --help`")
+        raise ValueError(
+            f"Unknown arguments: {unknown_args}, see `matbii --help` for options."
+        )
 
 
 def main():
     """Main entry point for the matbii."""
-    kwargs, unknown_args = parse_cmd_args()
+    args, config_args, unknown_args = parse_cmd_args()
 
     # premeptively set the logging level
     from matbii.utils import LOGGER
 
-    LOGGER.set_level(kwargs["logging"].get("level", "WARNING"))
+    LOGGER.set_level(config_args["logging"].get("level", "WARNING"))
 
+    print(args, config_args, unknown_args)
     # 1. Run a script if --script is specified
-    if kwargs.get("script", None):
+    if args.get("script", None):
         # unknown arguments are ok, they will be grabbed by the script
-        run_script(kwargs.get("script"), **kwargs)
+        run_script(args.get("script"), **args)
         return
 
     _unknown_args_error(unknown_args)
     # 2. Run an example if --example is specified
-    if kwargs.get("example", None):
-        run_example(kwargs.get("example"), **kwargs)
+    if args.get("example", None):
+        run_example(
+            args.get("example"),
+            config=args.get("config", None),
+            config_args=config_args,
+        )
         return
 
-    # 1. Run the main simulation
-    if kwargs.get("config", None):
+    # 3. Run the main simulation
+    if args.get("config", None):
         from matbii.main import main
 
-        main(**kwargs)
+        main(**args)
     else:
         raise ValueError(
             "No configuration provided, use -c or --config to specify a config file."
