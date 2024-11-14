@@ -1,6 +1,7 @@
 """Module containing the base class for matbii guidance agents, see `GuidanceAgent` documentation for details."""
 
 from typing import Any
+from collections import deque
 import time
 from icua.agent.actuator_guidance import (
     CounterFactualGuidanceActuator,
@@ -40,6 +41,7 @@ class GuidanceAgent(_GuidanceAgent):
         counter_factual: bool = False,
         user_input_events: tuple[type[Event]] = None,
         user_input_events_history_size: int | list[int] = 50,
+        cycle_times_history_size: int = 5,
     ):
         # this actuator will be used when counter-factual guidance is enabled, any other actuators will be ignored
         _counter_factual_guidance_actuator = CounterFactualGuidanceActuator()
@@ -50,11 +52,27 @@ class GuidanceAgent(_GuidanceAgent):
         self._counter_factual = counter_factual
         self._counter_factual_guidance_actuator = _counter_factual_guidance_actuator
 
-        # # these are used to look at differences in beliefs for logging purposes, old beliefs are copied at the end of each cycle (see __execute__)
-        # self._old_beliefs = deepcopy(self.beliefs)
-
         # various useful properties used to determine whether guidance should be shown
-        self._cycle_start_time = None
+        self._cycle_times = deque(maxlen=max(cycle_times_history_size, 2))
+
+    def get_cycle_start(self, index: int = 0) -> float:
+        """Get the time since the previous cycle started.
+
+        An index of 0 indicates the start of the current cycle.
+        If the index is greater than the current history size N (which may happen in the first N - 1 cycles) the oldest cycle time will be returned.
+
+        Args:
+            index (int): the index of the cycle to get the start time for.
+
+        Returns:
+            float: the time since the given cycle started.
+        """
+        if index >= self._cycle_times.maxlen:
+            raise ValueError(
+                f"Invalid argument: `index` {index} must be less than the cycle times history size {self._cycle_times.maxlen}, the can be increased by setting `cycle_times_history_size` in the constructor."
+            )
+        index = min(index, len(self._cycle_times) - 1)
+        return self._cycle_times[index]
 
     def show_guidance(self, task: str):
         """Show guidance for a given task.
@@ -108,7 +126,8 @@ class GuidanceAgent(_GuidanceAgent):
             )
 
     def __cycle__(self):  # noqa
-        self._cycle_start_time = time.time()
+        # add the latest cycle time (according to this agents cycle)
+        self._cycle_times.appendleft(time.time())
         super().__observe__()
         self.decide()
         self.__decide__()
@@ -132,20 +151,6 @@ class GuidanceAgent(_GuidanceAgent):
         raise NotImplementedError(
             f"Subclasses of {GuidanceAgent.__module__}.{GuidanceAgent.__name__} must implement the `decide` method, this method is intended to determine the guidance actions the agent will take in each cycle."
         )
-
-    # this is manually added to the event router (see __init__), so no @observe here
-    def on_user_input(self, observation: Event):
-        """Called when this agent receives a user input event, it will add the event to an internal buffer. See `get_latest_user_input`.
-
-        This method should not be called manually and will be handled by this agents event routing mechanism.
-
-        Args:
-            observation (Any): the observation.
-        """
-        super().on_user_input(observation)
-        # TODO may move this into `log_beliefs` and just use the event buffer.
-        # log all user input events as beliefs
-        # self.log_belief(observation)
 
     # ================================================================================================ #
     # ================================ Below are some useful methods ================================= #
@@ -187,6 +192,10 @@ class GuidanceAgent(_GuidanceAgent):
             guidance_time = self.beliefs[task].get("guidance_start", float("nan"))
         return self._cycle_start_time - guidance_time
 
+    def on_unacceptable(self, task: str):  # noqa
+        self.beliefs[task]["failure_start"] = self.get_cycle_start()
+        return super().on_unacceptable(task)
+
     # ================================================================================================ #
     # =============================== Below are some useful properties =============================== #
     # ================================================================================================ #
@@ -202,9 +211,27 @@ class GuidanceAgent(_GuidanceAgent):
             t for t in self.active_tasks if self.beliefs[t].get("is_guidance", False)
         )
 
-    def on_unacceptable(self, task: str):  # noqa
-        self.beliefs[task]["failure_start"] = self._cycle_start_time
-        return super().on_unacceptable(task)
+    @property
+    def fixation_target(self) -> str | None:
+        """Get the task that the user is currently fixating on. Eyetracking events arrive quickly, this will check events that have been generated since the last cycle of this agent.
+
+        Returns:
+            str | None: the task that the user is currently fixating on, or None if the user is not currently fixating on any task.
+        """
+        # gather events since the previous cycle
+        latest_fixation: EyeMotionEvent | None = None
+        prev_cycle_start = self.get_cycle_start(1)
+        for event in self._user_input_events[EyeMotionEvent]:
+            if event.timestamp >= prev_cycle_start:
+                if event.fixated:
+                    latest_fixation = event
+                    break  # found latest fixation
+            else:
+                break  # dont check older events
+        if latest_fixation is None:
+            return None
+        targets = set(latest_fixation.target) & self.monitoring_tasks
+        return next(iter(targets), None)
 
     @property
     def mouse_target(self) -> str | None:

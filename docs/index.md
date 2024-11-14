@@ -1,6 +1,6 @@
 # matbii
 
-[![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/{dicelab-rhul}/{matbii})
+[![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/dicelab-rhul/matbii)
 ![GitHub forks](https://img.shields.io/github/forks/dicelab-rhul/matbii?style=social)
 ![GitHub stars](https://img.shields.io/github/stars/dicelab-rhul/matbii?style=social)
 [![PyPI](https://img.shields.io/pypi/v/matbii)](https://pypi.org/project/matbii/)

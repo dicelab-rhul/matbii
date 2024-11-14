@@ -96,10 +96,27 @@ class DefaultGuidanceAgent(GuidanceAgent):
                 f"Invalid argument: `grace_period` {self._grace_period} must be > 0 "
             )
 
+        # used to track the tasks that the user is currently attending to
+        self._attending_tasks = set()
+
+    def on_attending(self, attending_tasks: set[str]) -> None:
+        """Called when the user's attention changes.
+
+        Args:
+            attending_tasks (set[str]): the new set of tasks that the user is currently attending to.
+        """
+        for task in attending_tasks:
+            self.beliefs[task]["last_attended"] = self.get_cycle_start()
+            self._log_attention(task)
+        if len(attending_tasks) == 0:
+            self._log_attention("none")
+
     def decide(self):  # noqa
         # update when the user was last attending to a task
-        for task in self.attending_tasks:
-            self.beliefs[task]["last_attended"] = self._cycle_start_time
+        attending_tasks = self.get_attending_tasks()  # empty or a single task
+        if attending_tasks != self._attending_tasks:
+            self._attending_tasks = attending_tasks
+            self.on_attending(attending_tasks)
 
         # make guidance decisions
         if self.guidance_on_tasks:
@@ -111,7 +128,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
                     self.hide_guidance(task)
                 return
 
-            guidance_and_attending = self.guidance_on_tasks & self.attending_tasks
+            guidance_and_attending = self.guidance_on_tasks & self._attending_tasks
             if guidance_and_attending:
                 # the task has guidance showing, but the user is attending to it - hide guidance for this task
                 for task in guidance_and_attending:
@@ -124,7 +141,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
             # these tasks are candidates for showing guidance
             unacceptable = self.unacceptable_tasks
             # remove those tasks that the user is currently attending
-            unacceptable -= self.attending_tasks
+            unacceptable -= self._attending_tasks
             # check the grace period
             unacceptable = self.grace_period_over(unacceptable)
 
@@ -187,19 +204,18 @@ class DefaultGuidanceAgent(GuidanceAgent):
             "last_attended", float("nan")
         )
 
-    @property
-    def attending_tasks(self) -> set[str]:
+    def get_attending_tasks(self) -> set[str]:
         """Get the set of tasks that the user is currently attending to - this is typically only one task.
 
         Returns:
-            set[str]: set of tasks that the user is currently attending to.
+            set[str]: set of tasks that the user is currently attending to (empty if no tasks are being attended to).
         """
         if self._attention_mode == "fixation":
             result = self.attending_task_fixation()
         elif self._attention_mode == "gaze":
-            result = self.gaze_target
+            result = self.attending_task_gaze()
         elif self._attention_mode == "mouse":
-            result = self.mouse_target
+            result = self.attending_task_mouse()
         else:
             raise ValueError(f"Unknown attention mode: {self._attention_mode}")
         if result is None:
@@ -207,59 +223,17 @@ class DefaultGuidanceAgent(GuidanceAgent):
         else:
             return set([result])
 
+    def attending_task_mouse(self) -> str | None:
+        """Use mouse position to determine which task the user is attending to."""
+        return self.mouse_target
+
+    def attending_task_gaze(self) -> str | None:
+        """Use gaze position (including saccades) to determine which task the user is attending to."""
+        return self.gaze_target
+
     def attending_task_fixation(self) -> str | None:
         """Use fixation to determine which task the user is attending to."""
-        raise NotImplementedError("TODO")  # TODO
-
-    # def get_attending(self):
-    #     """Get attention data from mouse or eyetracker."""
-    #     if self._attention_mode == "gaze":
-    #         elements, gaze = self.gaze_at_elements, self.gaze_position
-    #         # check if the gaze data is None, if so we need to see how long and give a warning, it may indicate that the eyetracker
-    #         # has stopped functioning which may invalidate an experimental trial!
-    #         if gaze is None:
-    #             if self._missing_gaze_since is None:
-    #                 self._missing_gaze_since = time.time()
-    #             elif (
-    #                 time.time() - self._missing_gaze_since
-    #                 > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
-    #             ):
-    #                 LOGGER.warning(
-    #                     f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
-    #                 )
-    #             return {"elements": elements}
-    #         else:
-    #             self._missing_gaze_since = None
-    #         # gaze data may be present, but it may be old (its stored in a buffer until fresh data arrives)
-    #         if (
-    #             time.time() - gaze["timestamp"]
-    #             > DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD
-    #         ):
-    #             LOGGER.warning(
-    #                 f"No fresh gaze data for longer than: { DefaultGuidanceAgent.MISSING_GAZE_DATA_THRESHOLD}s"
-    #             )
-    #         return {"elements": elements, **(gaze if gaze else {})}
-    #     elif self._attention_mode == "mouse":
-    #         position_data = self.mouse_position
-    #         return {
-    #             "elements": self.mouse_at_elements,
-    #             **(position_data if position_data else {}),
-    #         }
-    #     else:
-    #         raise ValueError(f"Unknown attention mode: {self._attention_mode}")
-
-    # def __cycle__(self):  # noqa
-    #     super().__cycle__()
-    #     attending = self.get_attending()
-    #     att_to = attending["elements"]
-
-    #     # TODO we might also care about recording other info in the event!
-    #     # this is the one that is being used by the agent to make its guidance decisions either way...
-    #     self.beliefs["attention"]["timestamp"] = attending.get("timestamp")
-    #     self.beliefs["attention"]["position"] = attending.get("position")
-    #     self.beliefs["attention"]["attending"] = next(
-    #         iter([e for e in att_to if e in self._tracking_tasks]), None
-    #     )
+        return self.fixation_target
 
     def break_tie(
         self,
@@ -306,3 +280,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
         """Log the acceptability of a task to the console."""
         info = "task %20s %20s %s" % (z, task, ["✘", "✔"][int(ok)])
         LOGGER.info(info)
+
+    def _log_attention(self, task: str):
+        """Log the attention of the user to the console."""
+        LOGGER.info(f"Attending task: {task}")
