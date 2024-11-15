@@ -1,0 +1,13 @@
+{
+    "debug": false,
+    "line_color": "#1d90ff",
+    "target_color": "#1d90ff",
+    "target_line_width": 4,
+    "target_radius": 25,
+    "padding": 10,
+    "width": 320,
+    "height": 320,
+    "x": 320,
+    "y": 0,
+    "dash_array": "4,2,1,2"
+}
