@@ -56,8 +56,8 @@ def parse_config_args(unknown_args: list[str]) -> dict[str, Any]:
 
     still_unknown_args = []
     config_args = {}
-
     config_indices = [i for i, arg in enumerate(unknown_args) if arg.startswith("-")]
+    config_indices.append(len(unknown_args)) # need to add the end index
     for i, j in zip(config_indices[:-1], config_indices[1:]):
         if unknown_args[i].startswith("--config"):
             try:
@@ -71,7 +71,6 @@ def parse_config_args(unknown_args: list[str]) -> dict[str, Any]:
             config_args[unknown_args[i].replace("--config.", "")] = value
         else:
             still_unknown_args.extend(unknown_args[i:j])
-
     config_args = dot_notation_to_dict(config_args, delim=".")
     return config_args, still_unknown_args
 
@@ -136,6 +135,8 @@ def run_example(
     """Run an example."""
     if config_args is None:
         config_args = dict()
+    print("---", config_args)
+
     # navigate to the example directory
     example_dir = Path(importlib.resources.path("matbii", "example"))
     if not example_dir.exists():
@@ -173,7 +174,6 @@ def run_example(
 
     LOGGER.debug(f"Example path: {example.as_posix()}")
     from matbii.main import main
-
     main(config_file.as_posix(), **config_args)
 
 

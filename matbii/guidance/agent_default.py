@@ -98,6 +98,8 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
         # used to track the tasks that the user is currently attending to
         self._attending_tasks = set()
+        print("COUNTER_FACTUAL", counter_factual)
+
 
     def on_attending(self, attending_tasks: set[str]) -> None:
         """Called when the user's attention changes.
