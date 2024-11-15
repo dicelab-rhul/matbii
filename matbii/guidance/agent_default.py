@@ -98,8 +98,6 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
         # used to track the tasks that the user is currently attending to
         self._attending_tasks = set()
-        print("COUNTER_FACTUAL", counter_factual)
-
 
     def on_attending(self, attending_tasks: set[str]) -> None:
         """Called when the user's attention changes.
@@ -277,6 +275,14 @@ class DefaultGuidanceAgent(GuidanceAgent):
         # TODO we may need to guard against actuators executing these actions...?
         # manually attempt the event, we could specify which actuators need this information...?
         self.attempt(event)
+
+    def on_acceptable(self, task: str):  # noqa
+        self._log_acceptability(task, "acceptable", True)
+        return super().on_acceptable(task)
+
+    def on_unacceptable(self, task: str):  # noqa
+        self._log_acceptability(task, "acceptable", False)
+        return super().on_unacceptable(task)
 
     def _log_acceptability(self, task, z, ok):
         """Log the acceptability of a task to the console."""

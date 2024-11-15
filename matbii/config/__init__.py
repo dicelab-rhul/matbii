@@ -157,7 +157,6 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
     @model_validator(mode="before")
     @classmethod
     def _validate(cls, data: dict[str, Any]):
-        print(data)
         if data.get("counter_factual", False) and not data.get("enable", True):
             raise ValueError(
                 "`guidance.counter_factual` cannot be True when `guidance.enable` is False. `guidance.enabled = False` should only be used when guidance is not going to be AT ALL in your experiments or analysis as it will completely disable this feature, otherwise, use `guidance.counter_factual = True`."

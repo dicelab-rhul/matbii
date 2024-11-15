@@ -57,7 +57,7 @@ def parse_config_args(unknown_args: list[str]) -> dict[str, Any]:
     still_unknown_args = []
     config_args = {}
     config_indices = [i for i, arg in enumerate(unknown_args) if arg.startswith("-")]
-    config_indices.append(len(unknown_args)) # need to add the end index
+    config_indices.append(len(unknown_args))  # need to add the end index
     for i, j in zip(config_indices[:-1], config_indices[1:]):
         if unknown_args[i].startswith("--config"):
             try:
@@ -135,7 +135,6 @@ def run_example(
     """Run an example."""
     if config_args is None:
         config_args = dict()
-    print("---", config_args)
 
     # navigate to the example directory
     example_dir = Path(importlib.resources.path("matbii", "example"))
@@ -174,6 +173,7 @@ def run_example(
 
     LOGGER.debug(f"Example path: {example.as_posix()}")
     from matbii.main import main
+
     main(config_file.as_posix(), **config_args)
 
 
@@ -210,7 +210,6 @@ def main():
 
     LOGGER.set_level(config_args["logging"].get("level", "WARNING"))
 
-    print(args, config_args, unknown_args)
     # 1. Run a script if --script is specified
     if args.get("script", None):
         # unknown arguments are ok, they will be grabbed by the script
