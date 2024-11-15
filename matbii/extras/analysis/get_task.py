@@ -289,7 +289,7 @@ def _get_task_dataframe(
     if len(df) == 0:
         return None
 
-    df["user"] = df["agent"] == next(iter(avatar_ids), None)
+    df["user"] = df["agent"] == next(iter(avatar_ids), float("nan"))
     df.drop(columns=["agent"], inplace=True)
     # organise columns
     start_columns = ["timestamp", "frame", "user"]
