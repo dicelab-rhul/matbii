@@ -183,6 +183,7 @@ def _summary(
     if not mouse_motion_df.empty:
         img = get_svg_as_image((config.ui.width, config.ui.height), events)
         fig, ax = plt.subplots(figsize=(4, 4))
+        fig.suptitle("Mouse motion")
         ax.imshow(img)
         plt.scatter(
             mouse_motion_df["x"],
@@ -196,14 +197,23 @@ def _summary(
     if not eyetracking_df.empty:
         img = get_svg_as_image((config.ui.width, config.ui.height), events)
         fig, ax = plt.subplots(figsize=(4, 4))
+        fig.suptitle("Eyetracking")
         ax.imshow(img)
         plt.scatter(
-            eyetracking_df["x"],
-            eyetracking_df["y"],
+            eyetracking_df["x"][~eyetracking_df['fixated']],
+            eyetracking_df["y"][~eyetracking_df['fixated']],
             marker=".",
-            alpha=0.5,
+            alpha=0.2,
+            color="blue",
+        )
+        plt.scatter(
+            eyetracking_df["x"][eyetracking_df['fixated']],
+            eyetracking_df["y"][eyetracking_df['fixated']],
+            marker=".",
+            alpha=0.8,
             color="red",
         )
+        
         fig.savefig(output_dir / "eyetracking.png", bbox_inches="tight")
 
     plt.show()
