@@ -233,6 +233,7 @@ class DefaultGuidanceAgent(GuidanceAgent):
 
     def attending_task_fixation(self) -> str | None:
         """Use fixation to determine which task the user is attending to."""
+        #print(self.fixation_target)
         return self.fixation_target
 
     def break_tie(

@@ -213,7 +213,6 @@ def _summary(
             alpha=0.8,
             color="red",
         )
-        
         fig.savefig(output_dir / "eyetracking.png", bbox_inches="tight")
 
     plt.show()

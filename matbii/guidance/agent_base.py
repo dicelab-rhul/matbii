@@ -40,8 +40,8 @@ class GuidanceAgent(_GuidanceAgent):
         actuators: list[Actuator],
         counter_factual: bool = False,
         user_input_events: tuple[type[Event]] = None,
-        user_input_events_history_size: int | list[int] = 50,
-        cycle_times_history_size: int = 5,
+        user_input_events_history_size: int | list[int] = 100,
+        cycle_times_history_size: int = 10,
     ):
         # this actuator will be used when counter-factual guidance is enabled, any other actuators will be ignored
         _counter_factual_guidance_actuator = CounterFactualGuidanceActuator()
@@ -53,7 +53,7 @@ class GuidanceAgent(_GuidanceAgent):
         self._counter_factual_guidance_actuator = _counter_factual_guidance_actuator
 
         # various useful properties used to determine whether guidance should be shown
-        self._cycle_times = deque(maxlen=max(cycle_times_history_size, 2))
+        self._cycle_times = deque(maxlen=max(cycle_times_history_size, 10))
 
     def get_cycle_start(self, index: int = 0) -> float:
         """Get the time since the previous cycle started.
@@ -220,14 +220,19 @@ class GuidanceAgent(_GuidanceAgent):
         """
         # gather events since the previous cycle
         latest_fixation: EyeMotionEvent | None = None
-        prev_cycle_start = self.get_cycle_start(1)
+        # use events from the last 3 cycles, rather than the last cycle... this makes things a bit more robust with timings, 
+        # especially if the fixation filter is not great (TODO we could choose different values or make this configurable...?)
+        prev_cycle_start = self.get_cycle_start(3)
+        _total = 0
         for event in self._user_input_events[EyeMotionEvent]:
             if event.timestamp >= prev_cycle_start:
+                _total += 1
                 if event.fixated:
                     latest_fixation = event
                     break  # found latest fixation
             else:
                 break  # dont check older events
+        #print(_total)
         if latest_fixation is None:
             return None
         targets = set(latest_fixation.target) & self.monitoring_tasks
