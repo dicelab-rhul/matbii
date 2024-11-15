@@ -239,13 +239,15 @@ def get_system_monitoring_task_events(
     return df
 
 
-def _get_task_dataframe(fevents, fn_sense):
+def _get_task_dataframe(
+    fevents, fn_sense, user_input_event_type: type = UserInputEvent
+):
     """Used internally to build a dataframe for a task."""
     # use the default state, the actual size etc. of the svg is not important for our purposes.
     # we only want to track the task events (which do not depend on the svg or window config.)
     xml_state = SVGAmbient([]).get_state()
     # sort the events by their log timestamp
-    fevents = sorted(fevents, key=lambda x: x[0])
+    fevents = EventLogParser.sort_by_timestamp(fevents)
 
     def _get_task_events(fevents: list[tuple[float, Event]], avatar_ids: set[int]):
         """Execute the events in order and yield the current task state."""
@@ -254,7 +256,7 @@ def _get_task_dataframe(fevents, fn_sense):
             if isinstance(event, RenderEvent):
                 frame += 1
                 continue
-            if isinstance(event, UserInputEvent):
+            if isinstance(event, user_input_event_type):
                 _, avatar_id = Component.unpack_source(event)
                 avatar_ids.add(avatar_id)
                 continue

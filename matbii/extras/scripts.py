@@ -3,7 +3,8 @@
 import argparse
 import numpy as np
 import pandas as pd
-from typing import Any
+from typing import Any, Literal
+import matplotlib.pyplot as plt
 from pathlib import Path
 from ..utils import LOGGER
 from ..config import Configuration
@@ -101,6 +102,8 @@ def _summary(
         get_unacceptable_intervals,
         get_attention_intervals,
         get_guidance_intervals,
+        get_start_and_end_time,
+        get_frame_timestamps,
     )
 
     parser = EventLogParser()
@@ -128,6 +131,8 @@ def _summary(
     get_resource_management_task_events(parser, events).to_csv(
         output_dir / "resource_management.csv"
     )
+    frame_timestamps = pd.DataFrame(get_frame_timestamps(events), columns=["timestamp"])
+    frame_timestamps.to_csv(output_dir / "frame_timestamps.csv", index=False)
 
     # get intervals
     _intervals_as_df(dict(get_acceptable_intervals(events))).to_csv(
@@ -146,17 +151,37 @@ def _summary(
     )
 
     # TODO: get attention intervals - input (mouse + keyboard)
-    # TODO: get attention intervals - gaze
-    # TODO: get attention intervals - fixation
+
+    _intervals_as_df(dict(get_attention_intervals(eyetracking_df))).to_csv(
+        output_dir / "attention_intervals_gaze.csv", index=False
+    )
+
+    # fixation intervals
+    fixation_df = eyetracking_df[eyetracking_df["fixated"]]
+    # deal with empty eyetracking df
+    if fixation_df.empty:
+        columns = list(eyetracking_df.columns)
+        columns.remove("fixated")
+        fixation_df = pd.DataFrame(columns=columns)
+    _intervals_as_df(dict(get_attention_intervals(fixation_df))).to_csv(
+        output_dir / "attention_intervals_fixation.csv", index=False
+    )
+
+    # record start and end times
+    start_time, end_time = get_start_and_end_time(events)
 
     # make plots
     # output_dir = output_dir / "plots"
     # output_dir.mkdir(parents=True, exist_ok=True)
-    _summary_plot(output_dir)
+    attention_mode = config.guidance.attention_mode
+    fig = _summary_plot(output_dir, attention_mode=attention_mode)
+    fig.savefig(output_dir / "summary.png", bbox_inches="tight")
+    plt.show()
 
 
 def _summary_plot(
     path: Path,
+    attention_mode: Literal["mouse", "fixation", "gaze"] = "mouse",
     guidance_colour: str = "red",
     attention_colour: str = "purple",
     system_monitoring_colour: str = SYSTEM_MONITORING_COLOR,
@@ -175,9 +200,18 @@ def _summary_plot(
     acceptable_intervals = pd.read_csv(path / "acceptable_intervals.csv")
     unacceptable_intervals = pd.read_csv(path / "unacceptable_intervals.csv")
     guidance_intervals = pd.read_csv(path / "guidance_intervals.csv")
-    attention_intervals = pd.read_csv(path / "attention_intervals_mouse.csv")
-    # TODO other attention intervals
-
+    try:
+        attention_intervals = pd.read_csv(
+            path / f"attention_intervals_{attention_mode}.csv"
+        )
+    except FileNotFoundError:
+        avaliable = [
+            p.name.split(".")[0].split("_")[-1]
+            for p in path.glob(path / "attention_intervals_*.csv")
+        ]
+        raise ValueError(
+            f"Attention intervals for mode {attention_mode} not found, available: {avaliable}."
+        )
     for task, data in task_data.items():
         plot_intervals(
             acceptable_intervals[acceptable_intervals["task"] == task],
@@ -211,13 +245,12 @@ def _summary_plot(
             color=attention_colour,
             alpha=0.2,
             ax=ax,
-            label="attention",
+            label=f"attention_{attention_mode}",
             ymin=data["ylim"][0] + 0.05,
             ymax=data["ylim"][1] - 0.05,
         )
 
         df = pd.read_csv(path / f"{task}.csv")
-
         # plot the timestamps for the task changed its state due to the task specific agent.
         plot_timestamps(
             df["timestamp"][~df["user"]],
@@ -247,20 +280,22 @@ def _summary_plot(
     #     linestyle="--",
     #     label="start/end",
     # )
-
-    # plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
     plt.legend(loc="lower center", bbox_to_anchor=(0.5, 1), ncol=100)
     plt.tight_layout()
-    plt.show()
+    return fig
 
 
 def _intervals_as_df(intervals: dict[str, np.ndarray]) -> pd.DataFrame:
     def _gen():
+        # yield an empty dataframe to handle the case where no intervals are found
         for task, i in intervals.items():
             if len(i) > 0:
                 yield pd.DataFrame({"t1": i[:, 0], "t2": i[:, 1], "task": task})
 
-    df = pd.concat(_gen())
+    result = list(_gen())
+    if len(result) == 0:
+        return pd.DataFrame(columns=["t1", "t2", "task"])
+    df = pd.concat(result)
     df.sort_values(by="t1", inplace=True)
     df.reset_index(drop=True, inplace=True)
     return df

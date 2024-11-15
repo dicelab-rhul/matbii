@@ -18,6 +18,7 @@ from icua.extras.analysis import (
     get_attention_intervals,
     get_start_and_end_time,
     get_svg_as_image,
+    get_frame_timestamps,
     merge_intervals,
     isin_intervals,
 )
@@ -36,6 +37,7 @@ __all__ = [
     "get_guidance_intervals",
     "get_attention_intervals",
     "get_start_and_end_time",
+    "get_frame_timestamps",
     "get_svg_as_image",
     "merge_intervals",
     "isin_intervals",

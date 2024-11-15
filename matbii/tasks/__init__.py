@@ -27,8 +27,21 @@ from .system_monitoring import (
     ResetSliderAction,
 )
 
+TASK_EVENT_TYPES = (
+    TargetMoveAction,
+    SetSliderAction,
+    SetLightAction,
+    ToggleLightAction,
+    SetPumpAction,
+    BurnFuelAction,
+    PumpFuelAction,
+    TogglePumpAction,
+    TogglePumpFailureAction,
+)
+
 
 __all__ = (
+    "TASK_EVENTS",
     # resource managment
     "ResourceManagementActuator",
     "AvatarResourceManagementActuator",
