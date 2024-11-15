@@ -33,7 +33,9 @@ from ...tasks import (
 
 
 def get_resource_management_task_events(
-    parser: EventLogParser, events: list[tuple[float, Event]]
+    parser: EventLogParser,
+    events: list[tuple[float, Event]],
+    norm: float | int = np.inf,
 ) -> pd.DataFrame:
     """Extracts useful data for the resource management task from the event log.
 
@@ -56,6 +58,11 @@ def get_resource_management_task_events(
     Returns:
         pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", *"tanks-{i}", *"pumps-{ij}"]
     """
+    from matbii.utils import LOGGER
+
+    LOGGER.warning(
+        "`get_resource_management_task_events` is not implemented yet, the result will be an empty dataframe."
+    )
     df = None
     if df is None:
         columns = [

@@ -1,4 +1,4 @@
-"""This module contains various scripts (functions) that can be used with the argument --script. Typically they will produce some output file (e.g. a csv or plot) for some data of interest from a log file."""
+"""This module contains various scripts (functions) that can be used with the argument --script. Typically they will produce some output file (e.g. a csv or plot) for some data of interest from a log file. The avaliable functions are intended to be called from the command line and not to to be used directly. The make use of the `matbii.extras.analysis` module to produce files and plots."""
 
 import argparse
 import numpy as np
@@ -144,6 +144,7 @@ def _summary(
     _intervals_as_df(dict(get_attention_intervals(mouse_motion_df))).to_csv(
         output_dir / "attention_intervals_mouse.csv", index=False
     )
+
     # TODO: get attention intervals - input (mouse + keyboard)
     # TODO: get attention intervals - gaze
     # TODO: get attention intervals - fixation

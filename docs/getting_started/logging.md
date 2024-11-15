@@ -1,5 +1,5 @@
 
-`matbii` logs all events in the simulation to a file as they happen. This file can be configured in the [main configuration](getting_started/configuration.md) under the `logging.path`. 
+`matbii` is designed as an experimental system for multi-task attention research. As such, it includes a range of functionality for logging and [analysing](./post-analysis.md) events that occur during an experiment. All events in the simulation are logged to a file as they happen. Logging options can be configured in the [main configuration](./configuration.md) under the `logging` section. 
 
 ## Log file structure
 
@@ -15,11 +15,9 @@ TIMESTAMP EVENT_TYPE EVENT_DATA
 
 - `EVENT_DATA` a JSON representation of the data associated with the event (enclosed in `{` `}`). The event data will contain at the very least, a unique `id` for the event and a `timestamp` for when the event was instantiated. 
 
-We provide a parser for these files will which reconstruct the origin event class, see [Post Analysis](post-analysis.md).
-
 ## Event types
 
-You can expect to see various kinds of events in a log file, the types are documented in the [API reference](/matbii/reference/). 
+You can expect to see various kinds of events in a log file.
 
 ### Actions
 
@@ -31,7 +29,7 @@ Some actions are task specific, for example:
 - Resource Management: `BurnFuelAction`, `PumpFuelAction`, `TogglePumpAction`, `SetPumpAction`
 - Tracking: `TargetMoveAction`
 
-Some actions are due to guidance, for example: `DrawBoxAction`, `DrawArrowAction`, `HideElementAction`, `ShowElementAction`
+Some actions are related to guidance, for example: `DrawBoxAction`, `DrawArrowAction`, `HideElementAction`, `ShowElementAction`
 
 ### Primitive Actions
 
@@ -39,7 +37,7 @@ Primitive events typically represent changes made internally by `matbii` or pare
 
 ### Device
 
-Events that come from devices are also recorded and include: `KeyEvent, MouseButtonEvent, MouseMotionEvent, EyeMotionEvent, WindowMoveEvent, WindowResizeEvent, WindowFocusEvent, WindowOpenEvent, WindowCloseEvent`, see [device documentation](/matbii/getting_started/devices/index.md) for details of each event.
+Events that come from devices are also recorded and include: `KeyEvent, MouseButtonEvent, MouseMotionEvent, EyeMotionEvent, WindowMoveEvent, WindowResizeEvent, WindowFocusEvent, WindowOpenEvent, WindowCloseEvent`, see [device documentation](./devices/index.md) for details of each event.
 
 ### Flags
 
@@ -54,12 +52,12 @@ Flag events are used to indicate state changes that may be of interest during po
 
 ## Gotchas
 
-Below is a list of [Gotchas](https://en.wikipedia.org/wiki/Gotcha_(programming)) that you should be aware of when working with log files and interpreting the results. 
+Below is a list of [Gotchas](https://en.wikipedia.org/wiki/Gotcha_(programming)) that you should be aware of when working with raw log files and interpreting the results. 
 
 ### Task acceptability
 
-The two flag events `TaskAcceptable` and `TaskUnacceptable` occur AFTER a task has reached an acceptable/unacceptable state. The agent requires 1 cycle to observe the state, decide it is acceptable/unacceptable and then act to produce the corresponding flag event. Using the timestamps of these events to classify other events as occuring when a task is acceptable/acceptable may lead to off-by-one errors. The analysis functions provided for analysis take this into account and are reliable for doing this classification.
+The two flag events `TaskAcceptable` and `TaskUnacceptable` occur AFTER a task has reached an acceptable/unacceptable state. The agent requires 1 cycle to observe the state, decide whether it is acceptable/unacceptable and then act to produce the corresponding flag event. Using the timestamps of these events to classify other events as occuring when a task is acceptable/unacceptable may lead to small time discrepancies when compared with the actual state of the tasks.
 
 ### Order of execution
 
-You should not rely on the order of the execution of the agents (within a single cycle) when analysis event timestamps since this is undefined, all events that appear between two `RenderEvents` should be considered as happening simultaneously, at least from the perspective of the user. This effectively splits up the event stream into small discrete chunks and sets a limit on the accuracy of the timing information.
+You should not rely on the order of the execution of the agents (within a single cycle) when analysis event timestamps since this is undefined, all events that appear between two `RenderEvents` should be considered as happening simultaneously, at least from the perspective of the user. This effectively splits up the event stream into small discrete chunks and sets a limit on the accuracy of the timing information. For most statistics of interest (e.g. reaction time), any small time discrepensies will not have an impact when comparing across participants or trials. When performing more complex analyses, you should make use of the [analysis tools](./post-analysis.md) and consider using the `frame` field rather than the raw `timestamp` field (where small discrepencies may be found).

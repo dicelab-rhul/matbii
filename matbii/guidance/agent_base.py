@@ -83,7 +83,7 @@ class GuidanceAgent(_GuidanceAgent):
             task (str): the task to show guidance for.
         """
         self.beliefs[task]["is_guidance"] = True
-        self.beliefs[task]["guidance_start"] = self._cycle_start_time
+        self.beliefs[task]["guidance_start"] = self.get_cycle_start()
         if not self._counter_factual:
             for actuator in self.guidance_actuators:
                 actuator.show_guidance(task=task)
@@ -172,7 +172,7 @@ class GuidanceAgent(_GuidanceAgent):
             )
         else:
             failure_time = self.beliefs[task].get("failure_start", float("nan"))
-        return self._cycle_start_time - failure_time
+        return self.get_cycle_start() - failure_time
 
     def time_since_guidance_start(self, task: str | None = None) -> float:
         """Get the time since the last guidance started to be shown on the task (or any task if `task` is None).
@@ -190,7 +190,7 @@ class GuidanceAgent(_GuidanceAgent):
             )
         else:
             guidance_time = self.beliefs[task].get("guidance_start", float("nan"))
-        return self._cycle_start_time - guidance_time
+        return self.get_cycle_start() - guidance_time
 
     def on_unacceptable(self, task: str):  # noqa
         self.beliefs[task]["failure_start"] = self.get_cycle_start()

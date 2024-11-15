@@ -86,6 +86,11 @@ class GuidanceBoxConfiguration(BaseModel, validate_assignment=True):
         )
 
 
+_TYPE_BREAK_TIES = Literal["random", "longest"]
+_TYPE_GRACE_MODE = Literal["guidance_task", "guidance_any", "failure", "attention"]
+_TYPE_ATTENTION_MODE = Literal["fixation", "gaze", "mouse"]
+
+
 class GuidanceConfiguration(BaseModel, validate_assignment=True):
     """Configuration relating to guidance that may be provided to a user."""
 
@@ -97,17 +102,15 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
         default=False,
         description="Whether to show guidance to the user, if False then guidance agent will be configured NOT to display guidance but will still take actions for logging purposes (if they support this).",
     )
-    break_ties: Literal["random", "longest"] = Field(
+    break_ties: _TYPE_BREAK_TIES = Field(
         default="random",
         description="How to break ties if guidance may be shown on multiple tasks simultaneously.",
     )
-    grace_mode: Literal["guidance_task", "guidance_any", "failure", "attention"] = (
-        Field(
-            default="attention",
-            description="Condition for which the `grace_period` is waiting. Options: `'guidance_task'` - time from last guidance a task, `'guidance_any'` - time from last guidance on _any_ task, `'failure'` - time from last failure a task, `'attention'` - time from when the user last attended to a task (according to `attention_mode`).",
-        )
+    grace_mode: _TYPE_GRACE_MODE = Field(
+        default="attention",
+        description="Condition for which the `grace_period` is waiting. Options: `'guidance_task'` - time from last guidance a task, `'guidance_any'` - time from last guidance on _any_ task, `'failure'` - time from last failure a task, `'attention'` - time from when the user last attended to a task (according to `attention_mode`).",
     )
-    attention_mode: Literal["fixation", "gaze", "mouse"] = Field(
+    attention_mode: _TYPE_ATTENTION_MODE = Field(
         default="fixation",
         description="Method used to track the attention of the user. Options: `'fixation'` - use eyetracking fixations, `'gaze'` - use eyetracking (fixation & saccade), `'mouse'` - use the mouse position.",
     )
@@ -123,6 +126,43 @@ class GuidanceConfiguration(BaseModel, validate_assignment=True):
         default_factory=GuidanceBoxConfiguration,
         description="Configuration for displaying box guidance.",
     )
+
+    @field_validator("break_ties", mode="before")
+    @classmethod
+    def _validate_break_ties(cls, value: _TYPE_BREAK_TIES):
+        if value.lower() not in ["random", "longest"]:
+            raise ValueError(
+                f"`guidance.break_ties` must be one of: {_TYPE_BREAK_TIES.__args__}"
+            )
+        return value.lower()
+
+    @field_validator("attention_mode", mode="before")
+    @classmethod
+    def _validate_attention_mode(cls, value: _TYPE_ATTENTION_MODE):
+        if value.lower() not in _TYPE_ATTENTION_MODE.__args__:
+            raise ValueError(
+                f"`guidance.attention_mode` must be one of: {_TYPE_ATTENTION_MODE.__args__}"
+            )
+        return value.lower()
+
+    @field_validator("grace_mode", mode="before")
+    @classmethod
+    def _validate_grace_mode(cls, value: _TYPE_GRACE_MODE):
+        if value.lower() not in _TYPE_GRACE_MODE.__args__:
+            raise ValueError(
+                f"`guidance.grace_mode` must be one of: {_TYPE_GRACE_MODE.__args__}"
+            )
+        return value.lower()
+
+    @model_validator(mode="before")
+    @classmethod
+    def _validate(cls, data: dict[str, Any]):
+        print(data)
+        if data.get("counter_factual", False) and not data.get("enable", True):
+            raise ValueError(
+                "`guidance.counter_factual` cannot be True when `guidance.enable` is False. `guidance.enabled = False` should only be used when guidance is not going to be AT ALL in your experiments or analysis as it will completely disable this feature, otherwise, use `guidance.counter_factual = True`."
+            )
+        return data
 
     def validate_from_context(self, context: "Configuration"):  # noqa
         if self.enable:

@@ -7,10 +7,8 @@ nav:
     - Getting started: getting_started/index.md
     - Key Concepts: getting_started/key-concepts.md
     - Configuration: getting_started/configuration.md
-    - Experiments:
-      - Experiments: getting_started/experiments/index.md
-      - Logging: getting_started/experiments/logging.md
-      - Post analysis: getting_started/experiments/post-analysis.md
+    - Logging: getting_started/logging.md
+    - Post analysis: getting_started/post-analysis.md
     - Devices:
       - Devices: getting_started/devices/index.md
       - Mouse & keyboard: getting_started/devices/mouse_keyboard.md

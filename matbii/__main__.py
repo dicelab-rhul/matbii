@@ -107,7 +107,7 @@ def parse_cmd_args() -> dict[str, Any]:
         "-x",
         "--example",
         required=False,
-        help="Name of the example to run - see `https://github.com/dicelab-rhul/matbii/tree/main/example`",
+        help="Name of the example to run - see `matbii.example` or [examples](https://github.com/dicelab-rhul/matbii/tree/main/example) for a full list.",
     )
     # ======================================================================== #
     # ========================= Options for scripts ========================== #

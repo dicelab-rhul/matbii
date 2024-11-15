@@ -46,15 +46,13 @@ python -m matbii
 
 ### Default entry point
 
-The default entry point for `matbii` (`python -m matbii <OPTIONS>` which will use [`matbii.__main__.py`](https://github.com/dicelab-rhul/matbii/blob/main/matbii/__main__.py)) is highly configurable and a good place to start. A full list of command line arguments is given below. The most important option is `-c` which specifies a path to a configuration file (details on [next page](configuration.md)).
+The default entry point for `matbii` (`python -m matbii <OPTIONS>` which will use [`matbii.main.py`](https://github.com/dicelab-rhul/matbii/blob/main/matbii/main.py)) is highly configurable and a good place to start. A full list of command line arguments is given below. The most important option is `-c` which specifies a path to a configuration file (details on [next page](configuration.md)).
 
 ### Command line arguments
 
 {{ cmd_help() }}
 
-All options except `-c` will override some option that is specified in the configuation file.
-
-See [next page](configuration.md) for details on the main configuration file.
+The most important option is `--config` which specifies a path to a configuration file (details on [next page](configuration.md)). 
 
 ??? info "Custom entry points (advanced)"
     Some experiments may require more advanced setups and you may wish to define your own entry point. The [`__main__.py`](https://github.com/dicelab-rhul/matbii/blob/main/matbii/__main__.py) file should serve as inspiration for this. For more details see the [documentation for advanced users](/matbii/advanced/custom_entry_points.md). It is recommended to read on to see what is offered by default before attempting to build you own entry point.
