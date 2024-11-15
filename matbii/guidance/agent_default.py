@@ -107,9 +107,9 @@ class DefaultGuidanceAgent(GuidanceAgent):
         """
         for task in attending_tasks:
             self.beliefs[task]["last_attended"] = self.get_cycle_start()
-            self._log_attention(task)
+            self._log_info(task, "attending", True)
         if len(attending_tasks) == 0:
-            self._log_attention("none")
+            self._log_info("none", "attending", True)
 
     def decide(self):  # noqa
         # update when the user was last attending to a task
@@ -277,18 +277,14 @@ class DefaultGuidanceAgent(GuidanceAgent):
         self.attempt(event)
 
     def on_acceptable(self, task: str):  # noqa
-        self._log_acceptability(task, "acceptable", True)
+        self._log_info(task, "acceptable", True)
         return super().on_acceptable(task)
 
     def on_unacceptable(self, task: str):  # noqa
-        self._log_acceptability(task, "acceptable", False)
+        self._log_info(task, "acceptable", False)
         return super().on_unacceptable(task)
 
-    def _log_acceptability(self, task, z, ok):
-        """Log the acceptability of a task to the console."""
+    def _log_info(self, task, z, ok):
+        """Log info related to a task to the console."""
         info = "task %20s %20s %s" % (z, task, ["✘", "✔"][int(ok)])
         LOGGER.info(info)
-
-    def _log_attention(self, task: str):
-        """Log the attention of the user to the console."""
-        LOGGER.info(f"Attending task: {task}")
