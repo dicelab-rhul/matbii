@@ -104,6 +104,7 @@ def _summary(
         get_guidance_intervals,
         get_start_and_end_time,
         get_frame_timestamps,
+        get_svg_as_image,
     )
 
     parser = EventLogParser()
@@ -176,6 +177,35 @@ def _summary(
     attention_mode = config.guidance.attention_mode
     fig = _summary_plot(output_dir, attention_mode=attention_mode)
     fig.savefig(output_dir / "summary.png", bbox_inches="tight")
+
+    # plot eyetracking if we have any
+
+    if not mouse_motion_df.empty:
+        img = get_svg_as_image((config.ui.width, config.ui.height), events)
+        fig, ax = plt.subplots(figsize=(4, 4))
+        ax.imshow(img)
+        plt.scatter(
+            mouse_motion_df["x"],
+            mouse_motion_df["y"],
+            marker=".",
+            alpha=0.5,
+            color="red",
+        )
+        fig.savefig(output_dir / "mouse_motion.png", bbox_inches="tight")
+
+    if not eyetracking_df.empty:
+        img = get_svg_as_image((config.ui.width, config.ui.height), events)
+        fig, ax = plt.subplots(figsize=(4, 4))
+        ax.imshow(img)
+        plt.scatter(
+            eyetracking_df["x"],
+            eyetracking_df["y"],
+            marker=".",
+            alpha=0.5,
+            color="red",
+        )
+        fig.savefig(output_dir / "eyetracking.png", bbox_inches="tight")
+
     plt.show()
 
 
