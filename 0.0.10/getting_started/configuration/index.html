@@ -1,0 +1,2738 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://dicelab-rhul.github.io/matbii/0.0.10/getting_started/configuration/">
+      
+      
+        <link rel="prev" href="../key-concepts/">
+      
+      
+        <link rel="next" href="../logging/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.30">
+    
+    
+      
+        <title>Configuration - matbii</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.3cba04c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="matbii" class="md-header__button md-logo" aria-label="matbii" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            matbii
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../advanced/" class="md-tabs__link">
+          
+  
+    
+  
+  Advanced
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reference/" class="md-tabs__link">
+        
+  
+    
+  
+  Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="matbii" class="md-nav__button md-logo" aria-label="matbii" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    matbii
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../key-concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Key Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#main-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Main Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line-overrides" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command line overrides
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      Naming convention
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      State files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schedule files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Schedule files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timing-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timing functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-schedules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Schedules
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../post-analysis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Post analysis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../devices/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Devices
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            Devices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../devices/mouse_keyboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mouse & keyboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../devices/eye_tracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Eye tracking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../devices/window_ui/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Window & UI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../advanced/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Advanced
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/custom_entry_points/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Entry Points
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/custom_tasks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Tasks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../advanced/custom_devices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Devices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/main/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Main
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/avatar/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Avatar
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Avatar
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/avatar/exit_actuator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Exit actuator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/environment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/extras/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Extras
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            Extras
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/extras/scripts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scripts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_6_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/extras/analysis/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Analysis
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6_2" id="__nav_4_6_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            Analysis
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/extras/analysis/get_guidance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get guidance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/extras/analysis/get_task/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get task
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_7" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/guidance/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Guidance
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_7" id="__nav_4_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_7">
+            <span class="md-nav__icon md-icon"></span>
+            Guidance
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/guidance/agent_base/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agent base
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/guidance/agent_default/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Agent default
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/guidance/sensor_guidance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor guidance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/guidance/sensor_resource_management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor resource management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/guidance/sensor_system_monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor system monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/guidance/sensor_tracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sensor tracking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+          
+        
+      
+        
+          
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_8" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/tasks/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Tasks
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_8" id="__nav_4_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            Tasks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_8_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/tasks/resource_management/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Resource management
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_8_1" id="__nav_4_8_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            Resource management
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/tasks/resource_management/resource_management/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resource management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_8_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/tasks/system_monitoring/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    System monitoring
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_8_2" id="__nav_4_8_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            System monitoring
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/tasks/system_monitoring/system_monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_8_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/tasks/tracking/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Tracking
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_8_3" id="__nav_4_8_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tracking
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/tasks/tracking/tracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Utils
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#main-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Main Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Main Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line-overrides" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command line overrides
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      Naming convention
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      State files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schedule-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schedule files
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Schedule files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timing-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timing functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-schedules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Schedules
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h1>
+<p><code>matbii</code> is highly configurable thanks to the modular agent-based design of <code>icua</code>. Various files are used in the configuration of tasks and experiments, these files are described in the sections below.</p>
+<h2 id="main-configuration">Main Configuration<a class="headerlink" href="#main-configuration" title="Permanent link">&para;</a></h2>
+<p>Matbii can be configured using a <code>.json</code> file.</p>
+<p>The path of this file is supplied as <code>-c &lt;CONFIG_PATH&gt;</code>, for example:</p>
+<div class="highlight"><pre><span></span><code>python -m matbii -c ./experiment-config.json
+</code></pre></div>
+<p>The default entry point (main) configuration has sections corresponding to a specific aspect of the simulation. Not all options need to be specified and all have reasonable default values.</p>
+<details class="info">
+<summary>ExperimentConfiguration</summary>
+<p>Configuration relating to the experiment to be run.</p>
+<ul>
+<li>
+<p><code>id (string | null) = null:</code>
+The unique ID of this experiment.</p>
+</li>
+<li>
+<p><code>path (string) = './':</code>
+The full path to the directory containing task configuration files. If this is a relative path it is relative to the current working directory.</p>
+</li>
+<li>
+<p><code>duration (integer) = -1:</code>
+The duration (in seconds) of this experiment (the simulation will close after this time), a negative value will leave the simulation running forever.</p>
+</li>
+<li>
+<p><code>enable_video_recording (boolean) = False:</code>
+Whether to begin a screen recording of the experiment when the simulation starts, the video will be saved to the logging path when the experiment ends.</p>
+</li>
+<li>
+<p><code>enable_tasks (array) = ['system_monitoring', 'resource_management', 'tracking']:</code>
+Which tasks to enable at the start of the simulation.</p>
+</li>
+<li>
+<p><code>meta (object) = {}:</code>
+Any additional meta data you wish to associate with this experiment.</p>
+</li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code>&quot;experiment&quot;: {
+  &quot;id&quot;: null,
+  &quot;path&quot;: &quot;./&quot;,
+  &quot;duration&quot;: -1,
+  &quot;enable_video_recording&quot;: false,
+  &quot;enable_tasks&quot;: [
+    &quot;system_monitoring&quot;,
+    &quot;resource_management&quot;,
+    &quot;tracking&quot;
+  ],
+  &quot;meta&quot;: {}
+}
+</code></pre></div>
+</details>
+</details>
+<details class="info">
+<summary>ParticipantConfiguration</summary>
+<p>Configuration relating to the participant (or user).</p>
+<ul>
+<li>
+<p><code>id (string | null) = null:</code>
+The unique ID of the participant that is taking part in the experiment.</p>
+</li>
+<li>
+<p><code>meta (object) = {}:</code>
+Any additional meta data you wish to associate with the participant.</p>
+</li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code>&quot;participant&quot;: {
+  &quot;id&quot;: null,
+  &quot;meta&quot;: {}
+}
+</code></pre></div>
+</details>
+</details>
+<details class="info">
+<summary>GuidanceConfiguration</summary>
+<p>Configuration relating to guidance that may be provided to a user.</p>
+<ul>
+<li>
+<p><code>enable (boolean) = True:</code>
+Whether to enable guidance, if this is False then no guidance agent will be created. Only set this False if you do not plan to use AT ALL in your experiments, otherwise set <code>counter_factual</code> to True.</p>
+</li>
+<li>
+<p><code>counter_factual (boolean) = False:</code>
+Whether to show guidance to the user, if False then guidance agent will be configured NOT to display guidance but will still take actions for logging purposes (if they support this).</p>
+</li>
+<li>
+<p><code>break_ties (string) = 'random':</code>
+How to break ties if guidance may be shown on multiple tasks simultaneously.</p>
+</li>
+<li>
+<p><code>grace_mode (string) = 'attention':</code>
+Condition for which the <code>grace_period</code> is waiting. Options: <code>'guidance_task'</code> - time from last guidance a task, <code>'guidance_any'</code> - time from last guidance on <em>any</em> task, <code>'failure'</code> - time from last failure a task, <code>'attention'</code> - time from when the user last attended to a task (according to <code>attention_mode</code>).</p>
+</li>
+<li>
+<p><code>attention_mode (string) = 'fixation':</code>
+Method used to track the attention of the user. Options: <code>'fixation'</code> - use eyetracking fixations, <code>'gaze'</code> - use eyetracking (fixation &amp; saccade), <code>'mouse'</code> - use the mouse position.</p>
+</li>
+<li>
+<p><code>grace_period (number) = 3.0:</code>
+The grace period to use (seconds) - how long to wait before guidance is shown to the user, see also <code>grace_mode</code>.</p>
+</li>
+<li>
+<p><code>arrow (GuidanceArrowConfiguration)</code> <em>required</em>:
+Configuration for displaying arrow guidance.</p>
+<ul>
+<li>
+<p><code>enable (boolean) = True:</code>
+Whether to enable arrow guidance.</p>
+</li>
+<li>
+<p><code>mode (string) = 'gaze':</code>
+The mode to use for the arrow guidance, <code>gaze</code> will use the current gaze position, <code>mouse</code> will use the current mouse position, <code>fixed</code> will use the fixed offset specified in <code>arrow_offset</code>.</p>
+</li>
+<li>
+<p><code>scale (number) = 1.0:</code>
+The scale of the arrow.</p>
+</li>
+<li>
+<p><code>fill_color (string) = 'none':</code>
+The fill colour of the arrow.</p>
+</li>
+<li>
+<p><code>stroke_color (string) = '#ff0000':</code>
+The line colour of the arrow outline.</p>
+</li>
+<li>
+<p><code>stroke_width (number) = 4.0:</code>
+The line width of the arrow outline.</p>
+</li>
+<li>
+<p><code>offset (array) = [80, 80]:</code>
+The offset of the arrow from its set position, this is the position of the arrow if in "fixed" mode.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>box (GuidanceBoxConfiguration)</code> <em>required</em>:
+Configuration for displaying box guidance.</p>
+<ul>
+<li>
+<p><code>enable (boolean) = True:</code>
+Whether to enable the guidance box.</p>
+</li>
+<li>
+<p><code>stroke_color (string) = '#ff0000':</code>
+The line colour of the box outline.</p>
+</li>
+<li>
+<p><code>stroke_width (number) = 4.0:</code>
+The line width of the box outline.</p>
+</li>
+</ul>
+</li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code>&quot;guidance&quot;: {
+  &quot;enable&quot;: true,
+  &quot;counter_factual&quot;: false,
+  &quot;break_ties&quot;: &quot;random&quot;,
+  &quot;grace_mode&quot;: &quot;attention&quot;,
+  &quot;attention_mode&quot;: &quot;fixation&quot;,
+  &quot;grace_period&quot;: 3.0,
+  &quot;arrow&quot;: {
+    &quot;enable&quot;: true,
+    &quot;mode&quot;: &quot;gaze&quot;,
+    &quot;scale&quot;: 1.0,
+    &quot;fill_color&quot;: &quot;none&quot;,
+    &quot;stroke_color&quot;: &quot;#ff0000&quot;,
+    &quot;stroke_width&quot;: 4.0,
+    &quot;offset&quot;: [
+      80.0,
+      80.0
+    ]
+  },
+  &quot;box&quot;: {
+    &quot;enable&quot;: true,
+    &quot;stroke_color&quot;: &quot;#ff0000&quot;,
+    &quot;stroke_width&quot;: 4.0
+  }
+}
+</code></pre></div>
+</details>
+</details>
+<details class="info">
+<summary>WindowConfiguration</summary>
+<p>Window Configuration.</p>
+<ul>
+<li>
+<p><code>x (integer) = 0:</code>
+Horizontal position of the window</p>
+</li>
+<li>
+<p><code>y (integer) = 0:</code>
+Vertical position of the window</p>
+</li>
+<li>
+<p><code>width (integer) = 640:</code>
+Width of the window</p>
+</li>
+<li>
+<p><code>height (integer) = 480:</code>
+Height of the window</p>
+</li>
+<li>
+<p><code>title (string) = 'window':</code>
+Title of the window</p>
+</li>
+<li>
+<p><code>resizable (boolean) = False:</code>
+Whether the window is resizable</p>
+</li>
+<li>
+<p><code>fullscreen (boolean) = False:</code>
+Whether the window is fullscreen</p>
+</li>
+<li>
+<p><code>background_color (string) = '#ffffff':</code>
+Background color of the window</p>
+</li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code>&quot;window&quot;: {
+  &quot;x&quot;: 0,
+  &quot;y&quot;: 0,
+  &quot;width&quot;: 640,
+  &quot;height&quot;: 480,
+  &quot;title&quot;: &quot;window&quot;,
+  &quot;resizable&quot;: false,
+  &quot;fullscreen&quot;: false,
+  &quot;background_color&quot;: &quot;#ffffff&quot;
+}
+</code></pre></div>
+</details>
+</details>
+<details class="info">
+<summary>EyetrackingConfiguration</summary>
+<p>Configuration relating to eyetracking.</p>
+<ul>
+<li>
+<p><code>uri (string | null) = null:</code>
+The eye tracker address (example: <code>'tet-tcp://172.28.195.1'</code>). If left unspecified <code>matbii</code> will attempt to find an eye tracker. For details on setting up eye tracking, consult the <a href="https://github.com/dicelab-rhul/matbii/wiki/Eyetracking">wiki</a>.</p>
+</li>
+<li>
+<p><code>sdk (string) = 'tobii':</code>
+The eye tracking SDK to use, current options are: <code>['tobii']</code>.</p>
+</li>
+<li>
+<p><code>enable (boolean) = False:</code>
+Whether eye tracking is enabled.</p>
+</li>
+<li>
+<p><code>moving_average_n (integer) = 5:</code>
+The window size to used to smooth eye tracking coordinates.</p>
+</li>
+<li>
+<p><code>velocity_threshold (number) = 0.5:</code>
+The threshold on gaze velocity which will determine saccades/fixations. This is defined in screen space, where the screen coordinates are normalised in the range [0,1]. <strong>IMPORTANT NOTE:</strong> different monitor sizes may require different values, unfortunately this is difficult to standardise without access to data on the gaze angle (which would be monitor size independent).</p>
+</li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code>&quot;eyetracking&quot;: {
+  &quot;uri&quot;: null,
+  &quot;sdk&quot;: &quot;tobii&quot;,
+  &quot;enable&quot;: false,
+  &quot;moving_average_n&quot;: 5,
+  &quot;velocity_threshold&quot;: 0.5
+}
+</code></pre></div>
+</details>
+</details>
+<details class="info">
+<summary>LoggingConfiguration</summary>
+<p>Configuration relating to logging (including event logging).</p>
+<ul>
+<li>
+<p><code>level (string) = 'INFO':</code>
+The logging level to use: ['DEBUG', 'INFO', 'WARNING', 'ERROR'], this will not affect event logging.</p>
+</li>
+<li>
+<p><code>path (string) = './logs/':</code>
+The path to the directory where log files will be written.</p>
+</li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code>&quot;logging&quot;: {
+  &quot;level&quot;: &quot;INFO&quot;,
+  &quot;path&quot;: &quot;./logs/&quot;
+}
+</code></pre></div>
+</details>
+</details>
+<details class="info">
+<summary>UIConfiguration</summary>
+<p>Configuration relating to rendering and the UI.</p>
+<ul>
+<li>
+<p><code>width (integer) = 810:</code>
+The width of the canvas used to render the tasks.</p>
+</li>
+<li>
+<p><code>height (integer) = 680:</code>
+The height of the canvas used to render the tasks.</p>
+</li>
+</ul>
+<details class="example">
+<summary>Example</summary>
+<div class="highlight"><pre><span></span><code>&quot;ui&quot;: {
+  &quot;width&quot;: 810,
+  &quot;height&quot;: 680
+}
+</code></pre></div>
+</details>
+</details>
+<p>The default configuration file can be found below, you can simply copy it and modify as needed.</p>
+<details class="example">
+<summary>default-configuration.json</summary>
+<div class="highlight"><pre><span></span><code>{
+  &quot;experiment&quot;: {
+    &quot;id&quot;: null,
+    &quot;path&quot;: &quot;./&quot;,
+    &quot;duration&quot;: -1,
+    &quot;enable_video_recording&quot;: false,
+    &quot;enable_tasks&quot;: [
+      &quot;system_monitoring&quot;,
+      &quot;resource_management&quot;,
+      &quot;tracking&quot;
+    ],
+    &quot;meta&quot;: {}
+  },
+  &quot;participant&quot;: {
+    &quot;id&quot;: null,
+    &quot;meta&quot;: {}
+  },
+  &quot;guidance&quot;: {
+    &quot;enable&quot;: true,
+    &quot;counter_factual&quot;: false,
+    &quot;break_ties&quot;: &quot;random&quot;,
+    &quot;grace_mode&quot;: &quot;attention&quot;,
+    &quot;attention_mode&quot;: &quot;fixation&quot;,
+    &quot;grace_period&quot;: 3.0,
+    &quot;arrow&quot;: {
+      &quot;enable&quot;: true,
+      &quot;mode&quot;: &quot;gaze&quot;,
+      &quot;scale&quot;: 1.0,
+      &quot;fill_color&quot;: &quot;none&quot;,
+      &quot;stroke_color&quot;: &quot;#ff0000&quot;,
+      &quot;stroke_width&quot;: 4.0,
+      &quot;offset&quot;: [
+        80.0,
+        80.0
+      ]
+    },
+    &quot;box&quot;: {
+      &quot;enable&quot;: true,
+      &quot;stroke_color&quot;: &quot;#ff0000&quot;,
+      &quot;stroke_width&quot;: 4.0
+    }
+  },
+  &quot;window&quot;: {
+    &quot;x&quot;: 0,
+    &quot;y&quot;: 0,
+    &quot;width&quot;: 810,
+    &quot;height&quot;: 680,
+    &quot;title&quot;: &quot;icua matbii&quot;,
+    &quot;resizable&quot;: false,
+    &quot;fullscreen&quot;: false,
+    &quot;background_color&quot;: &quot;#ffffff&quot;
+  },
+  &quot;eyetracking&quot;: {
+    &quot;uri&quot;: null,
+    &quot;sdk&quot;: &quot;tobii&quot;,
+    &quot;enable&quot;: false,
+    &quot;moving_average_n&quot;: 5,
+    &quot;velocity_threshold&quot;: 0.5
+  },
+  &quot;logging&quot;: {
+    &quot;level&quot;: &quot;INFO&quot;,
+    &quot;path&quot;: &quot;./logs/&quot;
+  },
+  &quot;ui&quot;: {
+    &quot;width&quot;: 810,
+    &quot;height&quot;: 680
+  }
+}
+</code></pre></div>
+</details>
+<div class="admonition note">
+<p class="admonition-title">Custom entry points</p>
+<p>The main configuration outlined here is used in the default entry point (<code>main.py</code>), but may also be useful for <a href="../../advanced/custom_entry_points/">custom entry points</a>. Other entry points include <code>--example &lt;EXAMPLE&gt;</code> (see <a href="#quick-start">here</a>), and <code>--script &lt;SCRIPT&gt;</code>, (see <a href="./experiments/post-analysis.md">here</a>).</p>
+</div>
+<h3 id="command-line-overrides">Command line overrides<a class="headerlink" href="#command-line-overrides" title="Permanent link">&para;</a></h3>
+<p>It is possible to override the configuration options via the command line using:</p>
+<p><code>--config.*KEYS *VALUES</code></p>
+<p>where <code>*KEYS</code> is a dot seperated path to the configuration option you wish to override, and <code>*VALUES</code> is one of more (space separated) values for the option. For example:
+<div class="highlight"><pre><span></span><code>--config.experiment.id &#39;experiment-1&#39;
+</code></pre></div>
+Values must be valid python literals (str, int, float, bool, list, tuple, dict). String values must be surrounded by single quotes.</p>
+<hr />
+<h2 id="task-configuration">Task Configuration<a class="headerlink" href="#task-configuration" title="Permanent link">&para;</a></h2>
+<p>Along with the main configuration which provides some general options for configuring experiments the tasks themselves can be configured. Task configuration is independent of the entry point. </p>
+<p>There are two types of task configuration files:</p>
+<ul>
+<li>State files (<code>.json</code>)</li>
+<li>Schedule files (<code>.sch</code>)</li>
+</ul>
+<p>For a single experiment these files will all be placed in a single directory, for example: 
+<div class="highlight"><pre><span></span><code>experiment/
+ ├─resource_management.json  
+ ├─resource_management.sch  
+ ├─system_monitoring.json  
+ ├─system_monitoring.sch  
+ ├─tracking.json  
+ └─tracking.sch
+</code></pre></div></p>
+<p>The directory <code>experiment</code> above should be used as the <code>experiment.path</code> option in the <a href="#main-configuration">main configuration file</a>. You may or may not decide to place the main configuration inside this directory. Either way, it is better to provide an absolute path in <code>experiment.path</code> to avoid issues with path resolution (recall that the configuration path is relative to the working directory - where <code>python -m matbii -c &lt;CONFIG&gt;</code> is run).</p>
+<h4 id="naming-convention">Naming convention<a class="headerlink" href="#naming-convention" title="Permanent link">&para;</a></h4>
+<p>Each configuration file must be named after the task (as above): <code>resource_management</code>, <code>system_monitoring</code>, <code>tracking</code> with <code>.json</code> for state files and <code>.sch</code> for schedule files. These names are also used when enabling a task in the <a href="#main-configuration">main configuration file</a>.</p>
+<h4 id="default-configuration">Default configuration<a class="headerlink" href="#default-configuration" title="Permanent link">&para;</a></h4>
+<p>All tasks have a <a href="https://github.com/dicelab-rhul/matbii/tree/main/matbii/tasks">default configuration</a> which will be used in place of state or schedule if the file is not given. Each of the files above is overriding the default state or schedule for the corresponding task.</p>
+<h3 id="state-files">State files<a class="headerlink" href="#state-files" title="Permanent link">&para;</a></h3>
+<p>State files contain values that determine the starting state of the task and influence how the task is displayed in the UI. Options are described below.</p>
+<details class="info">
+<summary>Resource Management Task Configuration</summary>
+<ul>
+<li><code>x (integer) = 260:</code> x position of the task</li>
+<li><code>y (integer) = 360:</code> y position of the task</li>
+<li><code>width (integer) = 540:</code> width of the task</li>
+<li><code>height (integer) = 300:</code> height of the task</li>
+<li><code>padding (integer) = 10:</code> padding surrounding the task</li>
+<li><code>pump_on_color (color) = "#00ff00":</code> color of pumps when in the <code>"on"</code> state</li>
+<li><code>pump_off_color (color) = "#add9e6":</code> color of pumps when in the <code>"off"</code> state</li>
+<li><code>pump_failure_color (color) = "#ff0000":</code> color of pumps when in the <code>"failure"</code> state</li>
+<li><code>stroke_color (color) = "#000000":</code> line colour</li>
+<li><code>stroke_width (integer) = 2:</code> line width</li>
+<li><code>show_tank_labels (boolean) = true:</code> whether to show textual labels next to each tank</li>
+<li><code>background_color (color) = "#ffffff":</code> background color of the tanks</li>
+<li><code>debug (boolean) = false:</code> whether to display debug information</li>
+<li><code>tank_capacity (dict):</code> See details below:</li>
+<li><code>tank_capacity.a (integer) = 2000:</code> capacity for tank a</li>
+<li><code>tank_capacity.b (integer) = 2000:</code> capacity for tank b</li>
+<li><code>tank_capacity.c (integer) = 1500:</code> capacity for tank c</li>
+<li><code>tank_capacity.d (integer) = 1500:</code> capacity for tank d</li>
+<li><code>tank_capacity.e (integer) = 1000:</code> capacity for tank e</li>
+<li><code>tank_capacity.f (integer) = 1000:</code> capacity for tank f</li>
+<li><code>tank_level (dict):</code> See details below:</li>
+<li><code>tank_level.a (integer) = 1000:</code> starting fuel level for tank a (&lt; tank_capacity.a)</li>
+<li><code>tank_level.b (integer) = 1000:</code> starting fuel level for tank b (&lt; tank_capacity.b)</li>
+<li><code>tank_level.c (integer) = 750:</code> starting fuel level for tank c (&lt; tank_capacity.c)</li>
+<li><code>tank_level.d (integer) = 750:</code> starting fuel level for tank d (&lt; tank_capacity.d)</li>
+<li><code>tank_level.e (integer) = 750:</code> starting fuel level for tank e (&lt; tank_capacity.e)</li>
+<li><code>tank_level.f (integer) = 750:</code> starting fuel level for tank f (&lt; tank_capacity.f)</li>
+<li><code>pump_state (dict):</code> See details below:</li>
+<li><code>pump_state.ab (str) = "off":</code> starting state of pump ab (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+<li><code>pump_state.ba (str) = "off":</code> starting state of pump ba (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+<li><code>pump_state.ca (str) = "off":</code> starting state of pump ca (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+<li><code>pump_state.ec (str) = "off":</code> starting state of pump ec (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+<li><code>pump_state.ea (str) = "off":</code> starting state of pump ea (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+<li><code>pump_state.db (str) = "off":</code> starting state of pump db (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+<li><code>pump_state.fd (str) = "off":</code> starting state of pump fd (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+<li><code>pump_state.fb (str) = "off":</code> starting state of pump fb (options <code>"off"</code>, <code>"on"</code>, <code>"failure"</code>)</li>
+</ul>
+</details>
+<details class="info">
+<summary>System Monitoring Task Configuration</summary>
+<ul>
+<li><code>x (integer) = 0:</code> x position of the task</li>
+<li><code>y (integer) = 0:</code> y position of the task</li>
+<li><code>width (integer) = 240:</code> width of the task</li>
+<li><code>height (integer) = 330:</code> height of the task</li>
+<li><code>padding (integer) = 10:</code> padding surrounding the task</li>
+<li><code>debug (boolean) = false:</code> whether to display debug information</li>
+<li><code>show_keyboard_shortcuts (boolean) = false:</code> whether to display keyboard shortcuts</li>
+<li><code>font_size (integer) = 12:</code> font size</li>
+<li><code>stroke_width (integer) = 2:</code> line width</li>
+<li><code>light_state (list) = [0, 0]:</code> initial states of each light (options: 0 or 1)</li>
+<li><code>light_on_color (color) = "#00ff00":</code> color of light 1 when on</li>
+<li><code>light_failure_color (color) = "#ff0000":</code> color of light 2 when on</li>
+<li><code>light_off_color (color) = "#add9e6":</code> color of light 1 and 2 when off</li>
+<li><code>light_width (integer) = 75:</code> width of each light</li>
+<li><code>light_height (integer) = 50:</code> height of each light</li>
+<li><code>slider_num_increments (integer) = 11:</code> number of increments in each slider</li>
+<li><code>slider_state (list) = [5, 5, 5, 5]:</code> intial states of each slider (options: 0 to slider_num_increments-1)</li>
+<li><code>slider_width (integer) = 30:</code> width of each slider</li>
+<li><code>slider_height (integer) = 20:</code> height of each slider</li>
+<li><code>slider_background_color (color) = "#add9e6":</code> slider background color</li>
+<li><code>slider_color (color) = "#4682b4":</code> slider color</li>
+<li><code>slider_arrow_color (color) = "#ffff00":</code> slider arrow color</li>
+</ul>
+</details>
+<details class="info">
+<summary>Tracking Task Configuration</summary>
+<ul>
+<li><code>x (integer) = 320:</code> x position of the task</li>
+<li><code>y (integer) = 0:</code> y position of the task</li>
+<li><code>width (integer) = 320:</code> width of the task</li>
+<li><code>height (integer) = 320:</code> height of the task</li>
+<li><code>padding (integer) = 10:</code> padding surrounding the task</li>
+<li><code>debug (boolean) = false:</code> whether to display debug information</li>
+<li><code>line_color (color) = "#1d90ff":</code> line color</li>
+<li><code>target_color (color) = "#1d90ff":</code> line color of the target</li>
+<li><code>target_line_width (integer) = 4:</code> width of the target lines</li>
+<li><code>target_x_offset (integer) = 0:</code> starting x position of the target</li>
+<li><code>target_y_offset (integer) = 0:</code> starting y position of the target</li>
+<li><code>target_radius (integer) = 25:</code> size of the target</li>
+<li><code>dash_array (string) = "4,2,1,2":</code> dash array for dashed lines</li>
+</ul>
+</details>
+<h3 id="schedule-files">Schedule files<a class="headerlink" href="#schedule-files" title="Permanent link">&para;</a></h3>
+<p>Schedule files determine how each task evolves, the files are written in a DSL (Domain Specific Language) details of which can be found <a href="https://github.com/BenedictWilkins/pyfuncschedule">here</a>.</p>
+<p>Briefly, schedule files contain a list of actions with times to execute them. Each line of a configuration file follows a template:
+<div class="highlight"><pre><span></span><code>ACTION(...) @ [T1, T2, ...] : R
+</code></pre></div></p>
+<p>Where <code>T1</code>, <code>T2</code>, ... are times to wait before executing the action <code>ACTION</code>, and <code>R</code> is the number of times to repeat the given sequence of wait times, the special character <code>*</code> means repeat forever. </p>
+<p>Each task has a number of actions that have been defined which will update the task's state. </p>
+<h4 id="actions">Actions<a class="headerlink" href="#actions" title="Permanent link">&para;</a></h4>
+<p>Actions make a change to the state of <code>matbii</code> and have their own internal definition. The full list of actions avaliable for use in a schedule is given below. Some examples are given in the <a href="#timing-functions">next section</a>.</p>
+<details class="info">
+<summary>Action Reference</summary>
+<p><strong>Tracking</strong></p>
+<ul>
+<li><code>move_target(direction: tuple[float, float] | int | float, speed: float)</code></li>
+<li><code>perturb_target(speed: float)</code></li>
+</ul>
+<p><strong>System Monitoring</strong></p>
+<ul>
+<li><code>on_light(target: int)</code></li>
+<li><code>off_light(target: int)</code></li>
+<li><code>toggle_light(target: int)</code></li>
+<li><code>perturb_slider(target: int)</code></li>
+</ul>
+<p><strong>Resource Management</strong></p>
+<ul>
+<li><code>burn_fuel(target: int | str, burn: float)</code></li>
+<li><code>pump_fuel(target: int | str, flow: float)</code></li>
+<li><code>toggle_pump_failure(target: int | str)</code></li>
+<li><code>toggle_pump(target: int | str)</code></li>
+</ul>
+</details>
+<h4 id="timing-functions">Timing functions<a class="headerlink" href="#timing-functions" title="Permanent link">&para;</a></h4>
+<p>Timings can be specified explicitly as constant <code>int</code> or <code>float</code> values (seconds).</p>
+<div class="admonition example">
+<p class="admonition-title">Example 1</p>
+<p><div class="highlight"><pre><span></span><code>toggle_light(1) @ [10]:*
+</code></pre></div>
+This will toggle light number 1 on/off every 10 seconds.</p>
+</div>
+<p>but we may want some more complicated schedule. This can be acheived using some built-in timing functions to introduce randomness or otherwise.</p>
+<ul>
+<li><code>uniform(a : int, b : int)</code> - a random integer between a and b (inclusive).</li>
+<li><code>uniform(a : float, b : float)</code> - a random float between a and b (inclusive).</li>
+</ul>
+<div class="admonition example">
+<p class="admonition-title">Example 2</p>
+<p><div class="highlight"><pre><span></span><code>toggle_light(1) @ [uniform(10,20)]:*
+</code></pre></div>
+This will toggle light number 1 on/off at times randomly chosen between 10 and 20 seconds.</p>
+</div>
+<p>We can build more complex schedules that mix timing functions and constant values. </p>
+<div class="admonition example">
+<p class="admonition-title">Example 3</p>
+<p><div class="highlight"><pre><span></span><code>toggle_pump_failure(&quot;ab&quot;) @ [uniform(3,10), 2]:*
+</code></pre></div>
+This will trigger a pump failure for 2 seconds after some random time between 3-10 seconds and repeat.</p>
+</div>
+<h4 id="example-schedules">Example Schedules<a class="headerlink" href="#example-schedules" title="Permanent link">&para;</a></h4>
+<details class="example">
+<summary>Tracking Task Schedule</summary>
+<div class="highlight"><pre><span></span><code># this moves the target around randomly by 5 units every 0.1 seconds
+perturb_target(5) @ [0.1]:*
+</code></pre></div>
+</details>
+<details class="example">
+<summary>System Monitoring Task Schedule</summary>
+<div class="highlight"><pre><span></span><code># this makes the lights turn to their unacceptable state every 10-20 seconds
+off_light(1) @ [uniform(10,20)]:*    # this means failure for light 1
+on_light(2) @ [uniform(10,20)]:*     # this means failure for light 2
+# toggle_light(1) is also an option
+# toggle_light(2) is also an option
+
+# this randomly moves the sliders (up/down by 1) every 5-6 seconds.
+perturb_slider(1) @ [uniform(5,6)]:*
+perturb_slider(2) @ [uniform(5,6)]:*
+perturb_slider(3) @ [uniform(5,6)]:*
+perturb_slider(4) @ [uniform(5,6)]:*
+</code></pre></div>
+</details>
+<details class="example">
+<summary>Resource Management Task Schedule</summary>
+<div class="highlight"><pre><span></span><code># these determine pump failures, fail for 2 seconds after between 3 and 10 seconds (and repeat)
+toggle_pump_failure(&quot;fd&quot;) @ [uniform(3,10), 2]:*
+toggle_pump_failure(&quot;fb&quot;) @ [uniform(3,10), 2]:*
+toggle_pump_failure(&quot;db&quot;) @ [uniform(3,10), 2]:*
+toggle_pump_failure(&quot;ec&quot;) @ [uniform(3,10), 2]:*
+toggle_pump_failure(&quot;ea&quot;) @ [uniform(3,10), 2]:*
+toggle_pump_failure(&quot;ca&quot;) @ [uniform(3,10), 2]:*
+toggle_pump_failure(&quot;ba&quot;) @ [uniform(3,10), 2]:*
+toggle_pump_failure(&quot;ab&quot;) @ [uniform(3,10), 2]:*
+
+# these determine the burning of fuel in the two main tanks
+burn_fuel(&quot;a&quot;, 10) @ [0.1]:*
+burn_fuel(&quot;b&quot;, 10) @ [0.1]:*
+
+# these determine the flow of the pumps (when they are &quot;on&quot;)
+pump_fuel(&quot;fd&quot;, 20) @ [0.1]:*
+pump_fuel(&quot;fb&quot;, 20) @ [0.1]:*
+pump_fuel(&quot;db&quot;, 20) @ [0.1]:*
+pump_fuel(&quot;ec&quot;, 20) @ [0.1]:*
+pump_fuel(&quot;ea&quot;, 20) @ [0.1]:*
+pump_fuel(&quot;ca&quot;, 20) @ [0.1]:*
+pump_fuel(&quot;ba&quot;, 20) @ [0.1]:*
+pump_fuel(&quot;ab&quot;, 20) @ [0.1]:*
+</code></pre></div>
+</details>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<p>Configuration examples can be found <a href="https://github.com/dicelab-rhul/matbii/tree/main/matbii/example">here</a>.</p>
+<p>Examples can be run using the <code>--example</code> option:</p>
+<div class="highlight"><pre><span></span><code>python -m matbii --example example-A
+</code></pre></div>
+<p>Events will be logged to <code>./example-A-logs/</code>, take a look and make sure everything is working as expected. To start running your own experiments, you can copy the example files, or an <a href="https://github.com/dicelab-rhul/matbii/tree/main/matbii/example">example</a> and run in the usual way with:</p>
+<p><div class="highlight"><pre><span></span><code>python -m matbii -c &lt;CONFIG_PATH&gt;
+</code></pre></div>
+You can set up the logging directory using the <code>logging.path</code> option in your <a href="#main-configuration">main configuration file</a> or by overriding via the command line with <code>--config.logging.path &lt;PATH&gt;</code>.</p>
+<p>The next page contains details on the logging system and tools for post-experiment analysis/visualisation.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../key-concepts/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Key Concepts">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Key Concepts
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../logging/" class="md-footer__link md-footer__link--next" aria-label="Next: Logging">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Logging
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.footer", "navigation.expand", "navigation.tabs", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      
+    
+  </body>
+</html>
