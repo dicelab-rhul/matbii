@@ -183,9 +183,8 @@ class ExperimentConfiguration(BaseModel, validate_assignment=True):
         default=None, description="The unique ID of this experiment."
     )
     path: str = Field(
-        # default_factory=lambda: Path("./").resolve().as_posix(),
         default="./",
-        description="The full path to the directory containing task configuration files. If this is a relative path it is relative to the current working directory.",
+        description="The path to the directory containing task configuration files. This is relative to the configuration file used, if no file was used then it is relative to the current working directory.",
     )
     duration: int = Field(
         default=-1,
@@ -213,14 +212,31 @@ class ExperimentConfiguration(BaseModel, validate_assignment=True):
 
     @field_validator("path", mode="before")
     @classmethod
-    def _validate_path(cls, value: str):
-        # we don't want to set it here, it should remain relative, just check that it exists!
-        experiment_path = Path(value).expanduser().resolve()
+    def _validate_path(cls, value: str, info: dict[str, Any]):
+        context = info.context
+        experiment_path = Path(value).expanduser()
+        if experiment_path.is_absolute():
+            experiment_path = experiment_path.resolve()
+        else:
+            # check if this comes from a config file
+            if "configuration_path" in context:
+                config_path = (
+                    Path(context["configuration_path"]).expanduser().resolve().parent
+                )
+                LOGGER.debug(
+                    f"`experiment.path` is relative to: {config_path.as_posix()}"
+                )
+                experiment_path = config_path / experiment_path
+            else:
+                LOGGER.debug(
+                    "`experiment.path` is relative to the current working directory."
+                )
+                experiment_path = Path(value).expanduser().resolve()
         if not experiment_path.exists():
             raise ValueError(
                 f"Configuration option `experiment.path` is not valid: `{experiment_path.as_posix()}` does not exist."
             )
-        return value
+        return experiment_path.as_posix()
 
     def validate_from_context(self, context: "Configuration"):  # noqa
         pass
@@ -428,7 +444,9 @@ class Configuration(BaseModel, validate_assignment=True):
             with open(path) as f:
                 data = json.load(f)
                 data = always_merger.merge(data, context)
-                result = Configuration.model_validate(data)
+                result = Configuration.model_validate(
+                    data, context={"configuration_path": path}
+                )
                 result.validate_from_context()  # check consistency of nested fields
                 return result
         else:

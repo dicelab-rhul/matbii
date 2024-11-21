@@ -1,4 +1,6 @@
 
+*-logs/
+
 *.h5
 *.zip
 logs/
