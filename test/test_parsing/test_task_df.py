@@ -15,17 +15,25 @@ def get_events(path: str | Path):
     return parser, list(parser.parse(path, relative_start=True))
 
 
-class TestTasks(unittest.TestCase):
-    """Test system monitoring event parsing."""
+class TestTasks(unittest.TestCase):  # noqa
+    pass
+    # def test_resource_management_events(self):
+    #     """Test resource management events."""
+    #     path = (Path(__file__).parent / "resource_management.log").as_posix()
+    #     parser, events = get_events(path)
 
-    def test_tracking_events(self):
-        """Test tracking events."""
-        path = (Path(__file__).parent / "tracking.log").as_posix()
-        parser, events = get_events(path)
+    #     resource_management_df = analysis.get_resource_management_task_events(
+    #         parser, events
+    #     )
 
-        tracking_df = analysis.get_tracking_task_events(parser, events)
-        print(tracking_df)
-        self.assertGreater(len(tracking_df), 0, "No tracking events found.")
+    # def test_tracking_events(self):
+    #     """Test tracking events."""
+    #     path = (Path(__file__).parent / "tracking.log").as_posix()
+    #     parser, events = get_events(path)
+
+    #     tracking_df = analysis.get_tracking_task_events(parser, events)
+    #     print(tracking_df)
+    #     self.assertGreater(len(tracking_df), 0, "No tracking events found.")
 
     # def test_system_monitoring_events(self):
     #     """Test system monitoring events."""

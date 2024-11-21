@@ -63,13 +63,43 @@ ALTERNATE_KEY_BINDING = {
 
 
 def tank_id(tank: str):
-    assert tank in ("a", "b")
+    assert tank in ("a", "b", "c", "d", "e", "f")
     return f"tank-{tank}"
 
 
 def tank_level_id(tank: str):
-    assert tank in ("a", "b")
+    assert tank in ("a", "b", "c", "d", "e", "f")
     return f"tank-{tank}-level"
+
+
+def tank_ids() -> tuple[str]:
+    return (
+        tank_id("a"),
+        tank_id("b"),
+        tank_id("c"),
+        tank_id("d"),
+        tank_id("e"),
+        tank_id("f"),
+    )
+
+
+def pump_id(tank1: str, tank2: str):
+    assert tank1 in ("a", "b", "c", "d", "e", "f")
+    assert tank2 in ("a", "b", "c", "d", "e", "f")
+    return f"pump-{tank1}{tank2}"
+
+
+def pump_ids() -> tuple[str]:
+    return (
+        pump_id("a", "b"),
+        pump_id("b", "a"),
+        pump_id("f", "d"),
+        pump_id("f", "b"),
+        pump_id("d", "b"),
+        pump_id("e", "c"),
+        pump_id("e", "a"),
+        pump_id("c", "a"),
+    )
 
 
 def slider_id(slider: int):

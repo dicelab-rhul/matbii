@@ -200,15 +200,15 @@ def _summary(
         fig.suptitle("Eyetracking")
         ax.imshow(img)
         plt.scatter(
-            eyetracking_df["x"][~eyetracking_df['fixated']],
-            eyetracking_df["y"][~eyetracking_df['fixated']],
+            eyetracking_df["x"][~eyetracking_df["fixated"]],
+            eyetracking_df["y"][~eyetracking_df["fixated"]],
             marker=".",
             alpha=0.2,
             color="blue",
         )
         plt.scatter(
-            eyetracking_df["x"][eyetracking_df['fixated']],
-            eyetracking_df["y"][eyetracking_df['fixated']],
+            eyetracking_df["x"][eyetracking_df["fixated"]],
+            eyetracking_df["y"][eyetracking_df["fixated"]],
             marker=".",
             alpha=0.8,
             color="red",
@@ -222,7 +222,7 @@ def _summary_plot(
     path: Path,
     attention_mode: Literal["mouse", "fixation", "gaze"] = "mouse",
     guidance_colour: str = "red",
-    attention_colour: str = "purple",
+    attention_colour: str = "green",
     system_monitoring_colour: str = SYSTEM_MONITORING_COLOR,
     tracking_colour: str = TRACKING_COLOR,
     resource_management_colour: str = RESOURCE_MANAGEMENT_COLOR,
@@ -251,12 +251,13 @@ def _summary_plot(
         raise ValueError(
             f"Attention intervals for mode {attention_mode} not found, available: {avaliable}."
         )
+    first = True
     for task, data in task_data.items():
         plot_intervals(
             acceptable_intervals[acceptable_intervals["task"] == task],
-            color=data["colour"],
+            color=tracking_colour,
             alpha=0.5,
-            label="acceptable",
+            label="acceptable" if first else None,
             ymin=data["ylim"][0],
             ymax=data["ylim"][1],
             ax=ax,
@@ -265,7 +266,7 @@ def _summary_plot(
             unacceptable_intervals[unacceptable_intervals["task"] == task],
             color="black",
             alpha=0.1,
-            label="unacceptable",
+            label="unacceptable" if first else None,
             ymin=data["ylim"][0],
             ymax=data["ylim"][1],
             ax=ax,
@@ -275,7 +276,7 @@ def _summary_plot(
             color=guidance_colour,
             alpha=0.2,
             ax=ax,
-            label="guidance",
+            label="guidance" if first else None,
             ymin=data["ylim"][0] + 0.05,
             ymax=data["ylim"][1] - 0.05,
         )
@@ -284,7 +285,7 @@ def _summary_plot(
             color=attention_colour,
             alpha=0.2,
             ax=ax,
-            label=f"attention_{attention_mode}",
+            label=f"attention_{attention_mode}" if first else None,
             ymin=data["ylim"][0] + 0.05,
             ymax=data["ylim"][1] - 0.05,
         )
@@ -295,7 +296,7 @@ def _summary_plot(
             df["timestamp"][~df["user"]],
             color="black",
             alpha=0.5,
-            label="task schedule",
+            label="task schedule" if first else None,
             ymin=data["ylim"][0] + 0.1,
             ymax=data["ylim"][1] - 0.1,
             ax=ax,
@@ -303,13 +304,14 @@ def _summary_plot(
         # plot the timestamps for the task changed its state due to the user.
         plot_timestamps(
             df["timestamp"][df["user"]],
-            color="white",
+            color="red",
             alpha=0.5,
-            label="user input",
+            label="user input" if first else None,
             ymin=data["ylim"][0] + 0.1,
             ymax=data["ylim"][1] - 0.1,
             ax=ax,
         )
+        first = False
 
     # # plot the start and end times - this is the time of the first and last rendered frame.
     # fig = plot_timestamps(

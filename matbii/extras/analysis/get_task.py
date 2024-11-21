@@ -21,6 +21,13 @@ from icua.extras.analysis import EventLogParser
 from ...guidance import (
     SystemMonitoringTaskAcceptabilitySensor,
     TrackingTaskAcceptabilitySensor,
+    # ResourceManagementTaskAcceptabilitySensor, # the sense actions are defined here...
+)
+
+# used to create resource management sense actions
+from ...utils._const import (
+    tank_ids,
+    pump_ids,
 )
 
 # system monitoring events
@@ -29,7 +36,57 @@ from ...tasks import (
     SetLightAction,
     ToggleLightAction,
     TargetMoveAction,
+    SetPumpAction,
+    BurnFuelAction,
+    PumpFuelAction,
+    TogglePumpAction,
+    TogglePumpFailureAction,
 )
+
+
+# def get_resource_management_task_events(
+#     parser: EventLogParser,
+#     events: list[tuple[float, Event]],
+#     norm: float | int = np.inf,
+# ) -> pd.DataFrame:
+#     """Extracts useful data for the resource management task from the event log.
+
+#     Columns:
+#         - timestamp: float - the (logging) timestamp of the event
+#         - frame: int - the frame number of the event, events with a frame number of 0 happen BEFORE the first frame is rendered to the user.
+#         - user: bool - whether the event was triggered by the user or not.
+#         - tank-a: float - tank a level
+#         - tank-b: float - tank b level
+#         - tank-c: float - tank c level
+#         - tank-d: float - tank d level
+#         - tank-e: float - tank e level
+#         - tank-f: float - tank f level
+
+#     Args:
+#         parser (EventLogParser): parser used to parse the event log file.
+#         events (list[tuple[float, Event]]): list of events that were parsed from the event log file.
+#         norm (float | int, optional): the norm to use for the distance metric, either "inf" for the max norm or an integer for the p-norm.
+
+#     Returns:
+#         pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", *"tanks-{i}", *"pumps-{ij}"]
+#     """
+#     from matbii.utils import LOGGER
+
+#     LOGGER.warning(
+#         "`get_resource_management_task_events` is not implemented yet, the result will be an empty dataframe."
+#     )
+#     df = None
+#     if df is None:
+#         columns = [
+#             "timestamp",
+#             "frame",
+#             "user",
+#             "x",
+#             "y",
+#             "distance",
+#         ]
+#         return pd.DataFrame(columns=columns)
+#     return df
 
 
 def get_resource_management_task_events(
@@ -58,22 +115,65 @@ def get_resource_management_task_events(
     Returns:
         pd.DataFrame: dataframe with columns: ["timestamp", "frame", "user", *"tanks-{i}", *"pumps-{ij}"]
     """
-    from matbii.utils import LOGGER
-
-    LOGGER.warning(
-        "`get_resource_management_task_events` is not implemented yet, the result will be an empty dataframe."
+    fevents = parser.filter_events(
+        events,
+        (
+            Insert,
+            Delete,
+            Update,
+            Replace,
+            SetPumpAction,
+            BurnFuelAction,
+            PumpFuelAction,
+            TogglePumpAction,
+            TogglePumpFailureAction,
+            KeyEvent,
+            MouseButtonEvent,
+            RenderEvent,
+        ),
     )
-    df = None
+
+    # # sort the events by their log timestamp
+    fevents = parser.sort_by_timestamp(fevents)
+
+    def _sense(state: XMLState):
+        # sense_actions = ResourceManagementTaskAcceptabilitySensor().sense()
+        # sense actions for tank states
+        sense_actions = [
+            Select(xpath=f"//*[@id='{id}']", attrs=["id", "data-level"])
+            for id in tank_ids()
+        ]
+        result = sense(state, sense_actions)
+        if result is None:
+            result = dict()
+        result_tanks = {k: v["data-level"] for k, v in result.items()}
+
+        # actions for pump states
+        sense_actions = [
+            Select(xpath=f"//*[@id='{id}-button']", attrs=["id", "data-state"])
+            for id in pump_ids()
+        ]
+        result = sense(state, sense_actions)
+        # print(result)
+        if result is None:
+            result = dict()
+        result_pumps = {k.rsplit("-", 1)[0]: v["data-state"] for k, v in result.items()}
+        if len(result_pumps) == 0:
+            return None
+        return {**result_tanks, **result_pumps}
+
+    df = _get_task_dataframe(fevents, _sense)
     if df is None:
         columns = [
             "timestamp",
             "frame",
             "user",
-            "x",
-            "y",
-            "distance",
+            *tank_ids(),
+            *pump_ids(),
         ]
         return pd.DataFrame(columns=columns)
+
+    # TODO combine rows if the timestamp matches
     return df
 
 
@@ -116,8 +216,8 @@ def get_tracking_task_events(
         ),
     )
 
-    # sort the events by their log timestamp
-    fevents = sorted(fevents, key=lambda x: x[0])
+    # # sort the events by their log timestamp
+    fevents = parser.sort_by_timestamp(fevents)
 
     def _sense(state: XMLState):
         sense_actions = TrackingTaskAcceptabilitySensor().sense()
@@ -204,8 +304,8 @@ def get_system_monitoring_task_events(
             RenderEvent,
         ),
     )
-    # sort the events by their log timestamp
-    fevents = sorted(fevents, key=lambda x: x[0])
+    # sort the events by their timestamp
+    fevents = parser.sort_by_timestamp(fevents)
 
     def _rename_column(k: str):
         return "-".join(k.split("-")[:2])

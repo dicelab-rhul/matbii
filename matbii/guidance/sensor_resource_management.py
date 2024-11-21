@@ -69,19 +69,22 @@ class ResourceManagementTaskAcceptabilitySensor(TaskAcceptabilitySensor):
             and fuel_level <= acceptable_level + acceptable_range2
         )
 
-    def sense(self) -> list[Select]:
+    def sense(self, tank_ids: tuple[str, ...] = ("a", "b")) -> list[Select]:
         """Generates the sense actions that are required for checking whether the resource management task is in an acceptable state.
 
         The actions will request the following data:
         - the current fuel level and capacity of each main tank ("a" and "b")
         - the acceptable range of fuel for each main tank ("a" and "b")
 
+        Args:
+            tank_ids (tuple[str, str], optional): the ids of the tanks to check, defaults to ("a", "b").
+
         Returns:
             list[Select]: list of sense actions to take.
         """
         # interested in the fuel levels of the main tanks in the Resource Management Task
-        tanks = [tank_id(i) for i in ("a", "b")]
-        tank_levels = [tank_level_id(i) for i in ("a", "b")]
+        tanks = [tank_id(i) for i in tank_ids]
+        tank_levels = [tank_level_id(i) for i in tank_ids]
         tank_selects = [
             select(
                 xpath=f"//*[@id='{id}']", attrs=["id", "data-capacity", "data-level"]
